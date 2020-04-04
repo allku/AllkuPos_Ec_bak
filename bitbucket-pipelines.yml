@@ -1,0 +1,21 @@
+image:
+  name: unicenta/unicenta-maven:20180216
+  username: $DOCKER_HUB_USERNAME
+  password: $DOCKER_HUB_PASSWORD
+  email: $DOCKER_HUB_EMAIL
+
+pipelines:
+  custom: # Pipelines that can only be triggered manually
+    release:
+      - step:
+          caches:
+            - maven
+          script:
+            - apt-get update
+            - apt-get install -y openjfx
+            - mvn clean package
+            - mvn exec:exec -Dbitrock.exec=$BITROCK_EXEC -Dbitrock.platform=linux -Dbitrock.licence=~/licence.xml
+            - mvn exec:exec -Dbitrock.exec=$BITROCK_EXEC -Dbitrock.platform=linux-x64 -Dbitrock.licence=~/licence.xml
+            - mvn exec:exec -Dbitrock.exec=$BITROCK_EXEC -Dbitrock.platform=osx -Dbitrock.licence=~/licence.xml
+            - mvn exec:exec -Dbitrock.exec=$BITROCK_EXEC -Dbitrock.platform=windows -Dbitrock.licence=~/licence.xml
+            - ./installer-upload.sh target/installers $DB_AUTH_STRING
