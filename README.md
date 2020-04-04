@@ -1,2 +1,2 @@
 # AllkuPos_Ec
-POS for Ecuador
+POS for Ecuador, based on OpenBravo and UniCenta
