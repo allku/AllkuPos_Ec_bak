@@ -915,36 +915,52 @@ INSERT INTO resources(id, name, restype, content) VALUES('70', 'script.posapps',
 INSERT INTO resources(id, name, restype, content) VALUES('71', 'script.SendOrder', 0, $FILE{/com/openbravo/pos/templates/script.SendOrder.txt});
 INSERT INTO resources(id, name, restype, content) VALUES('72', 'script.Totaldiscount', 0, $FILE{/com/openbravo/pos/templates/script.Totaldiscount.txt});
 
+-- ADD EMPRESA
+INSERT INTO resources(id, name, restype, content) VALUES('101', 'Empresa.RUC', 0, $FILE{/com/openbravo/pos/templates/Empresa.RUC.txt});
+INSERT INTO resources(id, name, restype, content) VALUES('102', 'Empresa.RazonSocial', 0, $FILE{/com/openbravo/pos/templates/Empresa.RazonSocial.txt});
+INSERT INTO resources(id, name, restype, content) VALUES('103', 'Empresa.NombreComercial', 0, $FILE{/com/openbravo/pos/templates/Empresa.NombreComercial.txt});
+INSERT INTO resources(id, name, restype, content) VALUES('104', 'Empresa.Direccion1', 0, $FILE{/com/openbravo/pos/templates/Empresa.Direccion1.txt});
+INSERT INTO resources(id, name, restype, content) VALUES('105', 'Empresa.Direccion2', 0, $FILE{/com/openbravo/pos/templates/Empresa.Direccion2.txt});
+-- ADD Ambiente de facturación electrónica 1 => Pruebas, 2 => Producción
+INSERT INTO resources(id, name, restype, content) VALUES('106', 'Empresa.Ambiente', 0, $FILE{/com/openbravo/pos/templates/Empresa.Ambiente.txt});
+-- ADD Establecimiento y Punto de Emisión.
+INSERT INTO resources(id, name, restype, content) VALUES('107', 'Empresa.Establecimiento', 0, $FILE{/com/openbravo/pos/templates/Empresa.Establecimiento.txt});
+INSERT INTO resources(id, name, restype, content) VALUES('108', 'Empresa.PuntoEmision', 0, $FILE{/com/openbravo/pos/templates/Empresa.PuntoEmision.txt});
+
+
 -- ADD CATEGORIES
-INSERT INTO categories(id, name) VALUES ('000', 'Category Standard');
+INSERT INTO categories(id, name) VALUES ('000', 'Categoría Standard');
 
 -- ADD TAXCATEGORIES
 /* 002 added 31/01/2017 00:00:00. */
-INSERT INTO taxcategories(id, name) VALUES ('000', 'Tax Exempt');
-INSERT INTO taxcategories(id, name) VALUES ('001', 'Tax Standard');
-INSERT INTO taxcategories(id, name) VALUES ('002', 'Tax Other');
+INSERT INTO taxcategories(id, name) VALUES ('000', 'IVA 0');
+INSERT INTO taxcategories(id, name) VALUES ('001', 'IVA 12');
+INSERT INTO taxcategories(id, name) VALUES ('003', 'ICE');
 
 -- ADD TAXES
 /* 002 added 31/01/2017 00:00:00. */
-INSERT INTO taxes(id, name, category, custcategory, parentid, rate, ratecascade, rateorder) VALUES ('000', 'Tax Exempt', '000', NULL, NULL, 0, FALSE, NULL);
-INSERT INTO taxes(id, name, category, custcategory, parentid, rate, ratecascade, rateorder) VALUES ('001', 'Tax Standard', '001', NULL, NULL, 0.20, FALSE, NULL);
-INSERT INTO taxes(id, name, category, custcategory, parentid, rate, ratecascade, rateorder) VALUES ('002', 'Tax Other', '002', NULL, NULL, 0, FALSE, NULL);
+INSERT INTO taxes(id, name, category, custcategory, parentid, rate, ratecascade, rateorder) VALUES ('000', 'IVA 0', '000', NULL, NULL, 0, FALSE, NULL);
+INSERT INTO taxes(id, name, category, custcategory, parentid, rate, ratecascade, rateorder) VALUES ('001', 'IVA 12', '001', NULL, NULL, 0.12, FALSE, NULL);
 
 -- ADD PRODUCTS
-INSERT INTO products(id, reference, code, name, category, taxcat, isservice, display, printto) 
-VALUES ('xxx999_999xxx_x9x9x9', 'xxx999', 'xxx999', 'Free Line entry', '000', '001', 1, '<html><center>Free Line entry', '1');
-INSERT INTO products(id, reference, code, name, category, taxcat, isservice, display, printto) 
-VALUES ('xxx998_998xxx_x8x8x8', 'xxx998', 'xxx998', 'Service Charge', '000', '001', 1, '<html><center>Service Charge', '1');
+INSERT INTO products(id,reference,code,codetype,name,pricebuy,pricesell,category,taxcat,stockcost,stockvolume,isservice,display,isvprice,isverpatrib,texttip,warranty,stockunits,printto,supplier,uom) 
+VALUES ('0','0','0','CODE128','Producto sin IVA',0,1,'000','000',0,0,0,'<html><center>Producto sin IVA',0,0,'',0,0,'1','0','0');
+INSERT INTO products(id,reference,code,codetype,name,pricebuy,pricesell,category,taxcat,stockcost,stockvolume,isservice,display,isvprice,isverpatrib,texttip,warranty,stockunits,printto,supplier,uom) 
+VALUES ('1','1','1','CODE128','Producto con IVA',0,1,'000','001',0,0,0,'<html><center>Producto con IVA',0,0,'',0,0,'1','0','0');
 
 -- ADD PRODUCTS_CAT
-INSERT INTO products_cat(product) VALUES ('xxx999_999xxx_x9x9x9');
-INSERT INTO products_cat(product) VALUES ('xxx998_998xxx_x8x8x8');
+INSERT INTO products_cat(product) VALUES ('0');
+INSERT INTO products_cat(product) VALUES ('1');
+
+-- ADD Consumidor Final CUSTOMERS
+INSERT INTO customers (id,searchkey,taxid,name,maxdebt,address,address2,postal,firstname,lastname,notes,visible,isvip,discount) 
+VALUES ('9999999999999','9999999999999','9999999999999','Consumidor Final',0,NULL,NULL,'Consumidor Final','Final','Consumidor','',1,0,0);
 
 -- ADD LOCATION
 INSERT INTO locations(id, name, address) VALUES ('0','Location 1','Local');
 
 -- ADD SUPPLIERS
-INSERT INTO suppliers(id, searchkey, name) VALUES ('0','uniCenta','uniCenta');
+INSERT INTO suppliers(id, searchkey, name) VALUES ('0','Ideas en Binario','Ideas en Binario');
 
 -- ADD UOM
 INSERT INTO uom(id, name) VALUES ('0','Each');
@@ -1005,10 +1021,10 @@ INSERT INTO breaks(id, name, visible, notes) VALUES ('2', 'Mid Break', TRUE, NUL
 INSERT INTO shift_breaks(id, shiftid, breakid, starttime, endtime) VALUES ('0', '0', '0', '2018-01-01 00:00:00.003', '2018-01-01 00:00:00.004');
 
 -- ADD SEQUENCES
-INSERT INTO pickup_number VALUES(1);
-INSERT INTO ticketsnum VALUES(1);
-INSERT INTO ticketsnum_refund VALUES(1);
-INSERT INTO ticketsnum_payment VALUES(1);
+INSERT INTO pickup_number VALUES(0);
+INSERT INTO ticketsnum VALUES(0);
+INSERT INTO ticketsnum_refund VALUES(0);
+INSERT INTO ticketsnum_payment VALUES(0);
 
 -- ADD APPLICATION VERSION
 INSERT INTO applications(id, name, version) VALUES($APP_ID{}, $APP_NAME{}, $APP_VERSION{});

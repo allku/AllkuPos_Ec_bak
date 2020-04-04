@@ -103,7 +103,7 @@ public class TicketParser extends DefaultHandler {
     public void printTicket(String sIn, TicketInfo ticket) throws TicketPrinterException {
 //       cUser=ticket.getUser().getName();
        cUser=ticket.getName();        
-        ticketId=Integer.toString(ticket.getTicketId()); 
+        ticketId=Long.toString(ticket.getTicketId()); 
         pickupId=Integer.toString(ticket.getPickupId());
         
         if (ticket.getTicketId()==0){

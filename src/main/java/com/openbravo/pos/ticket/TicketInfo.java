@@ -30,6 +30,7 @@ import com.openbravo.pos.payment.PaymentInfo;
 import com.openbravo.pos.payment.PaymentInfoMagcard;
 import com.openbravo.pos.payment.PaymentInfoTicket;
 import com.openbravo.pos.util.StringUtils;
+import expert.allku.electronico.Modulo11;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,12 +48,12 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public static final int RECEIPT_REFUND = 1;
     public static final int RECEIPT_PAYMENT = 2;
     public static final int RECEIPT_NOSALE = 3;
-    
+
 // JG Jun 2017 - contain partial/full refunds    
     public static final int REFUND_NOT = 0; // is a non-refunded ticket    
     public static final int REFUND_PARTIAL = 1;
     public static final int REFUND_ALL = 2;
-  
+
     private static final DateFormat m_dateformat = new SimpleDateFormat("hh:mm");
 
     private String m_sHost;
@@ -78,18 +79,28 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     private final String m_locked;
     private Double nsum;
     private int ticketstatus;
+    private String ruc;
+    private String razonSocial;
+    private String nombreComercial;
+    private String direccion1;
+    private String direccion2;
+    private String establecimiento;
+    private String puntoEmision;
+    private String ambiente;
 
     private static String Hostname;
 
     public static void setHostname(String name) {
-        Hostname=name;
+        Hostname = name;
     }
 
     public static String getHostname() {
         return Hostname;
     }
 
-    /** Creates new TicketModel */
+    /**
+     * Creates new TicketModel
+     */
     public TicketInfo() {
         m_sId = UUID.randomUUID().toString();
         tickettype = RECEIPT_NORMAL;
@@ -103,15 +114,15 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         payments = new ArrayList<>();
         taxes = null;
         m_sResponse = null;
-        oldTicket=false;
+        oldTicket = false;
 
         AppConfig config = new AppConfig(new File(new File(
-            System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+                System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
         config.load();
         tip = Boolean.valueOf(config.getProperty("machine.showTip"));
         m_isProcessed = false;
         m_locked = null;
-        ticketstatus = 0;        
+        ticketstatus = 0;
     }
 
     @Override
@@ -168,7 +179,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         m_aLines = new ArrayList<>();
         payments = new ArrayList<>();
         taxes = null;
-        
+
         ticketstatus = dr.getInt(10);
     }
 
@@ -197,11 +208,11 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         payments.forEach((p) -> {
             t.payments.add(p.copyPayment());
         });
-        t.oldTicket=oldTicket;
+        t.oldTicket = oldTicket;
         // taxes are not copied, must be calculated again.
 
         t.ticketstatus = ticketstatus;
-        
+
         return t;
     }
 
@@ -212,6 +223,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public int getTicketType() {
         return tickettype;
     }
+
     public void setTicketType(int tickettype) {
         this.tickettype = tickettype;
     }
@@ -219,6 +231,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public int getTicketId() {
         return m_iTicketId;
     }
+
     public void setTicketId(int iTicketId) {
         m_iTicketId = iTicketId;
     }
@@ -226,14 +239,15 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public int getTicketStatus() {
         return ticketstatus;
     }
+
     public void setTicketStatus(int ticketstatus) {
-        if (m_iTicketId >0) {
+        if (m_iTicketId > 0) {
             this.ticketstatus = m_iTicketId;
-        }else{
+        } else {
             this.ticketstatus = ticketstatus;
         }
     }
-    
+
     public void setPickupId(int iTicketId) {
         m_iPickupId = iTicketId;
     }
@@ -241,38 +255,38 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public int getPickupId() {
         return m_iPickupId;
     }
-    
+
     public String getName(Object info) {
 // JG Aug 2014 - Add User info
-        List<String> name = new ArrayList<>();        
+        List<String> name = new ArrayList<>();
 
-        String nameprop = getProperty("name"); 
+        String nameprop = getProperty("name");
         if (nameprop != null) {
-            name.add(nameprop);            
+            name.add(nameprop);
         }
-        
+
         if (m_User != null) {
-            name.add(m_User.getName());                        
+            name.add(m_User.getName());
         }
 
         if (info == null) {
             if (m_iTicketId == 0) {
-                name.add("(" + m_dateformat.format(m_dDate) + " " 
-                        + Long.toString(m_dDate.getTime() % 1000) + ")");                
+                name.add("(" + m_dateformat.format(m_dDate) + " "
+                        + Long.toString(m_dDate.getTime() % 1000) + ")");
             } else {
-                name.add(Integer.toString(m_iTicketId));                
+                name.add(Integer.toString(m_iTicketId));
             }
         } else {
-            name.add(info.toString());            
+            name.add(info.toString());
         }
 
-        if (m_Customer != null) {        
-            name.add(m_Customer.getName());            
+        if (m_Customer != null) {
+            name.add(m_Customer.getName());
         }
 
-        return org.apache.commons.lang.StringUtils.join(name, " - ");        
+        return org.apache.commons.lang.StringUtils.join(name, " - ");
     }
-    
+
     public String getName() {
         return getName(null);
     }
@@ -284,16 +298,16 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public void setDate(java.util.Date dDate) {
         m_dDate = dDate;
     }
-    
+
     public String getHost() {
-      AppConfig m_config_host =  new AppConfig(new File((System.getProperty("user.home")),
-              AppLocal.APP_ID + ".properties"));        
-      m_config_host.load();
-      String machineHostname =(m_config_host.getProperty("machine.hostname"));
-      m_config_host = null;
-      return machineHostname;
+        AppConfig m_config_host = new AppConfig(new File((System.getProperty("user.home")),
+                AppLocal.APP_ID + ".properties"));
+        m_config_host.load();
+        String machineHostname = (m_config_host.getProperty("machine.hostname"));
+        m_config_host = null;
+        return machineHostname;
     }
-    
+
     public UserInfo getUser() {
         return m_User;
     }
@@ -317,17 +331,17 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             return m_Customer.getId();
         }
     }
-    
-    public String getTransactionID(){
-        return (getPayments().size()>0)
-            ? ( getPayments().get(getPayments().size()-1) ).getTransactionID()
-            : StringUtils.getCardNumber(); //random transaction ID
+
+    public String getTransactionID() {
+        return (getPayments().size() > 0)
+                ? (getPayments().get(getPayments().size() - 1)).getTransactionID()
+                : StringUtils.getCardNumber(); //random transaction ID
     }
-    
-    public String getReturnMessage(){
-        return ( (getPayments().get(getPayments().size()-1)) instanceof PaymentInfoMagcard )
-            ? ((PaymentInfoMagcard)(getPayments().get(getPayments().size()-1))).getReturnMessage()
-            : LocalRes.getIntString("button.OK");
+
+    public String getReturnMessage() {
+        return ((getPayments().get(getPayments().size() - 1)) instanceof PaymentInfoMagcard)
+                ? ((PaymentInfoMagcard) (getPayments().get(getPayments().size() - 1))).getReturnMessage()
+                : LocalRes.getIntString("button.OK");
     }
 
     public void setActiveCash(String value) {
@@ -376,7 +390,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public void removeLine(int index) {
         m_aLines.remove(index);
         refreshLines();
-       
+
     }
 
     public void refreshLines() {
@@ -388,7 +402,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public int getLinesCount() {
         return m_aLines.size();
     }
-    
+
     public double getArticlesCount() {
         double dArticles = 0.0;
         TicketLineInfo oLine;
@@ -403,9 +417,9 @@ public final class TicketInfo implements SerializableRead, Externalizable {
 
     public double getSubTotal() {
         double sum = 0.0;
-        sum = m_aLines.stream().map((line) -> 
-                line.getSubValue()).reduce(sum, (accumulator, _item) -> 
-                        accumulator + _item);
+        sum = m_aLines.stream().map((line)
+                -> line.getSubValue()).reduce(sum, (accumulator, _item)
+                -> accumulator + _item);
         return sum;
     }
 
@@ -418,10 +432,10 @@ public final class TicketInfo implements SerializableRead, Externalizable {
                 nsum = sum;
             }
         } else {
-            sum = m_aLines.stream().map((line) -> 
-                    line.getTax()).reduce(sum, (accumulator, _item) -> 
-                            accumulator + _item);
-            }
+            sum = m_aLines.stream().map((line)
+                    -> line.getTax()).reduce(sum, (accumulator, _item)
+                    -> accumulator + _item);
+        }
         return sum;
     }
 
@@ -429,24 +443,24 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         return getSubTotal() + getTax();
 
     }
-    
+
     public double getServiceCharge() {
-        return (getTotal() + getTax());        
+        return (getTotal() + getTax());
 
     }
-    
+
     public double getTotalPaid() {
         double sum = 0.0;
-        sum = payments.stream().filter((p) -> 
-                (!"debtpaid".equals(p.getName()))).map((p) -> 
-                        p.getTotal()).reduce(sum, (accumulator, _item) -> 
-                                accumulator + _item);
+        sum = payments.stream().filter((p)
+                -> (!"debtpaid".equals(p.getName()))).map((p)
+                -> p.getTotal()).reduce(sum, (accumulator, _item)
+                -> accumulator + _item);
         return sum;
-          }
+    }
 
     public double getTendered() {
         return getTotalPaid();
-    }    
+    }
 
     public List<TicketLineInfo> getLines() {
         return m_aLines;
@@ -528,30 +542,111 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         return avalues.toArray(new TicketTaxInfo[avalues.size()]);
     }
 
+    public String getRuc() {
+        return ruc;
+    }
+
+    public void setRuc(String ruc) {
+        this.ruc = ruc;
+    }
+
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
+    public String getNombreComercial() {
+        return nombreComercial;
+    }
+
+    public void setNombreComercial(String nombreComercial) {
+        this.nombreComercial = nombreComercial;
+    }
+
+    public String getDireccion1() {
+        return direccion1;
+    }
+
+    public void setDireccion1(String direccion) {
+        this.direccion1 = direccion;
+    }
+
+    public String getDireccion2() {
+        return direccion2;
+    }
+
+    public void setDireccion2(String direccion2) {
+        this.direccion2 = direccion2;
+    }
+
+    public String getEstablecimiento() {
+        return establecimiento;
+    }
+
+    public void setEstablecimiento(String establecimiento) {
+        this.establecimiento = establecimiento;
+    }
+
+    public String getPuntoEmision() {
+        return puntoEmision;
+    }
+
+    public void setPuntoEmision(String puntoEmision) {
+        this.puntoEmision = puntoEmision;
+    }
+
+    public String getAmbiente() {
+        return ambiente;
+    }
+
+    public void setAmbiente(String ambiente) {
+        this.ambiente = ambiente;
+    }
+
+    public String printSecuencial() {
+        if (m_iTicketId > 0) {
+            // valid ticket id
+            return getEstablecimiento()
+                    + "-"
+                    + getPuntoEmision()
+                    + "-"
+                    + String.format("%09d", m_iTicketId);
+        } else {
+            return "";
+        }
+    }
+
+    public String getSecuencial() {
+        return String.format("%09d", m_iTicketId);
+    }
+
     public String printId() {
-      
-      AppConfig m_config =  new AppConfig(new File(
-              (System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));        
-      m_config.load();
-      String receiptSize =(m_config.getProperty("till.receiptsize"));
-      String receiptPrefix =(m_config.getProperty("till.receiptprefix"));
-     
-      m_config =null;
+
+        AppConfig m_config = new AppConfig(new File(
+                (System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+        m_config.load();
+        String receiptSize = (m_config.getProperty("till.receiptsize"));
+        String receiptPrefix = (m_config.getProperty("till.receiptprefix"));
+
+        m_config = null;
 
         if (m_iTicketId > 0) {
-            String tmpTicketId=Integer.toString(m_iTicketId);
-            if (receiptSize == null || (Integer.parseInt(receiptSize) <= tmpTicketId.length())){
-                if (receiptPrefix != null){
-                    tmpTicketId=receiptPrefix+tmpTicketId;
-                } 
+            String tmpTicketId = Integer.toString(m_iTicketId);
+            if (receiptSize == null || (Integer.parseInt(receiptSize) <= tmpTicketId.length())) {
+                if (receiptPrefix != null) {
+                    tmpTicketId = receiptPrefix + tmpTicketId;
+                }
                 return tmpTicketId;
-            }            
-            while (tmpTicketId.length()<Integer.parseInt(receiptSize)){
-                tmpTicketId="0"+tmpTicketId;
             }
-            if (receiptPrefix != null){
-                    tmpTicketId=receiptPrefix+tmpTicketId;
-            }             
+            while (tmpTicketId.length() < Integer.parseInt(receiptSize)) {
+                tmpTicketId = "0" + tmpTicketId;
+            }
+            if (receiptPrefix != null) {
+                tmpTicketId = receiptPrefix + tmpTicketId;
+            }
             return tmpTicketId;
         } else {
             return "";
@@ -564,46 +659,44 @@ public final class TicketInfo implements SerializableRead, Externalizable {
 
     public String printUser() {
         return m_User == null ? "" : m_User.getName();
-        
+
     }
 
     public String printHost() {
         return m_sHost;
-       }
-    
-    
-// Added JDL 28.05.13 for loyalty card functions
+    }
 
+// Added JDL 28.05.13 for loyalty card functions
     /**
      *
      */
-        public void clearCardNumber(){
-        loyaltyCardNumber=null;
+    public void clearCardNumber() {
+        loyaltyCardNumber = null;
     }
-    
+
     /**
      *
      * @param cardNumber
      */
-    public void setLoyaltyCardNumber(String cardNumber){
-        loyaltyCardNumber=cardNumber;
+    public void setLoyaltyCardNumber(String cardNumber) {
+        loyaltyCardNumber = cardNumber;
     }
-    
+
     /**
      *
      * @return
      */
-    public String getLoyaltyCardNumber(){
+    public String getLoyaltyCardNumber() {
         return (loyaltyCardNumber);
     }
-         
+
     public String printCustomer() {
         return m_Customer == null ? "" : m_Customer.getName();
     }
 
     public String printPhone1() {
         return m_Customer == null ? "" : m_Customer.getPhone1();
-    }    
+    }
 
     public String printArticlesCount() {
         return Formats.DOUBLE.formatValue(getArticlesCount());
@@ -629,145 +722,169 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         return Formats.CURRENCY.formatValue(getTendered());
     }
 
-    public String VoucherReturned(){
-        return Formats.CURRENCY.formatValue(getTotalPaid()- getTotal());
+    public String VoucherReturned() {
+        return Formats.CURRENCY.formatValue(getTotalPaid() - getTotal());
     }
 
     public boolean getOldTicket() {
-	return (oldTicket);
+        return (oldTicket);
     }
 
     public void setOldTicket(Boolean otState) {
-	oldTicket = otState;
+        oldTicket = otState;
     }
-    
+
     public String getTicketHeaderFooterData(String data) {
-        AppConfig m_config = new AppConfig(new File((System.getProperty("user.home"))
-                , AppLocal.APP_ID + ".properties"));        
+        AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")),
+                 AppLocal.APP_ID + ".properties"));
         m_config.load();
-        String row =(m_config.getProperty("tkt."+data));
-        
+        String row = (m_config.getProperty("tkt." + data));
+
         return row;
-    }    
-    
+    }
+
     public String printTicketHeaderLine1() {
         String lineData = getTicketHeaderFooterData("header1");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketHeaderLine2() {
         String lineData = getTicketHeaderFooterData("header2");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketHeaderLine3() {
         String lineData = getTicketHeaderFooterData("header3");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketHeaderLine4() {
         String lineData = getTicketHeaderFooterData("header4");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketHeaderLine5() {
         String lineData = getTicketHeaderFooterData("header5");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketHeaderLine6() {
         String lineData = getTicketHeaderFooterData("header6");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketFooterLine1() {
         String lineData = getTicketHeaderFooterData("footer1");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketFooterLine2() {
         String lineData = getTicketHeaderFooterData("footer2");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketFooterLine3() {
         String lineData = getTicketHeaderFooterData("footer3");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketFooterLine4() {
         String lineData = getTicketHeaderFooterData("footer4");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketFooterLine5() {
         String lineData = getTicketHeaderFooterData("footer5");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
     }
-    
+
     public String printTicketFooterLine6() {
         String lineData = getTicketHeaderFooterData("footer6");
-        
-        if(lineData != null) {
+
+        if (lineData != null) {
             return lineData;
         } else {
             return "";
         }
-    }    
-   
+    }
+
+    public String printClaveAcceso() {
+        try {
+            String codigoDocumeto = "";
+            String claveAcceso = "";
+            Modulo11 m11 = new Modulo11();
+
+            if (getTicketType() == 0) {
+                codigoDocumeto = "01";
+            } else if (getTicketType() == 1) {
+                codigoDocumeto = "04";
+            }
+
+            claveAcceso = new SimpleDateFormat("ddMMyyyy").format(getDate());
+            claveAcceso = claveAcceso + codigoDocumeto;
+            claveAcceso = claveAcceso + getRuc() + getAmbiente();
+            claveAcceso = claveAcceso + getEstablecimiento() + getPuntoEmision() + getSecuencial();
+            claveAcceso = claveAcceso + "12345678" + "1";
+            claveAcceso = claveAcceso + m11.modulo11(claveAcceso);
+
+            return claveAcceso;
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }

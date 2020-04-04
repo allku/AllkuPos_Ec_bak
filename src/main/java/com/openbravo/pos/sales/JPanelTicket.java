@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.sales;
 
 import bsh.EvalError;
@@ -32,6 +31,7 @@ import com.openbravo.data.gui.ComboBoxValModel;
 import com.openbravo.data.gui.ListKeyed;
 import com.openbravo.data.gui.MessageInf;
 import com.openbravo.data.loader.SentenceList;
+import com.openbravo.pos.customers.CustomerInfo;
 import com.openbravo.pos.customers.CustomerInfoExt;
 import com.openbravo.pos.customers.CustomerInfoGlobal;
 import com.openbravo.pos.customers.DataLogicCustomers;
@@ -89,94 +89,94 @@ import net.sf.jasperreports.engine.data.JRMapArrayDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-
 /**
  *
  * @author JG uniCenta
  */
 public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFactoryApp, TicketsEditor {
-   
+
     private final static int NUMBERZERO = 0;
     private final static int NUMBERVALID = 1;
-    
+
     private final static int NUMBER_INPUTZERO = 0;
     private final static int NUMBER_INPUTZERODEC = 1;
     private final static int NUMBER_INPUTINT = 2;
-    private final static int NUMBER_INPUTDEC = 3; 
-    private final static int NUMBER_PORZERO = 4; 
-    private final static int NUMBER_PORZERODEC = 5; 
-    private final static int NUMBER_PORINT = 6; 
-    private final static int NUMBER_PORDEC = 7; 
+    private final static int NUMBER_INPUTDEC = 3;
+    private final static int NUMBER_PORZERO = 4;
+    private final static int NUMBER_PORZERODEC = 5;
+    private final static int NUMBER_PORINT = 6;
+    private final static int NUMBER_PORDEC = 7;
 
     protected JTicketLines m_ticketlines;
-        
+
     private TicketParser m_TTP;
-    
-    protected TicketInfo m_oTicket; 
-    protected Object m_oTicketExt; 
-    
+
+    protected TicketInfo m_oTicket;
+    protected Object m_oTicketExt;
+
     private int m_iNumberStatus;
     private int m_iNumberStatusInput;
     private int m_iNumberStatusPor;
     private StringBuffer m_sBarcode;
-            
+
     private JTicketsBag m_ticketsbag;
-    
+
     private SentenceList senttax;
     private ListKeyed taxcollection;
-    
+
     private SentenceList senttaxcategories;
     private ListKeyed taxcategoriescollection;
     private ComboBoxValModel taxcategoriesmodel;
-    
+
     private TaxesLogic taxeslogic;
-    
+
     protected JPanelButtons m_jbtnconfig;
     protected AppView m_App;
 
     protected DataLogicSystem dlSystem;
     protected DataLogicSales dlSales;
     protected DataLogicCustomers dlCustomers;
-   
+
     private JPaymentSelect paymentdialogreceipt;
     private JPaymentSelect paymentdialogrefund;
 
     private JRootApp root;
     private Object m_principalapp;
     private Boolean restaurant;
-    private Boolean orderlistopen;    
+    private Boolean orderlistopen;
 
     private Action logout;
     private InactivityListener listener;
     private Integer delay = 0;
     private final String m_sCurrentTicket = null;
 
-    protected TicketsEditor m_panelticket; 
+    protected TicketsEditor m_panelticket;
     private DataLogicReceipts dlReceipts = null;
     private Boolean priceWith00;
-    private final String temp_jPrice="";
+    private final String temp_jPrice = "";
     private String tableDetails;
     private RestaurantDBUtils restDB;
     private KitchenDisplay kitchenDisplay;
     private String ticketPrintType;
-    
-    private Boolean warrantyPrint=false;
-    
+
+    private Boolean warrantyPrint = false;
+
     private TicketInfo m_ticket;
     private TicketInfo m_ticketCopy;
     private AppConfig m_config;
-    
+
     private Integer count = 0;
     private Integer oCount = 0;
     private Boolean pinOK;
-   
-    
-    /** Creates new form JTicketView */
+
+    /**
+     * Creates new form JTicketView
+     */
     public JPanelTicket() {
-        
-        initComponents ();
+
+        initComponents();
     }
-   
+
     /**
      *
      * @param app
@@ -187,32 +187,31 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
         m_config.load();
-        
+
         m_App = app;
         restDB = new RestaurantDBUtils(m_App);
-       
+
         dlSystem = (DataLogicSystem) m_App.getBean("com.openbravo.pos.forms.DataLogicSystem");
         dlSales = (DataLogicSales) m_App.getBean("com.openbravo.pos.forms.DataLogicSales");
         dlCustomers = (DataLogicCustomers) m_App.getBean("com.openbravo.pos.customers.DataLogicCustomers");
         dlReceipts = (DataLogicReceipts) app.getBean("com.openbravo.pos.sales.DataLogicReceipts");
-        
 
-/* uniCenta Feb 2018
+
+        /* uniCenta Feb 2018
  * Changed for 4.3
  * Set up main toolbar area with two rows to add cater for additional scripts 
  * else over-crowding and some dynamic buttons off screen/not visible
  * m_jPanelScripts contains m_jButtonsExt panel for buttons Enabled/Disabled in
  * Resources>Menu.Root
-*/        
-        
+         */
 // Set Configuration>General>Tickets toolbar simple : standard : restaurant option
-        m_ticketsbag = getJTicketsBag();    
+        m_ticketsbag = getJTicketsBag();
         m_jPanelBag.add(m_ticketsbag.getBagComponent(), BorderLayout.LINE_START);
-        add(m_ticketsbag.getNullComponent(), "null");   
+        add(m_ticketsbag.getNullComponent(), "null");
 
 // Script event buttons
         m_jbtnconfig = new JPanelButtons("Ticket.Buttons", this);
-        m_jButtonsExt.add(m_jbtnconfig);   
+        m_jButtonsExt.add(m_jbtnconfig);
 
 // Configuration>Peripheral options        
         if (!m_App.getDeviceScale().existsScale()) {
@@ -220,35 +219,35 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
         jbtnMooring.setVisible(Boolean.valueOf(m_App.getProperties().getProperty("till.marineoption")));
         m_jPanelScripts.setVisible(false);
-        m_jButtonsExt.setVisible(false);           
+        m_jButtonsExt.setVisible(false);
         jTBtnShow.setSelected(false);
-        
-        if (Boolean.valueOf(m_App.getProperties().getProperty("till.amountattop"))){
+
+        if (Boolean.valueOf(m_App.getProperties().getProperty("till.amountattop"))) {
             m_jPanEntries.remove(jPanel9);
-            m_jPanEntries.remove(m_jNumberKeys);        
+            m_jPanEntries.remove(m_jNumberKeys);
             m_jPanEntries.add(jPanel9);
             m_jPanEntries.add(m_jNumberKeys);
-        }        
- 
+        }
+
         priceWith00 = ("true".equals(m_App.getProperties().getProperty("till.pricewith00")));
 
         if (priceWith00) {
             m_jNumberKeys.dotIs00(true);
         }
-        
+
         m_ticketlines = new JTicketLines(dlSystem.getResourceAsXML("Ticket.Line"));
         m_jPanelCentral.add(m_ticketlines, java.awt.BorderLayout.CENTER);
         m_TTP = new TicketParser(m_App.getDeviceTicket(), dlSystem);
         catcontainer.add(getSouthComponent(), BorderLayout.CENTER);
-        
+
         senttax = dlSales.getTaxList();
-        senttaxcategories = dlSales.getTaxCategoriesList();       
+        senttaxcategories = dlSales.getTaxCategoriesList();
         taxcategoriesmodel = new ComboBoxValModel();
-        
-        stateToZero();  
+
+        stateToZero();
 
         m_oTicket = null;
-        m_oTicketExt = null; 
+        m_oTicketExt = null;
         jCheckStock.setText(AppLocal.getIntString("message.title.checkstock"));
 
     }
@@ -267,28 +266,29 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         public logout() {
         }
+
         @Override
-        public void actionPerformed(ActionEvent ae){
+        public void actionPerformed(ActionEvent ae) {
             closeAllDialogs();
-            switch (m_App.getProperties().getProperty("machine.ticketsbag")){
-            case "restaurant":                   
-                if ("false".equals(m_App.getProperties().getProperty("till.autoLogoffrestaurant")))  {
+            switch (m_App.getProperties().getProperty("machine.ticketsbag")) {
+                case "restaurant":
+                    if ("false".equals(m_App.getProperties().getProperty("till.autoLogoffrestaurant"))) {
+                        deactivate();
+                        ((JRootApp) m_App).closeAppView();
+                        break;
+                    }
+
                     deactivate();
-                    ((JRootApp)m_App).closeAppView();
+                    setActiveTicket(null, null);
                     break;
-                }     
 
-                deactivate();
-                setActiveTicket(null, null);      
-                break;                
-
-            default:
-                deactivate();
-                ((JRootApp)m_App).closeAppView();
+                default:
+                    deactivate();
+                    ((JRootApp) m_App).closeAppView();
             }
         }
     }
-    
+
     private void closeAllDialogs() {
         Window[] windows = getWindows();
 
@@ -297,20 +297,20 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 window.dispose();
             }
         }
-    }    
+    }
 
     private void saveCurrentTicket() {
-        String currentTicket =(String)m_oTicketExt;
+        String currentTicket = (String) m_oTicketExt;
         if (currentTicket != null) {
             try {
-                dlReceipts.updateSharedTicket(currentTicket, m_oTicket,m_oTicket.getPickupId());
+                dlReceipts.updateSharedTicket(currentTicket, m_oTicket, m_oTicket.getPickupId());
 //            } catch (BasicException e) {
 //                new MessageInf(e).show(this);
 //            }  
             } catch (BasicException ex) {
                 Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }                    
-        }    
+            }
+        }
     }
 
     /**
@@ -320,37 +320,37 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     @Override
     public void activate() throws BasicException {
 
-        Action logout = new logout();        
+        Action logout = new logout();
         String autoLogoff = (m_App.getProperties().getProperty("till.autoLogoff"));
 
-        if (autoLogoff != null){
-            if (autoLogoff.equals("true")){
-                try{
+        if (autoLogoff != null) {
+            if (autoLogoff.equals("true")) {
+                try {
                     delay = Integer.parseInt(m_App.getProperties().getProperty("till.autotimer"));
-                }catch (NumberFormatException e){
-                    delay=0;
+                } catch (NumberFormatException e) {
+                    delay = 0;
                 }
                 delay *= 1000;
             }
         }
 
-        if (delay != 0){
-            listener = new InactivityListener(logout,delay); 
+        if (delay != 0) {
+            listener = new InactivityListener(logout, delay);
             listener.start();
-        } 
-        
+        }
+
         paymentdialogreceipt = JPaymentSelectReceipt.getDialog(this);
         paymentdialogreceipt.init(m_App);
-        paymentdialogrefund = JPaymentSelectRefund.getDialog(this); 
+        paymentdialogrefund = JPaymentSelectRefund.getDialog(this);
         paymentdialogrefund.init(m_App);
-        
+
         m_jaddtax.setSelected("true".equals(m_jbtnconfig.getProperty("taxesincluded")));
 
         java.util.List<TaxInfo> taxlist = senttax.list();
         taxcollection = new ListKeyed<>(taxlist);
         java.util.List<TaxCategoryInfo> taxcategorieslist = senttaxcategories.list();
         taxcategoriescollection = new ListKeyed<>(taxcategorieslist);
-        
+
         taxcategoriesmodel = new ComboBoxValModel(taxcategorieslist);
         m_jTax.setModel(taxcategoriesmodel);
 
@@ -362,50 +362,52 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             }
         } else {
             taxcategoriesmodel.setSelectedKey(taxesid);
-        }              
-                
+        }
+
         taxeslogic = new TaxesLogic(taxlist);
-        m_jaddtax.setSelected((Boolean.parseBoolean(m_App.getProperties().getProperty("till.taxincluded"))));             
+        m_jaddtax.setSelected((Boolean.parseBoolean(m_App.getProperties().getProperty("till.taxincluded"))));
 
         if (m_App.getAppUserView().getUser().hasPermission("sales.ChangeTaxOptions")) {
             m_jTax.setVisible(true);
-            m_jaddtax.setVisible(true);            
+            m_jaddtax.setVisible(true);
         } else {
             m_jTax.setVisible(false);
-            m_jaddtax.setVisible(false);            
+            m_jaddtax.setVisible(false);
         }
 
         m_jDelete.setEnabled(m_App.getAppUserView().getUser().hasPermission("sales.EditLines"));
         m_jNumberKeys.setMinusEnabled(m_App.getAppUserView().getUser().hasPermission("sales.EditLines"));
         m_jNumberKeys.setEqualsEnabled(m_App.getAppUserView().getUser().hasPermission("sales.Total"));
-        m_jbtnconfig.setPermissions(m_App.getAppUserView().getUser());  
-               
+        m_jbtnconfig.setPermissions(m_App.getAppUserView().getUser());
+
         m_ticketsbag.setEnabled(false);
-        m_ticketsbag.activate();  
-        
+        m_ticketsbag.activate();
+
         CustomerInfoGlobal customerInfoGlobal = CustomerInfoGlobal.getInstance();
 
-        if (customerInfoGlobal.getCustomerInfoExt() != null){
+        if (customerInfoGlobal.getCustomerInfoExt() != null) {
 
-            if (m_oTicket != null){
+            if (m_oTicket != null) {
                 m_oTicket.setCustomer(customerInfoGlobal.getCustomerInfoExt());
             }
         }
-         
+
         refreshTicket();
     }
-    
+
     @Override
     public boolean deactivate() {
-        if (listener  != null) {
+        if (listener != null) {
             listener.stop();
         }
- 
+
         return m_ticketsbag.deactivate();
     }
-    
+
     protected abstract JTicketsBag getJTicketsBag();
+
     protected abstract Component getSouthComponent();
+
     protected abstract void resetSouthComponent();
 
     /**
@@ -416,70 +418,70 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     @SuppressWarnings("empty-statement")
     @Override
     public void setActiveTicket(TicketInfo oTicket, Object oTicketExt) {
-        
-        switch (m_App.getProperties().getProperty("machine.ticketsbag")){
-           case "restaurant":                              
-            if ("true".equals(m_App.getProperties().getProperty("till.autoLogoffrestaurant"))) {
-                if (listener != null) {
-                    listener.restart();
+
+        switch (m_App.getProperties().getProperty("machine.ticketsbag")) {
+            case "restaurant":
+                if ("true".equals(m_App.getProperties().getProperty("till.autoLogoffrestaurant"))) {
+                    if (listener != null) {
+                        listener.restart();
+                    }
                 }
-            }          
         }
-         
+
         m_oTicket = oTicket;
         m_oTicketExt = oTicketExt;
-       
-        if (m_oTicket != null) {            
+
+        if (m_oTicket != null) {
             m_oTicket.setUser(m_App.getAppUserView().getUser().getUserInfo());
             m_oTicket.setActiveCash(m_App.getActiveCashIndex());
             m_oTicket.setDate(new Date());
-            
+
             if ("restaurant".equals(m_App.getProperties().getProperty("machine.ticketsbag"))
-                    && !oTicket.getOldTicket()){            
-                if (restDB.getCustomerNameInTable(oTicketExt.toString())== null ){
-                    if (m_oTicket.getCustomer() != null){
-                       restDB.setCustomerNameInTable(m_oTicket.getCustomer().toString(), oTicketExt.toString()); 
+                    && !oTicket.getOldTicket()) {
+                if (restDB.getCustomerNameInTable(oTicketExt.toString()) == null) {
+                    if (m_oTicket.getCustomer() != null) {
+                        restDB.setCustomerNameInTable(m_oTicket.getCustomer().toString(), oTicketExt.toString());
                     }
-                } 
-                if (restDB.getWaiterNameInTable(oTicketExt.toString())==null 
-                    || "".equals(restDB.getWaiterNameInTable(oTicketExt.toString()))){
-                    restDB.setWaiterNameInTable(m_App.getAppUserView().getUser().getName(),oTicketExt.toString());
-                }              
-                    restDB.setTicketIdInTable(m_oTicket.getId(),oTicketExt.toString());
+                }
+                if (restDB.getWaiterNameInTable(oTicketExt.toString()) == null
+                        || "".equals(restDB.getWaiterNameInTable(oTicketExt.toString()))) {
+                    restDB.setWaiterNameInTable(m_App.getAppUserView().getUser().getName(), oTicketExt.toString());
+                }
+                restDB.setTicketIdInTable(m_oTicket.getId(), oTicketExt.toString());
             }
         }
-                           
+
         if ((m_oTicket != null) && (((Boolean.parseBoolean(m_App.getProperties()
-                .getProperty("table.showwaiterdetails"))) 
+                .getProperty("table.showwaiterdetails")))
                 || (Boolean.valueOf(m_App.getProperties().getProperty(
                         "table.showcustomerdetails")))))) {
-        }        
-            
+        }
+
         if ((m_oTicket != null) && (((Boolean.valueOf(m_App.getProperties()
-                .getProperty("table.showcustomerdetails"))) || 
-                (Boolean.parseBoolean(m_App.getProperties().getProperty("table.showwaiterdetails")))))) {
-            if (restDB.getTableMovedFlag(m_oTicket.getId())){
-                restDB.moveCustomer(oTicketExt.toString(),m_oTicket.getId());
-            }                                                
+                .getProperty("table.showcustomerdetails")))
+                || (Boolean.parseBoolean(m_App.getProperties().getProperty("table.showwaiterdetails")))))) {
+            if (restDB.getTableMovedFlag(m_oTicket.getId())) {
+                restDB.moveCustomer(oTicketExt.toString(), m_oTicket.getId());
+            }
         }
 
         executeEvent(m_oTicket, m_oTicketExt, "ticket.show");
-    
+
 //        if ("restaurant".equals(m_App
 //            .getProperties().getProperty("machine.ticketsbag"))){
 //        }else{
 //            j_btnRemotePrt.setVisible(m_App
 //                .getAppUserView().getUser().hasPermission("sales.PrintKitchen")); 
 //        }
-          if (m_App.getAppUserView().getUser().hasPermission("sales.PrintRemote")) {
-                j_btnRemotePrt.setEnabled(true);              
-          } else {
-                j_btnRemotePrt.setEnabled(false);
-          }
+        if (m_App.getAppUserView().getUser().hasPermission("sales.PrintRemote")) {
+            j_btnRemotePrt.setEnabled(true);
+        } else {
+            j_btnRemotePrt.setEnabled(false);
+        }
 
-        refreshTicket();               
+        refreshTicket();
     }
-    
+
     /**
      *
      * @return
@@ -488,27 +490,27 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     public TicketInfo getActiveTicket() {
         return m_oTicket;
     }
-    
-    private void refreshTicket() {    
-        
-        CardLayout cl = (CardLayout)(getLayout());
-        
-        if (m_oTicket == null) {        
-            m_jTicketId.setText(null);            
+
+    private void refreshTicket() {
+
+        CardLayout cl = (CardLayout) (getLayout());
+
+        if (m_oTicket == null) {
+            m_jTicketId.setText(null);
             m_ticketlines.clearTicketLines();
-           
+
             m_jSubtotalEuros.setText(null);
             m_jTaxesEuros.setText(null);
-            m_jTotalEuros.setText(null); 
+            m_jTotalEuros.setText(null);
             jCheckStock.setText(null);
 
             checkStock();
             stateToZero();
             repaint();
 
-            cl.show(this, "null");  
+            cl.show(this, "null");
 
-            if ((m_oTicket != null) &&  (m_oTicket.getLinesCount()==0)) {
+            if ((m_oTicket != null) && (m_oTicket.getLinesCount() == 0)) {
                 resetSouthComponent();
             }
         } else {
@@ -516,12 +518,12 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 m_jEditLine.setVisible(false);
                 m_jList.setVisible(false);
             }
-            
+
             m_oTicket.getLines().forEach((line) -> {
                 line.setTaxInfo(taxeslogic.getTaxInfo(line
                         .getProductTaxCategoryID(), m_oTicket.getCustomer()));
-            });  
-        
+            });
+
             m_jTicketId.setText(m_oTicket.getName(m_oTicketExt));
             m_ticketlines.clearTicketLines();
 
@@ -535,11 +537,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
             cl.show(this, "ticket");
 
-            if (m_oTicket.getLinesCount()==0) {
+            if (m_oTicket.getLinesCount() == 0) {
                 resetSouthComponent();
             }
-            
-            m_jKeyFactory.setText(null);       
+
+            m_jKeyFactory.setText(null);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -553,18 +555,18 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         oCount = count;                             // existing line before change
         count = (int) m_oTicket.getArticlesCount(); //existing line after change
 
-        if (m_oTicket != null) { 
+        if (m_oTicket != null) {
             for (int i = 0; i < m_oTicket.getLinesCount(); i++) {
                 if (m_App.getAppUserView().getUser().hasPermission("sales.Total")
                         && m_oTicket.getArticlesCount() > 1) {
                     btnSplit.setEnabled(true);
-                }else{
+                } else {
                     btnSplit.setEnabled(false);
                 }
             }
         }
     }
-    
+
     private boolean changeCount(boolean pinOK) {
 
         pinOK = false;
@@ -573,26 +575,26 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
             if (m_App.getProperties().getProperty("override.check").equals("true")) {
                 Integer secret = Integer.parseInt(m_App.getProperties().getProperty("override.pin"));
-                Integer iValue = JNumberPop.showEditNumber(this, AppLocal.getIntString("title.override.enterpin")); 
+                Integer iValue = JNumberPop.showEditNumber(this, AppLocal.getIntString("title.override.enterpin"));
 
                 if (iValue == null ? secret == null : iValue.equals(secret)) {
                     pinOK = true;
                     JOptionPane.showMessageDialog(this, "Units changed from "
-                            + count + " to " + oCount);                    
-                    return pinOK;  
-                    
+                            + count + " to " + oCount);
+                    return pinOK;
+
                 } else {
                     pinOK = false;
-                    JOptionPane.showMessageDialog(this, AppLocal.getIntString("message.override.badpin"));                                        
-                    return pinOK;                    
+                    JOptionPane.showMessageDialog(this, AppLocal.getIntString("message.override.badpin"));
+                    return pinOK;
                 }
             }
         }
-            return pinOK;        
+        return pinOK;
     }
-   
-    private void printPartialTotals(){
-            
+
+    private void printPartialTotals() {
+
         if (m_oTicket.getLinesCount() == 0) {
             m_jSubtotalEuros.setText(null);
             m_jTaxesEuros.setText(null);
@@ -604,10 +606,10 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
         repaint();
     }
-    
-    private void paintTicketLine(int index, TicketLineInfo oLine){
-        if (executeEventAndRefresh("ticket.setline", 
-            new ScriptArg("index", index), new ScriptArg("line", oLine)) == null) {
+
+    private void paintTicketLine(int index, TicketLineInfo oLine) {
+        if (executeEventAndRefresh("ticket.setline",
+                new ScriptArg("index", index), new ScriptArg("line", oLine)) == null) {
 
             m_oTicket.setLine(index, oLine);
             m_ticketlines.setTicketLine(index, oLine);
@@ -617,68 +619,68 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
             countArticles();
             visorTicketLine(oLine);
-            printPartialTotals();   
-            stateToZero();  
+            printPartialTotals();
+            stateToZero();
 
             executeEventAndRefresh("ticket.change");
         }
-   }
+    }
 
-    private void addTicketLine(ProductInfoExt oProduct, double dMul, double dPrice) {           
-        
+    private void addTicketLine(ProductInfoExt oProduct, double dMul, double dPrice) {
+
 //        if (oProduct.isVprice() || oProduct.getID().equals("xxx999_999xxx_x9x9x9")){
-        if (oProduct.isVprice()){            
+        if (oProduct.isVprice()) {
             TaxInfo tax = taxeslogic.getTaxInfo(oProduct.getTaxCategoryID(), m_oTicket.getCustomer());
 
             if (m_jaddtax.isSelected()) {
                 dPrice /= (1 + tax.getRate());
             }
 
-            addTicketLine(new TicketLineInfo(oProduct, dMul, dPrice, tax, 
-                (java.util.Properties) (oProduct.getProperties().clone())));
+            addTicketLine(new TicketLineInfo(oProduct, dMul, dPrice, tax,
+                    (java.util.Properties) (oProduct.getProperties().clone())));
 
-        } else if (oProduct.getID().equals("xxx998_998xxx_x8x8x8")){
-            
-            if(m_App.getProperties().getProperty("till.SCOnOff").equals("true")) {
-                TaxInfo tax = taxeslogic.getTaxInfo(oProduct.getTaxCategoryID(), 
+        } else if (oProduct.getID().equals("xxx998_998xxx_x8x8x8")) {
+
+            if (m_App.getProperties().getProperty("till.SCOnOff").equals("true")) {
+                TaxInfo tax = taxeslogic.getTaxInfo(oProduct.getTaxCategoryID(),
                         m_oTicket.getCustomer());
                 String SCRate = (m_App.getProperties().getProperty("till.SCRate"));
 
                 double scharge;
                 scharge = Double.parseDouble(SCRate);
-                scharge = m_oTicket.getTotal() * (scharge / 100);                    
-                
-                addTicketLine(new TicketLineInfo(oProduct, 1, scharge, tax, 
-                (java.util.Properties) (oProduct.getProperties().clone())));
-                
+                scharge = m_oTicket.getTotal() * (scharge / 100);
+
+                addTicketLine(new TicketLineInfo(oProduct, 1, scharge, tax,
+                        (java.util.Properties) (oProduct.getProperties().clone())));
+
             } else {
                 JOptionPane.showMessageDialog(this, "Service Charge Not Enabled");
             }
-            
-        } else {        
+
+        } else {
 // get the line product tax
-            TaxInfo tax = taxeslogic.getTaxInfo(oProduct.getTaxCategoryID(), m_oTicket.getCustomer());  
+            TaxInfo tax = taxeslogic.getTaxInfo(oProduct.getTaxCategoryID(), m_oTicket.getCustomer());
 
             addTicketLine(new TicketLineInfo(oProduct, dMul, dPrice, tax,
-                (java.util.Properties) (oProduct.getProperties().clone()))); 
+                    (java.util.Properties) (oProduct.getProperties().clone())));
 
-            if (oProduct.getID().equals("xxx999_999xxx_x9x9x9")){
+            if (oProduct.getID().equals("xxx999_999xxx_x9x9x9")) {
                 m_jEditLine.doClick();
-            } 
+            }
             refreshTicket();
-           
+
         }
 
         j_btnRemotePrt.setEnabled(true);
-    
+
     }
-    
+
     /**
      *
      * @param oLine
      */
-    protected void addTicketLine(TicketLineInfo oLine) {  
-        if (executeEventAndRefresh("ticket.addline", new ScriptArg("line", oLine)) == null) {        
+    protected void addTicketLine(TicketLineInfo oLine) {
+        if (executeEventAndRefresh("ticket.addline", new ScriptArg("line", oLine)) == null) {
             if (oLine.isProductCom()) {
                 int i = m_ticketlines.getSelectedIndex();
 
@@ -689,22 +691,22 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 while (i >= 0 && i < m_oTicket.getLinesCount() && m_oTicket.getLine(i).isProductCom()) {
                     i++;
                 }
-                
+
                 if (i >= 0) {
                     m_oTicket.insertLine(i, oLine);
                     m_ticketlines.insertTicketLine(i, oLine);
                 } else {
-                    Toolkit.getDefaultToolkit().beep();                                   
+                    Toolkit.getDefaultToolkit().beep();
                 }
-            } else {    
-                m_oTicket.addLine(oLine);            
+            } else {
+                m_oTicket.addLine(oLine);
                 m_ticketlines.addTicketLine(oLine);
 
                 try {
-                    int i =  m_ticketlines.getSelectedIndex();
-                    TicketLineInfo line = m_oTicket.getLine(i);                
+                    int i = m_ticketlines.getSelectedIndex();
+                    TicketLineInfo line = m_oTicket.getLine(i);
 
-                    if (line.isProductVerpatrib()){
+                    if (line.isProductVerpatrib()) {
                         JProductAttEdit2 attedit = JProductAttEdit2.getAttributesEditor(this, m_App.getSession());
                         attedit.editAttributes(line.getProductAttSetId(), line.getProductAttSetInstId());
                         attedit.setVisible(true);
@@ -717,82 +719,81 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     }
 
                 } catch (BasicException ex) {
-                    MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, 
-                    AppLocal.getIntString("message.cannotfindattributes"), ex);
+                    MessageInf msg = new MessageInf(MessageInf.SGN_WARNING,
+                            AppLocal.getIntString("message.cannotfindattributes"), ex);
                     msg.show(this);
-                }          
+                }
             }
-            
+
             visorTicketLine(oLine);
-            printPartialTotals();   
-            stateToZero();  
+            printPartialTotals();
+            stateToZero();
             checkStock();
             countArticles();
-            
-            executeEvent(m_oTicket, m_oTicketExt, "ticket.change");             
+
+            executeEvent(m_oTicket, m_oTicketExt, "ticket.change");
         }
-    }    
-    
-    private void removeTicketLine(int i){
+    }
+
+    private void removeTicketLine(int i) {
 
         if (executeEventAndRefresh("ticket.removeline", new ScriptArg("index", i)) == null) {
 
-            String ticketID = Integer.toString(m_oTicket.getTicketId());
-            if (m_oTicket.getTicketId()==0){
-                ticketID="Void";
+            String ticketID = Long.toString(m_oTicket.getTicketId());
+            if (m_oTicket.getTicketId() == 0) {
+                ticketID = "Void";
             }
-            
+
             dlSystem.execLineRemoved(
-                new Object[] {
-                m_App.getAppUserView().getUser().getName(),
-                    ticketID,
-                    m_oTicket.getLine(i).getProductID(),
-                    m_oTicket.getLine(i).getProductName(),
-                    m_oTicket.getLine(i).getMultiply()
-                }
+                    new Object[]{
+                        m_App.getAppUserView().getUser().getName(),
+                        ticketID,
+                        m_oTicket.getLine(i).getProductID(),
+                        m_oTicket.getLine(i).getProductName(),
+                        m_oTicket.getLine(i).getMultiply()
+                    }
             );
-            
+
             if (m_oTicket.getLine(i).isProductCom()) {
                 m_oTicket.removeLine(i);
-                m_ticketlines.removeTicketLine(i);   
+                m_ticketlines.removeTicketLine(i);
             } else {
                 if (i < 1) {
                     if (m_App.getAppUserView().getUser().hasPermission("sales.DeleteLines")) {
                         int input = JOptionPane.showConfirmDialog(this,
-                            AppLocal.getIntString("message.deletelineyes")
-                            ,AppLocal.getIntString("label.deleteline"), JOptionPane.YES_NO_OPTION);
+                                AppLocal.getIntString("message.deletelineyes"),
+                                AppLocal.getIntString("label.deleteline"), JOptionPane.YES_NO_OPTION);
                         if (input == 0) {
                             m_oTicket.removeLine(i);
                             m_ticketlines.removeTicketLine(i);
-                        }    
+                        }
                     } else {
-                        JOptionPane.showMessageDialog(this, 
-                            AppLocal.getIntString("message.deletelineno")
-                            ,AppLocal.getIntString("label.deleteline"), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(this,
+                                AppLocal.getIntString("message.deletelineno"),
+                                AppLocal.getIntString("label.deleteline"), JOptionPane.WARNING_MESSAGE);
                     }
-                } else {               
+                } else {
                     m_oTicket.removeLine(i);
-                    m_ticketlines.removeTicketLine(i); 
+                    m_ticketlines.removeTicketLine(i);
 
-                    while(i < m_oTicket.getLinesCount() && m_oTicket.getLine(i).isProductCom()) {
+                    while (i < m_oTicket.getLinesCount() && m_oTicket.getLine(i).isProductCom()) {
                         m_oTicket.removeLine(i);
                         m_ticketlines.removeTicketLine(i);
                     }
-                }  
-            }            
+                }
+            }
 
-           
             visorTicketLine(null);
             printPartialTotals();
             stateToZero();
             checkStock();
             countArticles();
-            
+
             executeEventAndRefresh("ticket.change");
         }
     }
-    
-    private ProductInfoExt getInputProduct() { 
+
+    private ProductInfoExt getInputProduct() {
         ProductInfoExt oProduct = new ProductInfoExt();
 // Always add Default Prod ID + Add Name to Misc. if empty
         oProduct.setID("xxx999_999xxx_x9x9x9");
@@ -800,84 +801,83 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         oProduct.setCode("xxx999");
         oProduct.setName("***");
         oProduct.setTaxCategoryID(((TaxCategoryInfo) taxcategoriesmodel
-            .getSelectedItem()).getID());
-        oProduct.setPriceSell(includeTaxes(oProduct.getTaxCategoryID(), getInputValue())); 
+                .getSelectedItem()).getID());
+        oProduct.setPriceSell(includeTaxes(oProduct.getTaxCategoryID(), getInputValue()));
 
         return oProduct;
     }
-    
+
     private double includeTaxes(String tcid, double dValue) {
         if (m_jaddtax.isSelected()) {
             TaxInfo tax = taxeslogic.getTaxInfo(tcid, m_oTicket.getCustomer());
-            double dTaxRate = tax == null ? 0.0 : tax.getRate();           
-            return dValue / (1.0 + dTaxRate);      
+            double dTaxRate = tax == null ? 0.0 : tax.getRate();
+            return dValue / (1.0 + dTaxRate);
         } else {
             return dValue;
         }
     }
-    
-   private double excludeTaxes(String tcid, double dValue) {
+
+    private double excludeTaxes(String tcid, double dValue) {
         TaxInfo tax = taxeslogic.getTaxInfo(tcid, m_oTicket.getCustomer());
-        double dTaxRate = tax == null ? 0.0 : tax.getRate();           
-        return dValue / (1.0 + dTaxRate);  
-    } 
-    
-     
+        double dTaxRate = tax == null ? 0.0 : tax.getRate();
+        return dValue / (1.0 + dTaxRate);
+    }
+
     private double getInputValue() {
         try {
             return Double.parseDouble(m_jPrice.getText());
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return 0.0;
         }
     }
 
     private double getPorValue() {
         try {
-            return Double.parseDouble(m_jPor.getText().substring(1));                
-        } catch (NumberFormatException | StringIndexOutOfBoundsException e){
+            return Double.parseDouble(m_jPor.getText().substring(1));
+        } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
             return 1.0;
         }
     }
 
-    private void stateToZero(){
+    private void stateToZero() {
         m_jPor.setText("");
         m_jPrice.setText("");
         m_sBarcode = new StringBuffer();
-            
+
         m_iNumberStatus = NUMBER_INPUTZERO;
         m_iNumberStatusInput = NUMBERZERO;
         m_iNumberStatusPor = NUMBERZERO;
         repaint();
     }
-    
+
     private void incProductByCode(String sCode) {
 
         try {
             ProductInfoExt oProduct = dlSales.getProductInfoByCode(sCode);
 
-            if (oProduct == null) {                  
-                Toolkit.getDefaultToolkit().beep();                   
+            if (oProduct == null) {
+                Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(null,
-                   sCode + " - " + AppLocal.getIntString("message.noproduct"),
-                   "Check", JOptionPane.WARNING_MESSAGE);                
+                        sCode + " - " + AppLocal.getIntString("message.noproduct"),
+                        "Check", JOptionPane.WARNING_MESSAGE);
                 stateToZero();
             } else {
                 incProduct(oProduct);
             }
         } catch (BasicException eData) {
-            stateToZero();           
-            new MessageInf(eData).show(this);           
+            stateToZero();
+            new MessageInf(eData).show(this);
         }
     }
-    
+
     private void incProductByCodePrice(String sCode, double dPriceSell) {
 
         try {
             ProductInfoExt oProduct = dlSales.getProductInfoByCode(sCode);
-            if (oProduct == null) {                  
-                Toolkit.getDefaultToolkit().beep();                   
+            if (oProduct == null) {
+                Toolkit.getDefaultToolkit().beep();
                 new MessageInf(MessageInf.SGN_WARNING, AppLocal
-                    .getIntString("message.noproduct")).show(this);           
+                        .getIntString("message.noproduct")).show(this);
                 stateToZero();
             } else {
                 if (m_jaddtax.isSelected()) {
@@ -885,14 +885,14 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     addTicketLine(oProduct, 1.0, dPriceSell / (1.0 + tax.getRate()));
                 } else {
                     addTicketLine(oProduct, 1.0, dPriceSell);
-                }                
+                }
             }
         } catch (BasicException eData) {
             stateToZero();
-            new MessageInf(eData).show(this);               
+            new MessageInf(eData).show(this);
         }
     }
-    
+
     private void incProduct(ProductInfoExt prod) {
 
         if (prod.isScale() && m_App.getDeviceScale().existsScale()) {
@@ -902,31 +902,31 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     incProduct(value, prod);
                 }
             } catch (ScaleException e) {
-                Toolkit.getDefaultToolkit().beep();                
-                    new MessageInf(MessageInf.SGN_WARNING, AppLocal
-                        .getIntString("message.noweight"), e).show(this);           
-                stateToZero(); 
+                Toolkit.getDefaultToolkit().beep();
+                new MessageInf(MessageInf.SGN_WARNING, AppLocal
+                        .getIntString("message.noweight"), e).show(this);
+                stateToZero();
             }
         } else {
-            if (!prod.isVprice()){
-                incProduct(1.0, prod);          
+            if (!prod.isVprice()) {
+                incProduct(1.0, prod);
             } else {
-                Toolkit.getDefaultToolkit().beep();                
-                JOptionPane.showMessageDialog(null, 
-                    AppLocal.getIntString("message.novprice"));
+                Toolkit.getDefaultToolkit().beep();
+                JOptionPane.showMessageDialog(null,
+                        AppLocal.getIntString("message.novprice"));
             }
         }
     }
-     
+
     private void incProduct(double dPor, ProductInfoExt prod) {
 
-        if (prod.isVprice()){
-            addTicketLine(prod, getPorValue(), getInputValue());    
-        }else {        
+        if (prod.isVprice()) {
+            addTicketLine(prod, getPorValue(), getInputValue());
+        } else {
             addTicketLine(prod, dPor, prod.getPriceSell());
         }
     }
-       
+
     /**
      *
      * @param prod
@@ -935,59 +935,92 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         if (m_iNumberStatusInput == NUMBERZERO && m_iNumberStatusPor == NUMBERZERO) {
             incProduct(prod);
-        } else if (m_iNumberStatusInput == NUMBERVALID && m_iNumberStatusPor == NUMBERZERO) {          
+        } else if (m_iNumberStatusInput == NUMBERVALID && m_iNumberStatusPor == NUMBERZERO) {
             incProduct(getInputValue(), prod);
-        } else if (prod.isVprice()) {           
-            addTicketLine(prod, getPorValue(), getInputValue()) ;                
+        } else if (prod.isVprice()) {
+            addTicketLine(prod, getPorValue(), getInputValue());
         } else {
             Toolkit.getDefaultToolkit().beep();
-        }      
+        }
     }
-    
+
+    /*
+        Función para recuperar un consumidor final si no se elige.
+     */
+    private boolean getConsumidorFinal() {
+        CustomerInfo c = new CustomerInfo("9999999999999");
+
+        if (m_oTicket.getCustomer() == null) {
+            JCustomerFinder finder = JCustomerFinder.getCustomerFinder(this, dlCustomers);
+            c.setSearchkey("9999999999999");
+            c.setName("CONSUMIDOR FINAL");
+            finder.executeSearchDirecto();
+            c = finder.getSelectedCustomer();
+            if (c == null) {
+                return false;
+            }
+            try {
+                m_oTicket.setCustomer(finder.getSelectedCustomer() == null
+                        ? null
+                        : dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()));
+            } catch (BasicException e) {
+                MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotfindcustomer"), e);
+                msg.show(this);
+            }
+
+        }
+        return true;
+    }
+
     @SuppressWarnings("empty-statement")
     private void stateTransition(char cTrans) {
-    
+
+        //Added to cliente default is Consumidor Final
+        if (getConsumidorFinal() == false) {
+            JOptionPane.showMessageDialog(this, "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         if ((cTrans == '\n') || (cTrans == '?')) {
-        
-        if (m_sBarcode.length() > 0) { 
 
-            String sCode = m_sBarcode.toString();
-            String sCodetype = "EAN";                                           // Declare EAN. It's default        
+            if (m_sBarcode.length() > 0) {
 
-            if ("true".equals(m_App.getProperties()
-                    .getProperty("machine.barcodetype"))) {
-                sCodetype = "UPC";                
-            } else {
-                sCodetype = "EAN";                                              // Ensure not null   
-            }   
-            
-            if (sCode.startsWith("C")
-                    || sCode.startsWith("c")) {
-                try {
-                    String card = sCode;
-                    CustomerInfoExt newcustomer = dlSales.findCustomerExt(card);
+                String sCode = m_sBarcode.toString();
+                String sCodetype = "EAN";                                           // Declare EAN. It's default        
 
-                    if (newcustomer == null) {
-                        Toolkit.getDefaultToolkit().beep();                   
-                        new MessageInf(MessageInf.SGN_WARNING, AppLocal
-                            .getIntString("message.nocustomer")).show(this);           
-                    } else {
-                        m_oTicket.setCustomer(newcustomer);
-                        m_jTicketId.setText(m_oTicket.getName(m_oTicketExt));
-                    }
-                } catch (BasicException e) {
-                    Toolkit.getDefaultToolkit().beep();                   
-                    new MessageInf(MessageInf.SGN_WARNING, AppLocal
-                        .getIntString("message.nocustomer"), e).show(this);           
+                if ("true".equals(m_App.getProperties()
+                        .getProperty("machine.barcodetype"))) {
+                    sCodetype = "UPC";
+                } else {
+                    sCodetype = "EAN";                                              // Ensure not null   
                 }
+
+                if (sCode.startsWith("C")
+                        || sCode.startsWith("c")) {
+                    try {
+                        String card = sCode;
+                        CustomerInfoExt newcustomer = dlSales.findCustomerExt(card);
+
+                        if (newcustomer == null) {
+                            Toolkit.getDefaultToolkit().beep();
+                            new MessageInf(MessageInf.SGN_WARNING, AppLocal
+                                    .getIntString("message.nocustomer")).show(this);
+                        } else {
+                            m_oTicket.setCustomer(newcustomer);
+                            m_jTicketId.setText(m_oTicket.getName(m_oTicketExt));
+                        }
+                    } catch (BasicException e) {
+                        Toolkit.getDefaultToolkit().beep();
+                        new MessageInf(MessageInf.SGN_WARNING, AppLocal
+                                .getIntString("message.nocustomer"), e).show(this);
+                    }
                     stateToZero();
 
-            } else if (sCode.startsWith(";")) {
+                } else if (sCode.startsWith(";")) {
                     stateToZero();
 
-
-        // START OF BARCODE PARSING
-            /*  This block is deliberately verbose and is base for future scanner handling
+                    // START OF BARCODE PARSING
+                    /*  This block is deliberately verbose and is base for future scanner handling
             *  Some scanners inject a CR+LF... some don't... 
             *  stateTransition() must allow for this as these add characters to .length()
             *  First 3 digits are GS1 CountryCode OR Retailer internal use
@@ -1009,146 +1042,145 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             *  PPP      MMMMM      CCCCC       K           Format                    
             *  012      34567      89012       K           Human
             * 
-            */                    
-        
-                } else if ( "EAN".equals(sCodetype) 
+                     */
+                } else if ("EAN".equals(sCodetype)
                         && ((sCode.startsWith("2")) || (sCode.startsWith("02"))) // check code prefix
                         && ((sCode.length() == 13) || (sCode.length() == 12))) { // check code length variances                                                   
-                    
-                try {
-                    ProductInfoExt oProduct                                     // get product(s) with PMMMMM
-                            = dlSales.getProductInfoByShortCode(sCode);
 
-                    if(oProduct == null) {                                      // nothing returned so display message to user
-                        Toolkit.getDefaultToolkit().beep();
-                        JOptionPane.showMessageDialog(null,
-                            sCode + " - " 
-                            + AppLocal.getIntString("message.noproduct"),
-                            "Check", JOptionPane.WARNING_MESSAGE);  
-                        stateToZero();                                          // clear the user input
+                    try {
+                        ProductInfoExt oProduct // get product(s) with PMMMMM
+                                = dlSales.getProductInfoByShortCode(sCode);
 
-                    } else if("EAN-13".equals(oProduct.getCodetype())) {        // have a valid barcode
-                        oProduct.setProperty("product.barcode", sCode);         // set the screen's barcode from input
-                        double dPriceSell = oProduct.getPriceSell();            // default price for product
-                        double weight = 0;                                      // used if barcode includes weight of product
-                        double dUnits = 0;                                      // used for pro-rata unit
-                        String sVariableTypePrefix = sCode.substring(0, 2);     // get first two PPP digits                        
-                        String sVariableNum;                                    // CCCCC variable value of barcode
+                        if (oProduct == null) {                                      // nothing returned so display message to user
+                            Toolkit.getDefaultToolkit().beep();
+                            JOptionPane.showMessageDialog(null,
+                                    sCode + " - "
+                                    + AppLocal.getIntString("message.noproduct"),
+                                    "Check", JOptionPane.WARNING_MESSAGE);
+                            stateToZero();                                          // clear the user input
 
-                        if (sCode.length() == 13) {                             // full barcode from scanner
-                            sVariableNum =  sCode.substring(8,12);              // get the 5 CCCCC digits              
-                        } else {                                                // barcode can be any length
-                            sVariableNum =  sCode.substring(7,11);              // get the 5 CCCCC digits
-                        }                                                       // scanner has dropped 1st digit so shift get to left    
-        
+                        } else if ("EAN-13".equals(oProduct.getCodetype())) {        // have a valid barcode
+                            oProduct.setProperty("product.barcode", sCode);         // set the screen's barcode from input
+                            double dPriceSell = oProduct.getPriceSell();            // default price for product
+                            double weight = 0;                                      // used if barcode includes weight of product
+                            double dUnits = 0;                                      // used for pro-rata unit
+                            String sVariableTypePrefix = sCode.substring(0, 2);     // get first two PPP digits                        
+                            String sVariableNum;                                    // CCCCC variable value of barcode
+
+                            if (sCode.length() == 13) {                             // full barcode from scanner
+                                sVariableNum = sCode.substring(8, 12);              // get the 5 CCCCC digits              
+                            } else {                                                // barcode can be any length
+                                sVariableNum = sCode.substring(7, 11);              // get the 5 CCCCC digits
+                            }                                                       // scanner has dropped 1st digit so shift get to left    
+
 //  PRICE - SET value decimals 
-                        switch (sVariableTypePrefix) {                          // Use CCCCC value of 01049 as example
-                            case "02":                                          // first 2 PPP digits determine decimal position
-                                dUnits = (Double.parseDouble(sVariableNum)      // position decimal in CCC.CC
-                                        / 100) / oProduct.getPriceSell();       // 2 decimal = 010.49 
-                                break;
-                            case "20":
-                                dUnits = (Double.parseDouble(sVariableNum)      // position decimal in CCC.CC
-                                        / 100) / oProduct.getPriceSell();       // 2 decimal = 010.49
-                                break;
-                            case "21":
-                                dUnits = (Double.parseDouble(sVariableNum)      // position decimal in CC.CCC
-                                        / 10) / oProduct.getPriceSell();        // 2 decimal = 0104.9                                
-                                break;
-                            case "22":
-                                dUnits = Double.parseDouble(sVariableNum)       // position decimal in CCCC.C
-                                        / oProduct.getPriceSell();              // Price = 01049.                                
-                                break;
+                            switch (sVariableTypePrefix) {                          // Use CCCCC value of 01049 as example
+                                case "02":                                          // first 2 PPP digits determine decimal position
+                                    dUnits = (Double.parseDouble(sVariableNum) // position decimal in CCC.CC
+                                            / 100) / oProduct.getPriceSell();       // 2 decimal = 010.49 
+                                    break;
+                                case "20":
+                                    dUnits = (Double.parseDouble(sVariableNum) // position decimal in CCC.CC
+                                            / 100) / oProduct.getPriceSell();       // 2 decimal = 010.49
+                                    break;
+                                case "21":
+                                    dUnits = (Double.parseDouble(sVariableNum) // position decimal in CC.CCC
+                                            / 10) / oProduct.getPriceSell();        // 2 decimal = 0104.9                                
+                                    break;
+                                case "22":
+                                    dUnits = Double.parseDouble(sVariableNum) // position decimal in CCCC.C
+                                            / oProduct.getPriceSell();              // Price = 01049.                                
+                                    break;
 
 //  WEIGHT - SET value decimals                                 
-                            case "23":                                          // Use CCCCC 01049kg as example
-                                weight = Double.parseDouble(sVariableNum)       
-                                        / 1000;                                 // Weight = 01.049
-                                dUnits = weight;                                // set Units for price calculation
-                                break;
-                            case "24":
-                                weight = Double.parseDouble(sVariableNum) 
-                                        / 100;                                  // Weight = 010.49
-                                dUnits = weight;                                // set Units for price calculation                             
-                                break;
-                            case "25":
-                                weight = Double.parseDouble(sVariableNum)  
-                                        / 10;                                   // Weight = 0104.9
-                                dUnits = weight;                                // set Units for price calculation                            
-                                break;
-                            default:
-                                break;
-                        }
+                                case "23":                                          // Use CCCCC 01049kg as example
+                                    weight = Double.parseDouble(sVariableNum)
+                                            / 1000;                                 // Weight = 01.049
+                                    dUnits = weight;                                // set Units for price calculation
+                                    break;
+                                case "24":
+                                    weight = Double.parseDouble(sVariableNum)
+                                            / 100;                                  // Weight = 010.49
+                                    dUnits = weight;                                // set Units for price calculation                             
+                                    break;
+                                case "25":
+                                    weight = Double.parseDouble(sVariableNum)
+                                            / 10;                                   // Weight = 0104.9
+                                    dUnits = weight;                                // set Units for price calculation                            
+                                    break;
+                                default:
+                                    break;
+                            }
 
-                        TaxInfo tax = taxeslogic                                // get the TaxRate for the product
-                            .getTaxInfo(oProduct.getTaxCategoryID()             
-                            , m_oTicket.getCustomer());                         // calculate if ticket has a Customer
+                            TaxInfo tax = taxeslogic // get the TaxRate for the product
+                                    .getTaxInfo(oProduct.getTaxCategoryID(),
+                                            m_oTicket.getCustomer());                         // calculate if ticket has a Customer
 
-                        switch (sVariableTypePrefix) {
+                            switch (sVariableTypePrefix) {
 //  PRICE - Assign var's
-                            case "02":                                          // now we need to calculate some values
-                                dPriceSell = oProduct.getPriceSellTax(tax)  
-                                    / (1.0 + tax.getRate());                    // selling price with tax
-                                dUnits = (Double.parseDouble(sVariableNum) 
-                                    / 100) / oProduct.getPriceSellTax(tax);     // Units as proportion of selling price
-                                oProduct.setProperty("product.price"
-                                    , Double.toString(oProduct.getPriceSell())); // push to screen                                    
-                                break; 
-                            case "20":                                          // as above
-                                dPriceSell = oProduct.getPriceSellTax(tax) 
-                                    / (1.0 + tax.getRate());
-                                dUnits = (Double.parseDouble(sVariableNum) 
-                                    / 100) / oProduct.getPriceSellTax(tax);
-                                oProduct.setProperty("product.price"
-                                    , Double.toString(oProduct.getPriceSellTax(tax)));                                    
-                                break;  
-                            case "21":
-                                dPriceSell = oProduct.getPriceSellTax(tax) 
-                                    / (1.0 + tax.getRate());
-                                dUnits = (Double.parseDouble(sVariableNum) 
-                                    / 10) / oProduct.getPriceSellTax(tax);
-                                oProduct.setProperty("product.price"
-                                    , Double.toString(oProduct.getPriceSell()));                                    
-                                break;                                
-                            case "22":
-                                dPriceSell = oProduct.getPriceSellTax(tax) 
-                                    / (1.0 + tax.getRate());
-                                dUnits = (Double.parseDouble(sVariableNum) 
-                                    / 1) / oProduct.getPriceSellTax(tax);
-                                oProduct.setProperty("product.price"
-                                    , Double.toString(oProduct.getPriceSell()));                                    
-                                break;
+                                case "02":                                          // now we need to calculate some values
+                                    dPriceSell = oProduct.getPriceSellTax(tax)
+                                            / (1.0 + tax.getRate());                    // selling price with tax
+                                    dUnits = (Double.parseDouble(sVariableNum)
+                                            / 100) / oProduct.getPriceSellTax(tax);     // Units as proportion of selling price
+                                    oProduct.setProperty("product.price",
+                                            Double.toString(oProduct.getPriceSell())); // push to screen                                    
+                                    break;
+                                case "20":                                          // as above
+                                    dPriceSell = oProduct.getPriceSellTax(tax)
+                                            / (1.0 + tax.getRate());
+                                    dUnits = (Double.parseDouble(sVariableNum)
+                                            / 100) / oProduct.getPriceSellTax(tax);
+                                    oProduct.setProperty("product.price",
+                                            Double.toString(oProduct.getPriceSellTax(tax)));
+                                    break;
+                                case "21":
+                                    dPriceSell = oProduct.getPriceSellTax(tax)
+                                            / (1.0 + tax.getRate());
+                                    dUnits = (Double.parseDouble(sVariableNum)
+                                            / 10) / oProduct.getPriceSellTax(tax);
+                                    oProduct.setProperty("product.price",
+                                            Double.toString(oProduct.getPriceSell()));
+                                    break;
+                                case "22":
+                                    dPriceSell = oProduct.getPriceSellTax(tax)
+                                            / (1.0 + tax.getRate());
+                                    dUnits = (Double.parseDouble(sVariableNum)
+                                            / 1) / oProduct.getPriceSellTax(tax);
+                                    oProduct.setProperty("product.price",
+                                            Double.toString(oProduct.getPriceSell()));
+                                    break;
 
 // WEIGHT - Assign variable to Unit
-                            case "23":
-                                weight = Double.parseDouble(sVariableNum) 
-                                    / 1000;                                     // 3 decimals = 01.049 kg
-                                dUnits = weight;                                // which represents 1gramme Units
-                                oProduct.setProperty("product.weight"
-                                    , Double.toString(weight));
-                                oProduct.setProperty("product.price"
-                                    , Double.toString(dPriceSell));                                                                    
-                                break;                                
-                            case "24":
-                                weight = Double.parseDouble(sVariableNum) 
-                                    / 100;                                      // 2 decimals = 010.49 kg
-                                dUnits = weight;                                // which represents 10gramme Units 
-                                oProduct.setProperty("product.weight"
-                                    , Double.toString(weight));
-                                oProduct.setProperty("product.price"
-                                    , Double.toString(dPriceSell));                                                                    
-                                break;                                
-                            case "25":
-                                weight = Double.parseDouble(sVariableNum) 
-                                    / 10;                                       // 1 decimal = 0104.9 kg
-                                dUnits = weight;                                // which represents 100gramme Units
-                                oProduct.setProperty("product.weight"
-                                    , Double.toString(weight));
-                                oProduct.setProperty("product.price"
-                                    , Double.toString(dPriceSell));                                    
-                                break;
+                                case "23":
+                                    weight = Double.parseDouble(sVariableNum)
+                                            / 1000;                                     // 3 decimals = 01.049 kg
+                                    dUnits = weight;                                // which represents 1gramme Units
+                                    oProduct.setProperty("product.weight",
+                                            Double.toString(weight));
+                                    oProduct.setProperty("product.price",
+                                            Double.toString(dPriceSell));
+                                    break;
+                                case "24":
+                                    weight = Double.parseDouble(sVariableNum)
+                                            / 100;                                      // 2 decimals = 010.49 kg
+                                    dUnits = weight;                                // which represents 10gramme Units 
+                                    oProduct.setProperty("product.weight",
+                                            Double.toString(weight));
+                                    oProduct.setProperty("product.price",
+                                            Double.toString(dPriceSell));
+                                    break;
+                                case "25":
+                                    weight = Double.parseDouble(sVariableNum)
+                                            / 10;                                       // 1 decimal = 0104.9 kg
+                                    dUnits = weight;                                // which represents 100gramme Units
+                                    oProduct.setProperty("product.weight",
+                                            Double.toString(weight));
+                                    oProduct.setProperty("product.price",
+                                            Double.toString(dPriceSell));
+                                    break;
 
-/*
+                                /*
  *  Some countries use different barcode prefix 26-29 or 250 etc.
  *  Use this section to add more case statements but these are not mandatory
  *  If you have your own internal or other barcode schema then...
@@ -1161,26 +1193,27 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             oProduct.setProperty("product.price", Double.toString(dPriceSell));
             weight = -1.0;
         break;
-*/                                
-                            default:
-                            break;
+                                 */
+                                default:
+                                    break;
+                            }
+
+                            if (m_jaddtax.isSelected()) {
+                                addTicketLine(oProduct,
+                                        dUnits //weight
+                                        ,
+                                         dPriceSell = oProduct.getPriceSellTax(tax));
+                            } else {
+                                addTicketLine(oProduct,
+                                        dUnits,
+                                        dPriceSell);
+                            }
                         }
-                            
-                        if(m_jaddtax.isSelected()) {
-                            addTicketLine(oProduct
-                            , dUnits //weight
-                            , dPriceSell = oProduct.getPriceSellTax(tax)); 
-                        } else {
-                            addTicketLine(oProduct
-                            , dUnits
-                            , dPriceSell);
-                        }
+                    } catch (BasicException eData) {
+                        stateToZero();
+                        new MessageInf(eData).show(this);
                     }
-                } catch(BasicException eData) {
-                    stateToZero();
-                    new MessageInf(eData).show(this);
-                }
-                
+
 // UPC-A
 /* Note: if begins 02 then its a standard                 
 // UPC-A max value limitation is 4 digit price
@@ -1200,223 +1233,223 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
  *    7 = Standard UPC number 
  *    8 = Reserved
  *    9 = Reserved
-*/
-
-                } else if ( "UPC".equals(sCodetype) 
+                     */
+                } else if ("UPC".equals(sCodetype)
                         && (sCode.startsWith("2"))
-                        && (sCode.length() == 12)) {                 
-                
-                try {
-                    ProductInfoExt oProduct 
-                        = dlSales.getProductInfoByUShortCode(sCode);            // Return only UPC product
+                        && (sCode.length() == 12)) {
 
-                    if(oProduct == null) {
-                        Toolkit.getDefaultToolkit().beep();
-                        JOptionPane.showMessageDialog(null,
-                            sCode + " - " 
-                            + AppLocal.getIntString("message.noproduct"),
-                            "Check", JOptionPane.WARNING_MESSAGE);  
-                        stateToZero();
-                    } else if("Upc-A".equals(oProduct.getCodetype())) {
-                        oProduct.setProperty("product.barcode", sCode); 
-                        double dPriceSell = oProduct.getPriceSell();            // default price for product
-                        double weight = 0;                                      // used if barcode includes weight of product
-                        double dUnits = 0;                                      // used for pro-rata unit
-                        String sVariableNum = sCode.substring(7, 11);           // grab the value from the code only using 4 digit price
-                        
-                        TaxInfo tax = taxeslogic                                // get the TaxRate for the product
-                            .getTaxInfo(oProduct.getTaxCategoryID()             
-                            , m_oTicket.getCustomer());                        
-                        
-                    if (oProduct.getPriceSell() != 0.0) {                       // we have a weight barcode
-                        weight = Double.parseDouble(sVariableNum) / 100;        // 2 decimals (e.g. 10.49 kg)
-                        dUnits = weight;                                        // Units is now transformed to weight
-                        
-                        oProduct.setProperty("product.weight"                   // catch-all for weight
-                                , Double.toString(weight));
-                        oProduct.setProperty("product.price"                    // get the prod sellprice
-                                , Double.toString(oProduct.getPriceSell()));                      
-                        dPriceSell = oProduct.getPriceSellTax(tax);             // calculate the tax on sellprice
-                        dUnits = (Double.parseDouble(sVariableNum)              // calculate Units in sellprice with Tax
-                                / 100)
-                                / oProduct.getPriceSellTax(tax);
-                        
-                    } else {                                                    // no sellprice so we have a price barcode
-                        dPriceSell = (Double.parseDouble(sVariableNum)          // calculate Units in sellprice with Tax
-                                / 100);   
-                        dUnits = 1;                                             // no sellprice to calculate so must be 1 Unit
-                    }
+                    try {
+                        ProductInfoExt oProduct
+                                = dlSales.getProductInfoByUShortCode(sCode);            // Return only UPC product
 
-                        if(m_jaddtax.isSelected()) {
-                            addTicketLine(oProduct
-                            , dUnits
-                            , dPriceSell);
-                        } else {
-                            addTicketLine(oProduct
-                            , dUnits
-                            , dPriceSell / (1.0 + tax.getRate()));
+                        if (oProduct == null) {
+                            Toolkit.getDefaultToolkit().beep();
+                            JOptionPane.showMessageDialog(null,
+                                    sCode + " - "
+                                    + AppLocal.getIntString("message.noproduct"),
+                                    "Check", JOptionPane.WARNING_MESSAGE);
+                            stateToZero();
+                        } else if ("Upc-A".equals(oProduct.getCodetype())) {
+                            oProduct.setProperty("product.barcode", sCode);
+                            double dPriceSell = oProduct.getPriceSell();            // default price for product
+                            double weight = 0;                                      // used if barcode includes weight of product
+                            double dUnits = 0;                                      // used for pro-rata unit
+                            String sVariableNum = sCode.substring(7, 11);           // grab the value from the code only using 4 digit price
+
+                            TaxInfo tax = taxeslogic // get the TaxRate for the product
+                                    .getTaxInfo(oProduct.getTaxCategoryID(),
+                                            m_oTicket.getCustomer());
+
+                            if (oProduct.getPriceSell() != 0.0) {                       // we have a weight barcode
+                                weight = Double.parseDouble(sVariableNum) / 100;        // 2 decimals (e.g. 10.49 kg)
+                                dUnits = weight;                                        // Units is now transformed to weight
+
+                                oProduct.setProperty("product.weight" // catch-all for weight
+                                        ,
+                                         Double.toString(weight));
+                                oProduct.setProperty("product.price" // get the prod sellprice
+                                        ,
+                                         Double.toString(oProduct.getPriceSell()));
+                                dPriceSell = oProduct.getPriceSellTax(tax);             // calculate the tax on sellprice
+                                dUnits = (Double.parseDouble(sVariableNum) // calculate Units in sellprice with Tax
+                                        / 100)
+                                        / oProduct.getPriceSellTax(tax);
+
+                            } else {                                                    // no sellprice so we have a price barcode
+                                dPriceSell = (Double.parseDouble(sVariableNum) // calculate Units in sellprice with Tax
+                                        / 100);
+                                dUnits = 1;                                             // no sellprice to calculate so must be 1 Unit
+                            }
+
+                            if (m_jaddtax.isSelected()) {
+                                addTicketLine(oProduct,
+                                        dUnits,
+                                        dPriceSell);
+                            } else {
+                                addTicketLine(oProduct,
+                                        dUnits,
+                                        dPriceSell / (1.0 + tax.getRate()));
+                            }
                         }
-                    }
-                    } catch(BasicException eData) {
+                    } catch (BasicException eData) {
                         stateToZero();
                         new MessageInf(eData).show(this);
                     }
 
-            } else {
-                incProductByCode(sCode);                                        // returned is standard so go get it
-            }
+                } else {
+                    incProductByCode(sCode);                                        // returned is standard so go get it
+                }
 // END OF BARCODE            
-               
-        } else {
-            Toolkit.getDefaultToolkit().beep();
-        }
 
-    } else {
+            } else {
+                Toolkit.getDefaultToolkit().beep();
+            }
+
+        } else {
 
             m_sBarcode.append(cTrans);
 
-            if (cTrans == '\u007f') { 
+            if (cTrans == '\u007f') {
                 stateToZero();
 
             } else if ((cTrans == '0') && (m_iNumberStatus == NUMBER_INPUTZERO)) {
                 m_jPrice.setText(Character.toString('0'));
- 
-            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3' 
-                    || cTrans == '4' || cTrans == '5' || cTrans == '6' 
-                    || cTrans == '7' || cTrans == '8' || cTrans == '9') 
+
+            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3'
+                    || cTrans == '4' || cTrans == '5' || cTrans == '6'
+                    || cTrans == '7' || cTrans == '8' || cTrans == '9')
                     && (m_iNumberStatus == NUMBER_INPUTZERO)) {
 
-                if (!priceWith00){
-                    m_jPrice.setText(m_jPrice.getText() + cTrans);  
-                }else{ 
-                   m_jPrice.setText(setTempjPrice( m_jPrice.getText() + cTrans));  
+                if (!priceWith00) {
+                    m_jPrice.setText(m_jPrice.getText() + cTrans);
+                } else {
+                    m_jPrice.setText(setTempjPrice(m_jPrice.getText() + cTrans));
                 }
-                
+
                 m_iNumberStatus = NUMBER_INPUTINT;
                 m_iNumberStatusInput = NUMBERVALID;
 
-            } else if ((cTrans == '0' || cTrans == '1' || cTrans == '2' 
-                    || cTrans == '3' || cTrans == '4' || cTrans == '5' 
-                    || cTrans == '6' || cTrans == '7' || cTrans == '8' 
-                    || cTrans == '9') 
+            } else if ((cTrans == '0' || cTrans == '1' || cTrans == '2'
+                    || cTrans == '3' || cTrans == '4' || cTrans == '5'
+                    || cTrans == '6' || cTrans == '7' || cTrans == '8'
+                    || cTrans == '9')
                     && (m_iNumberStatus == NUMBER_INPUTINT)) {
 
-                if (!priceWith00){
+                if (!priceWith00) {
                     m_jPrice.setText(m_jPrice.getText() + cTrans);
-                }else{ 
-                   m_jPrice.setText(setTempjPrice( m_jPrice.getText() + cTrans));  
+                } else {
+                    m_jPrice.setText(setTempjPrice(m_jPrice.getText() + cTrans));
                 }
 
-
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_INPUTZERO && !priceWith00) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_INPUTZERO && !priceWith00) {
                 m_jPrice.setText("0.");
                 m_iNumberStatus = NUMBER_INPUTZERODEC;
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_INPUTZERO) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_INPUTZERO) {
                 m_jPrice.setText("");
                 m_iNumberStatus = NUMBER_INPUTZERO;
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_INPUTINT && !priceWith00) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_INPUTINT && !priceWith00) {
                 m_jPrice.setText(m_jPrice.getText() + ".");
                 m_iNumberStatus = NUMBER_INPUTDEC;
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_INPUTINT) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_INPUTINT) {
 
-                if (!priceWith00){
+                if (!priceWith00) {
                     m_jPrice.setText(m_jPrice.getText() + "00");
-                }else{ 
-                   m_jPrice.setText(setTempjPrice( m_jPrice.getText() + "00"));  
-                }                
+                } else {
+                    m_jPrice.setText(setTempjPrice(m_jPrice.getText() + "00"));
+                }
 
                 m_iNumberStatus = NUMBER_INPUTINT;
 
-            } else if ((cTrans == '0') 
-                && (m_iNumberStatus == NUMBER_INPUTZERODEC 
-                || m_iNumberStatus == NUMBER_INPUTDEC)) {
+            } else if ((cTrans == '0')
+                    && (m_iNumberStatus == NUMBER_INPUTZERODEC
+                    || m_iNumberStatus == NUMBER_INPUTDEC)) {
 
-                if (!priceWith00){
+                if (!priceWith00) {
                     m_jPrice.setText(m_jPrice.getText() + cTrans);
-                }else{ 
-                    m_jPrice.setText(setTempjPrice( m_jPrice.getText() + cTrans)); 
-                }                
-                 
-            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3' 
-                    || cTrans == '4' || cTrans == '5' || cTrans == '6' 
-                    || cTrans == '7' || cTrans == '8' || cTrans == '9') 
-                    && (m_iNumberStatus == NUMBER_INPUTZERODEC 
+                } else {
+                    m_jPrice.setText(setTempjPrice(m_jPrice.getText() + cTrans));
+                }
+
+            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3'
+                    || cTrans == '4' || cTrans == '5' || cTrans == '6'
+                    || cTrans == '7' || cTrans == '8' || cTrans == '9')
+                    && (m_iNumberStatus == NUMBER_INPUTZERODEC
                     || m_iNumberStatus == NUMBER_INPUTDEC)) {
 
                 m_jPrice.setText(m_jPrice.getText() + cTrans);
                 m_iNumberStatus = NUMBER_INPUTDEC;
                 m_iNumberStatusInput = NUMBERVALID;
 
-            } else if (cTrans == '*' 
-                && (m_iNumberStatus == NUMBER_INPUTINT 
-                || m_iNumberStatus == NUMBER_INPUTDEC)) {
+            } else if (cTrans == '*'
+                    && (m_iNumberStatus == NUMBER_INPUTINT
+                    || m_iNumberStatus == NUMBER_INPUTDEC)) {
                 m_jPor.setText("x");
                 m_iNumberStatus = NUMBER_PORZERO;
-            } else if (cTrans == '*' 
-                && (m_iNumberStatus == NUMBER_INPUTZERO 
-                || m_iNumberStatus == NUMBER_INPUTZERODEC)) {
+            } else if (cTrans == '*'
+                    && (m_iNumberStatus == NUMBER_INPUTZERO
+                    || m_iNumberStatus == NUMBER_INPUTZERODEC)) {
                 m_jPrice.setText("0");
                 m_jPor.setText("x");
                 m_iNumberStatus = NUMBER_PORZERO;
 
-            } else if ((cTrans == '0') 
-                && (m_iNumberStatus == NUMBER_PORZERO)) {
+            } else if ((cTrans == '0')
+                    && (m_iNumberStatus == NUMBER_PORZERO)) {
                 m_jPor.setText("x0");
-            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3' 
-                    || cTrans == '4' || cTrans == '5' || cTrans == '6' 
-                    || cTrans == '7' || cTrans == '8' || cTrans == '9') 
+            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3'
+                    || cTrans == '4' || cTrans == '5' || cTrans == '6'
+                    || cTrans == '7' || cTrans == '8' || cTrans == '9')
                     && (m_iNumberStatus == NUMBER_PORZERO)) {
 
                 m_jPor.setText("x" + Character.toString(cTrans));
                 m_iNumberStatus = NUMBER_PORINT;
                 m_iNumberStatusPor = NUMBERVALID;
-            } else if ((cTrans == '0' || cTrans == '1' || cTrans == '2' 
-                    || cTrans == '3' || cTrans == '4' || cTrans == '5' 
-                    || cTrans == '6' || cTrans == '7' || cTrans == '8' 
+            } else if ((cTrans == '0' || cTrans == '1' || cTrans == '2'
+                    || cTrans == '3' || cTrans == '4' || cTrans == '5'
+                    || cTrans == '6' || cTrans == '7' || cTrans == '8'
                     || cTrans == '9') && (m_iNumberStatus == NUMBER_PORINT)) {
 
                 m_jPor.setText(m_jPor.getText() + cTrans);
 
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_PORZERO && !priceWith00) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_PORZERO && !priceWith00) {
                 m_jPor.setText("x0.");
                 m_iNumberStatus = NUMBER_PORZERODEC;
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_PORZERO) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_PORZERO) {
                 m_jPor.setText("x");
                 m_iNumberStatus = NUMBERVALID;
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_PORINT && !priceWith00) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_PORINT && !priceWith00) {
                 m_jPor.setText(m_jPor.getText() + ".");
                 m_iNumberStatus = NUMBER_PORDEC;
-            } else if (cTrans == '.' 
-                && m_iNumberStatus == NUMBER_PORINT) {
+            } else if (cTrans == '.'
+                    && m_iNumberStatus == NUMBER_PORINT) {
                 m_jPor.setText(m_jPor.getText() + "00");
                 m_iNumberStatus = NUMBERVALID;
 
-            } else if ((cTrans == '0') 
-                && (m_iNumberStatus == NUMBER_PORZERODEC 
-                || m_iNumberStatus == NUMBER_PORDEC)) {
+            } else if ((cTrans == '0')
+                    && (m_iNumberStatus == NUMBER_PORZERODEC
+                    || m_iNumberStatus == NUMBER_PORDEC)) {
                 m_jPor.setText(m_jPor.getText() + cTrans);
-            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3' 
-                    || cTrans == '4' || cTrans == '5' || cTrans == '6' 
-                    || cTrans == '7' || cTrans == '8' || cTrans == '9') 
+            } else if ((cTrans == '1' || cTrans == '2' || cTrans == '3'
+                    || cTrans == '4' || cTrans == '5' || cTrans == '6'
+                    || cTrans == '7' || cTrans == '8' || cTrans == '9')
                     && (m_iNumberStatus == NUMBER_PORZERODEC || m_iNumberStatus == NUMBER_PORDEC)) {
 
                 m_jPor.setText(m_jPor.getText() + cTrans);
                 m_iNumberStatus = NUMBER_PORDEC;
                 m_iNumberStatusPor = NUMBERVALID;
-            
-            } else if (cTrans == '\u00a7'   
-                && m_iNumberStatusInput == NUMBERVALID 
-                && m_iNumberStatusPor == NUMBERZERO) {
 
-                if (m_App.getDeviceScale().existsScale() 
-                    && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
+            } else if (cTrans == '\u00a7'
+                    && m_iNumberStatusInput == NUMBERVALID
+                    && m_iNumberStatusPor == NUMBERZERO) {
+
+                if (m_App.getDeviceScale().existsScale()
+                        && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
                     try {
                         Double value = m_App.getDeviceScale().readWeight();
                         if (value != null) {
@@ -1425,19 +1458,19 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         }
                     } catch (ScaleException e) {
                         Toolkit.getDefaultToolkit().beep();
-                        new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.noweight"), e).show(this);           
-                        stateToZero(); 
+                        new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.noweight"), e).show(this);
+                        stateToZero();
                     }
                 } else {
 
                     Toolkit.getDefaultToolkit().beep();
                 }
-            } else if (cTrans == '\u00a7' 
-                && m_iNumberStatusInput == NUMBERZERO
-                && m_iNumberStatusPor == NUMBERZERO) {
+            } else if (cTrans == '\u00a7'
+                    && m_iNumberStatusInput == NUMBERZERO
+                    && m_iNumberStatusPor == NUMBERZERO) {
 
                 int i = m_ticketlines.getSelectedIndex();
-                if (i < 0){
+                if (i < 0) {
                     Toolkit.getDefaultToolkit().beep();
                 } else if (m_App.getDeviceScale().existsScale()) {
                     try {
@@ -1450,28 +1483,28 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         }
                     } catch (ScaleException e) {
                         Toolkit.getDefaultToolkit().beep();
-                        new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.noweight"), e).show(this);           
-                        stateToZero(); 
+                        new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.noweight"), e).show(this);
+                        stateToZero();
                     }
                 } else {
 
                     Toolkit.getDefaultToolkit().beep();
-                }      
-                
-            } else if (cTrans == '+' 
-                && m_iNumberStatusInput == NUMBERZERO 
-                && m_iNumberStatusPor == NUMBERZERO) {
+                }
+
+            } else if (cTrans == '+'
+                    && m_iNumberStatusInput == NUMBERZERO
+                    && m_iNumberStatusPor == NUMBERZERO) {
                 int i = m_ticketlines.getSelectedIndex();
 
-                if (i < 0){
+                if (i < 0) {
                     Toolkit.getDefaultToolkit().beep();
                 } else {
                     TicketLineInfo newline = new TicketLineInfo(m_oTicket.getLine(i));
                     //If it's a refund + button means one unit less
-                    if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND){
+                    if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND) {
                         if (m_App.getProperties().getProperty("override.check").equals("true")) {
                             oCount = count - 1;  //increment existing line  
-                            pinOK=false;
+                            pinOK = false;
                             changeCount(pinOK);
                             newline.setMultiply(newline.getMultiply() - 1.0);
                             newline.setProperty("ticket.updated", "true");
@@ -1479,12 +1512,12 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         } else {
                             newline.setMultiply(newline.getMultiply() - 1.0);
                             newline.setProperty("ticket.updated", "true");
-                            paintTicketLine(i, newline);                            
-                        }                    
+                            paintTicketLine(i, newline);
+                        }
                     } else {
                         if (m_App.getProperties().getProperty("override.check").equals("true")) {
                             oCount = count + 1;  //increment existing line  
-                            pinOK=false;
+                            pinOK = false;
                             if (changeCount(pinOK)) {
                                 newline.setMultiply(newline.getMultiply() + 1.0);
                                 newline.setProperty("ticket.updated", "true");
@@ -1493,25 +1526,25 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         } else {
                             newline.setMultiply(newline.getMultiply() + 1.0);
                             newline.setProperty("ticket.updated", "true");
-                            paintTicketLine(i, newline);                            
+                            paintTicketLine(i, newline);
                         }
                     }
                 }
-            } else if (cTrans == '-' 
-                && m_iNumberStatusInput == NUMBERZERO 
-                && m_iNumberStatusPor == NUMBERZERO
-                && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
-                
+            } else if (cTrans == '-'
+                    && m_iNumberStatusInput == NUMBERZERO
+                    && m_iNumberStatusPor == NUMBERZERO
+                    && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
+
                 int i = m_ticketlines.getSelectedIndex();
-                if (i < 0){
+                if (i < 0) {
                     Toolkit.getDefaultToolkit().beep();
                 } else {
                     TicketLineInfo newline = new TicketLineInfo(m_oTicket.getLine(i));
 
-                    if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND){
+                    if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND) {
                         if (m_App.getProperties().getProperty("override.check").equals("true")) {
                             oCount = count - 1;  //increment existing line  
-                            pinOK=false;
+                            pinOK = false;
                             changeCount(pinOK);
                             newline.setMultiply(newline.getMultiply() - 1.0);
                             newline.setProperty("ticket.updated", "true");
@@ -1519,8 +1552,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         } else {
                             newline.setMultiply(newline.getMultiply() - 1.0);
                             newline.setProperty("ticket.updated", "true");
-                            paintTicketLine(i, newline);                            
-                        } 
+                            paintTicketLine(i, newline);
+                        }
 
                         if (newline.getMultiply() >= 0) {
                             removeTicketLine(i);
@@ -1530,7 +1563,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     } else {
                         if (m_App.getProperties().getProperty("override.check").equals("true")) {
                             oCount = count - 1;  //increment existing line  
-                            pinOK=false;
+                            pinOK = false;
                             if (changeCount(pinOK)) {
                                 newline.setMultiply(newline.getMultiply() - 1.0);
                                 newline.setProperty("ticket.updated", "true");
@@ -1539,10 +1572,10 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         } else {
                             newline.setMultiply(newline.getMultiply() - 1.0);
                             newline.setProperty("ticket.updated", "true");
-                            paintTicketLine(i, newline);                            
+                            paintTicketLine(i, newline);
                         }
 
-                        if (newline.getMultiply() <= 0.0) {                   
+                        if (newline.getMultiply() <= 0.0) {
                             removeTicketLine(i);
                         } else {
                             paintTicketLine(i, newline);
@@ -1550,86 +1583,41 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     }
                 }
 
-            } else if (cTrans == '+' 
-                && m_iNumberStatusInput == NUMBERZERO 
-                && m_iNumberStatusPor == NUMBERVALID) {
+            } else if (cTrans == '+'
+                    && m_iNumberStatusInput == NUMBERZERO
+                    && m_iNumberStatusPor == NUMBERVALID) {
                 int i = m_ticketlines.getSelectedIndex();
 
-                if (i < 0){
-                    Toolkit.getDefaultToolkit().beep();
-                } else {
-                    double dPor = getPorValue();
-                    TicketLineInfo newline = new TicketLineInfo(m_oTicket.getLine(i)); 
-
-                    if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND) {
-                        if (m_App.getProperties().getProperty("override.check").equals("true")) {
-                            oCount = count - 1;  //increment existing line  
-                            pinOK=false;
-                            changeCount(pinOK);
-                            newline.setMultiply(-dPor);
-                            newline.setProperty("ticket.updated", "true");
-                            newline.setPrice(Math.abs(newline.getPrice()));
-                            paintTicketLine(i, newline);                
-                        } else {
-                            newline.setMultiply(-dPor);
-                            newline.setProperty("ticket.updated", "true");
-                            newline.setPrice(Math.abs(newline.getPrice()));
-                            paintTicketLine(i, newline);                
-                        }                    
-                    } else {
-                        if (m_App.getProperties().getProperty("override.check").equals("true")) {
-                            oCount = count + 1;  //increment existing line  
-                            pinOK=false;
-                            if (changeCount(pinOK)) {
-                            newline.setMultiply(dPor);
-                            newline.setProperty("ticket.updated", "true");
-                            newline.setPrice(Math.abs(newline.getPrice()));
-                            paintTicketLine(i, newline);
-                            }
-                        } else {
-                            newline.setMultiply(dPor);
-                            newline.setProperty("ticket.updated", "true");
-                            newline.setPrice(Math.abs(newline.getPrice()));
-                            paintTicketLine(i, newline);
-                        }
-                    }
-                }
-            } else if (cTrans == '-' 
-                && m_iNumberStatusInput == NUMBERZERO 
-                && m_iNumberStatusPor == NUMBERVALID
-                && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {                
-                int i = m_ticketlines.getSelectedIndex();
-
-                if (i < 0){
+                if (i < 0) {
                     Toolkit.getDefaultToolkit().beep();
                 } else {
                     double dPor = getPorValue();
                     TicketLineInfo newline = new TicketLineInfo(m_oTicket.getLine(i));
 
-                   if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND) {
+                    if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND) {
                         if (m_App.getProperties().getProperty("override.check").equals("true")) {
                             oCount = count - 1;  //increment existing line  
-                            pinOK=false;
+                            pinOK = false;
                             changeCount(pinOK);
                             newline.setMultiply(-dPor);
                             newline.setProperty("ticket.updated", "true");
                             newline.setPrice(Math.abs(newline.getPrice()));
-                            paintTicketLine(i, newline);                
+                            paintTicketLine(i, newline);
                         } else {
                             newline.setMultiply(-dPor);
                             newline.setProperty("ticket.updated", "true");
                             newline.setPrice(Math.abs(newline.getPrice()));
-                            paintTicketLine(i, newline);                
-                        }                    
+                            paintTicketLine(i, newline);
+                        }
                     } else {
                         if (m_App.getProperties().getProperty("override.check").equals("true")) {
-                            oCount = count - 1;  //increment existing line  
-                            pinOK=false;
+                            oCount = count + 1;  //increment existing line  
+                            pinOK = false;
                             if (changeCount(pinOK)) {
-                            newline.setMultiply(dPor);
-                            newline.setProperty("ticket.updated", "true");
-                            newline.setPrice(Math.abs(newline.getPrice()));
-                            paintTicketLine(i, newline);
+                                newline.setMultiply(dPor);
+                                newline.setProperty("ticket.updated", "true");
+                                newline.setPrice(Math.abs(newline.getPrice()));
+                                paintTicketLine(i, newline);
                             }
                         } else {
                             newline.setMultiply(dPor);
@@ -1639,53 +1627,98 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         }
                     }
                 }
-            } else if (cTrans == '+' 
-                && m_iNumberStatusInput == NUMBERVALID 
-                && m_iNumberStatusPor == NUMBERZERO
-                && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
+            } else if (cTrans == '-'
+                    && m_iNumberStatusInput == NUMBERZERO
+                    && m_iNumberStatusPor == NUMBERVALID
+                    && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
+                int i = m_ticketlines.getSelectedIndex();
+
+                if (i < 0) {
+                    Toolkit.getDefaultToolkit().beep();
+                } else {
+                    double dPor = getPorValue();
+                    TicketLineInfo newline = new TicketLineInfo(m_oTicket.getLine(i));
+
+                    if (m_oTicket.getTicketType() == TicketInfo.RECEIPT_REFUND) {
+                        if (m_App.getProperties().getProperty("override.check").equals("true")) {
+                            oCount = count - 1;  //increment existing line  
+                            pinOK = false;
+                            changeCount(pinOK);
+                            newline.setMultiply(-dPor);
+                            newline.setProperty("ticket.updated", "true");
+                            newline.setPrice(Math.abs(newline.getPrice()));
+                            paintTicketLine(i, newline);
+                        } else {
+                            newline.setMultiply(-dPor);
+                            newline.setProperty("ticket.updated", "true");
+                            newline.setPrice(Math.abs(newline.getPrice()));
+                            paintTicketLine(i, newline);
+                        }
+                    } else {
+                        if (m_App.getProperties().getProperty("override.check").equals("true")) {
+                            oCount = count - 1;  //increment existing line  
+                            pinOK = false;
+                            if (changeCount(pinOK)) {
+                                newline.setMultiply(dPor);
+                                newline.setProperty("ticket.updated", "true");
+                                newline.setPrice(Math.abs(newline.getPrice()));
+                                paintTicketLine(i, newline);
+                            }
+                        } else {
+                            newline.setMultiply(dPor);
+                            newline.setProperty("ticket.updated", "true");
+                            newline.setPrice(Math.abs(newline.getPrice()));
+                            paintTicketLine(i, newline);
+                        }
+                    }
+                }
+            } else if (cTrans == '+'
+                    && m_iNumberStatusInput == NUMBERVALID
+                    && m_iNumberStatusPor == NUMBERZERO
+                    && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
                 ProductInfoExt product = getInputProduct();
                 addTicketLine(product, 1.0, product.getPriceSell());
                 m_jEditLine.doClick();
 
-            } else if (cTrans == '-' 
-                && m_iNumberStatusInput == NUMBERVALID 
-                && m_iNumberStatusPor == NUMBERZERO
-                && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
+            } else if (cTrans == '-'
+                    && m_iNumberStatusInput == NUMBERVALID
+                    && m_iNumberStatusPor == NUMBERZERO
+                    && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
                 ProductInfoExt product = getInputProduct();
                 addTicketLine(product, 1.0, -product.getPriceSell());
                 m_jEditLine.doClick();
 
-            } else if (cTrans == '+' 
-                && m_iNumberStatusInput == NUMBERVALID 
-                && m_iNumberStatusPor == NUMBERVALID
-                && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
+            } else if (cTrans == '+'
+                    && m_iNumberStatusInput == NUMBERVALID
+                    && m_iNumberStatusPor == NUMBERVALID
+                    && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
                 ProductInfoExt product = getInputProduct();
                 addTicketLine(product, getPorValue(), product.getPriceSell());
 
-            } else if (cTrans == '-' 
-                && m_iNumberStatusInput == NUMBERVALID 
-                && m_iNumberStatusPor == NUMBERVALID
-                && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
+            } else if (cTrans == '-'
+                    && m_iNumberStatusInput == NUMBERVALID
+                    && m_iNumberStatusPor == NUMBERVALID
+                    && m_App.getAppUserView().getUser().hasPermission("sales.EditLines")) {
                 ProductInfoExt product = getInputProduct();
                 addTicketLine(product, getPorValue(), -product.getPriceSell());
 
             } else if (cTrans == ' ' || cTrans == '=') {
                 if (m_oTicket.getLinesCount() > 0) {
                     if (closeTicket(m_oTicket, m_oTicketExt)) {
-                        m_ticketsbag.deleteTicket();  
+                        m_ticketsbag.deleteTicket();
                         String autoLogoff = (m_App.getProperties().getProperty("till.autoLogoff"));
-                        if (autoLogoff != null){               
-                            if (autoLogoff.equals("true")){                    
+                        if (autoLogoff != null) {
+                            if (autoLogoff.equals("true")) {
                                 if ("restaurant".equals(
-                                    m_App.getProperties().getProperty("machine.ticketsbag"))
-                                    && ("true".equals(m_App.getProperties().getProperty("till.autoLogoffrestaurant")))){
+                                        m_App.getProperties().getProperty("machine.ticketsbag"))
+                                        && ("true".equals(m_App.getProperties().getProperty("till.autoLogoffrestaurant")))) {
                                     deactivate();
-                                    setActiveTicket(null, null); 
-                                }else {
-                                    ((JRootApp)m_App).closeAppView();   
-                                }    
-                            }                   
-                        };                       
+                                    setActiveTicket(null, null);
+                                } else {
+                                    ((JRootApp) m_App).closeAppView();
+                                }
+                            }
+                        };
                     } else {
                         refreshTicket();
                     }
@@ -1696,36 +1729,35 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
     }
 
-   
     private boolean closeTicket(TicketInfo ticket, Object ticketext) {
-        if (listener  != null) {
+        if (listener != null) {
             listener.stop();
         }
         boolean resultok = false;
-        
-        if (m_App.getAppUserView().getUser().hasPermission("sales.Total")) {  
+
+        if (m_App.getAppUserView().getUser().hasPermission("sales.Total")) {
 
             warrantyCheck(ticket);
-            
+
             try {
 
                 taxeslogic.calculateTaxes(ticket);
-                if (ticket.getTotal()>=0.0){
+                if (ticket.getTotal() >= 0.0) {
                     ticket.resetPayments();
                 }
-                
+
                 if (executeEvent(ticket, ticketext, "ticket.total") == null) {
-                    if (listener  != null) {
+                    if (listener != null) {
                         listener.stop();
                     }
 
                     printTicket("Printer.TicketTotal", ticket, ticketext);
-                   
+
                     JPaymentSelect paymentdialog = ticket.getTicketType() == TicketInfo.RECEIPT_NORMAL
                             ? paymentdialogreceipt
                             : paymentdialogrefund;
                     paymentdialog.setPrintSelected("true".equals(m_jbtnconfig.getProperty("printselected", "true")));
-                    
+
                     paymentdialog.setTransactionID(ticket.getTransactionID());
 
                     if (paymentdialog.showDialog(ticket.getTotal(), ticket.getCustomer())) {
@@ -1739,11 +1771,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         if (executeEvent(ticket, ticketext, "ticket.save") == null) {
 
                             try {
-                                dlSales.saveTicket(ticket, m_App.getInventoryLocation());  
-                                m_config.setProperty("lastticket.number", Integer.toString(ticket.getTicketId()));
+                                dlSales.saveTicket(ticket, m_App.getInventoryLocation());
+                                m_config.setProperty("lastticket.number", Long.toString(ticket.getTicketId()));
                                 m_config.setProperty("lastticket.type", Integer.toString(ticket.getTicketType()));
-                                m_config.save();     
-                                
+                                m_config.save();
+
                             } catch (BasicException eData) {
                                 MessageInf msg = new MessageInf(MessageInf.SGN_NOTICE, AppLocal.getIntString("message.nosaveticket"), eData);
                                 msg.show(this);
@@ -1751,74 +1783,84 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                                 Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                             }
 
-                            executeEvent(ticket, ticketext, "ticket.close", 
+                            executeEvent(ticket, ticketext, "ticket.close",
                                     new ScriptArg("print", paymentdialog.isPrintSelected()));
 
-                                printTicket(paymentdialog.isPrintSelected() || warrantyPrint
+                            //Added Print Ticket
+                            ticket.setRuc(dlSystem.getResourceAsText("Empresa.RUC"));
+                            ticket.setEstablecimiento(dlSystem.getResourceAsText("Empresa.Establecimiento"));
+                            ticket.setPuntoEmision(dlSystem.getResourceAsText("Empresa.PuntoEmision"));
+                            ticket.setRazonSocial(dlSystem.getResourceAsText("Empresa.RazonSocial"));
+                            ticket.setNombreComercial(dlSystem.getResourceAsText("Empresa.NombreComercial"));
+                            ticket.setDireccion1(dlSystem.getResourceAsText("Empresa.Direccion1"));
+                            ticket.setDireccion2(dlSystem.getResourceAsText("Empresa.Direccion2"));
+                            ticket.setAmbiente(dlSystem.getResourceAsText("Empresa.Ambiente"));
+
+                            printTicket(paymentdialog.isPrintSelected() || warrantyPrint
                                     ? "Printer.Ticket"
-                                    : "Printer.Ticket2", ticket, ticketext);  
-                                    Notify(AppLocal.getIntString("notify.printing"));                 
-   
+                                    : "Printer.Ticket2", ticket, ticketext);
+                            Notify(AppLocal.getIntString("notify.printing"));
+
                             resultok = true;
 
                             if ("restaurant".equals(m_App.getProperties()
-                                .getProperty("machine.ticketsbag")) && !ticket.getOldTicket()) { 
+                                    .getProperty("machine.ticketsbag")) && !ticket.getOldTicket()) {
                                 restDB.clearCustomerNameInTable(ticketext.toString());
                                 restDB.clearWaiterNameInTable(ticketext.toString());
                                 restDB.clearTicketIdInTable(ticketext.toString());
-                            }                                
+                            }
                         }
                     }
                 }
             } catch (TaxesException e) {
-                MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, 
-                    AppLocal.getIntString("message.cannotcalculatetaxes"));
+                MessageInf msg = new MessageInf(MessageInf.SGN_WARNING,
+                        AppLocal.getIntString("message.cannotcalculatetaxes"));
                 msg.show(this);
                 resultok = false;
             }
 
             m_oTicket.resetTaxes();
             m_oTicket.resetPayments();
-           
-            jCheckStock.setText("");
-    
-        }
-                
-        return resultok;        
-    }   
 
-    private boolean warrantyCheck(TicketInfo ticket) {    
-        warrantyPrint=false;
-        int lines=0;
-        while (lines < ticket.getLinesCount()) {             
-            if (!warrantyPrint){
+            jCheckStock.setText("");
+
+        }
+
+        return resultok;
+    }
+
+    private boolean warrantyCheck(TicketInfo ticket) {
+        warrantyPrint = false;
+        int lines = 0;
+        while (lines < ticket.getLinesCount()) {
+            if (!warrantyPrint) {
                 warrantyPrint = ticket.getLine(lines).isProductWarranty();
                 return (true);
             }
             lines++;
-            }
+        }
         return false;
     }
-   
+
     /**
      *
      * @param pTicket
      * @return
      */
-    public String getPickupString(TicketInfo pTicket){ 
-    if (pTicket == null){    
-        return("0");
+    public String getPickupString(TicketInfo pTicket) {
+        if (pTicket == null) {
+            return ("0");
+        }
+        String tmpPickupId = Integer.toString(pTicket.getPickupId());
+        String pickupSize = (m_App.getProperties().getProperty("till.pickupsize"));
+        if (pickupSize != null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())) {
+            while (tmpPickupId.length() < (Integer.parseInt(pickupSize))) {
+                tmpPickupId = "0" + tmpPickupId;
+            }
+        }
+        return (tmpPickupId);
     }
-     String tmpPickupId=Integer.toString(pTicket.getPickupId());
-     String pickupSize =(m_App.getProperties().getProperty("till.pickupsize"));    
-        if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){        
-            while (tmpPickupId.length()< (Integer.parseInt(pickupSize))){
-            tmpPickupId="0"+tmpPickupId;}
-        } 
-       return (tmpPickupId);      
-    }
-    
-    
+
     private void printTicket(String sresourcename, TicketInfo ticket, Object ticketext) {
 
         String sresource = dlSystem.getResourceAsXML(sresourcename);
@@ -1826,39 +1868,40 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotprintticket"));
             msg.show(JPanelTicket.this);
         } else {
-            if (ticket.getPickupId()== 0){
-                try{
+            if (ticket.getPickupId() == 0) {
+                try {
                     ticket.setPickupId(dlSales.getNextPickupIndex());
-                }catch (BasicException e){
+                } catch (BasicException e) {
                     ticket.setPickupId(0);
                 }
             }
             try {
                 ScriptEngine script = ScriptFactory.getScriptEngine(ScriptFactory.VELOCITY);
 
-                if (Boolean.parseBoolean(m_App.getProperties().getProperty("receipt.newlayout"))){
-                    script.put("taxes",ticket.getTaxLines());                       
+                if (Boolean.parseBoolean(m_App.getProperties().getProperty("receipt.newlayout"))) {
+                    script.put("taxes", ticket.getTaxLines());
                 } else {
-                    script.put("taxes", taxcollection);            
+                    script.put("taxes", taxcollection);
                 }
-                
+
                 script.put("taxeslogic", taxeslogic);
                 script.put("ticket", ticket);
                 script.put("place", ticketext);
                 script.put("warranty", warrantyPrint);
-                script.put("pickupid",getPickupString(ticket));
+                script.put("pickupid", getPickupString(ticket));
 
-                refreshTicket();                
-                
+                refreshTicket();
+
                 m_TTP.printTicket(script.eval(sresource).toString(), ticket);
 
-            } catch (    ScriptException | TicketPrinterException e) {
+            } catch (ScriptException | TicketPrinterException e) {
                 MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotprintticket"), e);
                 msg.show(JPanelTicket.this);
             }
         }
     }
-     public void printTicket(String resource) {
+
+    public void printTicket(String resource) {
 //        printTicket(resource, m_oTicket, m_oTicketExt);
 // this method is intended to be called only from JPanelButtons.
 
@@ -1870,55 +1913,54 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 //            taxeslogic.calculateTaxes(m_oTicket);
             printTicket(resource, m_oTicket, m_oTicketExt);
         }
-    
-         Notify(AppLocal.getIntString("notify.printed"));                                    
+
+        Notify(AppLocal.getIntString("notify.printed"));
         j_btnRemotePrt.setEnabled(false);
     }
-    
+
     public void customerAdd(String resource) {
-        Notify(AppLocal.getIntString("notify.customeradd"));                                    
-    }          
-     
-     public void customerRemove(String resource) {
-        Notify(AppLocal.getIntString("notify.customerremove"));                                    
-    }     
-     
+        Notify(AppLocal.getIntString("notify.customeradd"));
+    }
+
+    public void customerRemove(String resource) {
+        Notify(AppLocal.getIntString("notify.customerremove"));
+    }
+
     public void customerChange(String resource) {
-        Notify(AppLocal.getIntString("notify.customerchange"));                                    
-    }     
-     
-    public void Notify(String msg){
-        final WebNotification notification = new WebNotification ();
-        notification.setIcon ( NotificationIcon.information );
-        notification.setDisplayTime ( 4000 );
+        Notify(AppLocal.getIntString("notify.customerchange"));
+    }
 
-        final WebClock clock = new WebClock ();
-        clock.setClockType ( ClockType.timer );
-        clock.setTimeLeft ( 5000 );
+    public void Notify(String msg) {
+        final WebNotification notification = new WebNotification();
+        notification.setIcon(NotificationIcon.information);
+        notification.setDisplayTime(4000);
+
+        final WebClock clock = new WebClock();
+        clock.setClockType(ClockType.timer);
+        clock.setTimeLeft(5000);
 //        clock.setTimePattern ( clock );        
-        notification.setContent ( msg );
+        notification.setContent(msg);
 
-        NotificationManager.showNotification ( notification );
-        clock.start ();    
-    }    
-    
+        NotificationManager.showNotification(notification);
+        clock.start();
+    }
+
     private void printReport(String resourcefile, TicketInfo ticket, Object ticketext) {
 
-        try {     
-         
+        try {
+
             JasperReport jr;
-           
+
             InputStream in = getClass().getResourceAsStream(resourcefile + ".ser");
-            if (in == null) {      
+            if (in == null) {
                 // read and compile the report
-                JasperDesign jd = JRXmlLoader.load(getClass().getResourceAsStream(resourcefile + ".jrxml"));            
-                jr = JasperCompileManager.compileReport(jd);    
+                JasperDesign jd = JRXmlLoader.load(getClass().getResourceAsStream(resourcefile + ".jrxml"));
+                jr = JasperCompileManager.compileReport(jd);
             } else {
                 try (ObjectInputStream oin = new ObjectInputStream(in)) {
                     jr = (JasperReport) oin.readObject();
                 }
             }
-          
 
             Map reportparams = new HashMap();
 
@@ -1926,54 +1968,53 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 reportparams.put("REPORT_RESOURCE_BUNDLE", ResourceBundle.getBundle(resourcefile + ".properties"));
             } catch (MissingResourceException e) {
             }
-            reportparams.put("TAXESLOGIC", taxeslogic); 
-            
+            reportparams.put("TAXESLOGIC", taxeslogic);
+
             Map reportfields = new HashMap();
             reportfields.put("TICKET", ticket);
             reportfields.put("PLACE", ticketext);
 
-            JasperPrint jp = JasperFillManager.fillReport(jr, reportparams, new JRMapArrayDataSource(new Object[] { reportfields } ));
-            
+            JasperPrint jp = JasperFillManager.fillReport(jr, reportparams, new JRMapArrayDataSource(new Object[]{reportfields}));
+
             PrintService service = ReportUtils.getPrintService(m_App.getProperties().getProperty("machine.printername"));
-            
+
             JRPrinterAWT300.printPages(jp, 0, jp.getPages().size() - 1, service);
-            
+
         } catch (JRException | IOException | ClassNotFoundException e) {
             MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotloadreport"), e);
             msg.show(this);
-        }               
+        }
     }
 
-    private void visorTicketLine(TicketLineInfo oLine){
-        if (oLine == null) { 
-             m_App.getDeviceTicket().getDeviceDisplay().clearVisor();
-        } else {                 
+    private void visorTicketLine(TicketLineInfo oLine) {
+        if (oLine == null) {
+            m_App.getDeviceTicket().getDeviceDisplay().clearVisor();
+        } else {
             try {
                 ScriptEngine script = ScriptFactory.getScriptEngine(ScriptFactory.VELOCITY);
                 script.put("ticketline", oLine);
                 m_TTP.printTicket(script.eval(dlSystem.getResourceAsXML("Printer.TicketLine")).toString());
 
-            } catch (    ScriptException | TicketPrinterException e) {
+            } catch (ScriptException | TicketPrinterException e) {
                 MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotprintline"), e);
                 msg.show(JPanelTicket.this);
             }
-        } 
-    }    
-    
-    
+        }
+    }
+
     private Object evalScript(ScriptObject scr, String resource, ScriptArg... args) {
-        
+
         // resource here is guaranteed to be not null
-         try {
+        try {
             scr.setSelectedIndex(m_ticketlines.getSelectedIndex());
-            return scr.evalScript(dlSystem.getResourceAsXML(resource), args);                
+            return scr.evalScript(dlSystem.getResourceAsXML(resource), args);
         } catch (ScriptException e) {
             MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotexecute"), e);
             msg.show(this);
             return msg;
-        } 
+        }
     }
-        
+
     /**
      *
      * @param resource
@@ -1983,11 +2024,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         if (resource == null) {
             MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotexecute"));
-            msg.show(this);            
+            msg.show(this);
         } else {
             ScriptObject scr = new ScriptObject(m_oTicket, m_oTicketExt);
             scr.setSelectedIndex(m_ticketlines.getSelectedIndex());
-            evalScript(scr, resource, args);   
+            evalScript(scr, resource, args);
             refreshTicket();
 
             setSelectedIndex(scr.getSelectedIndex());
@@ -1997,7 +2038,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     /**
      *
      */
-    private Object executeEventAndRefresh(String eventkey, ScriptArg ... args) {
+    private Object executeEventAndRefresh(String eventkey, ScriptArg... args) {
 
         String resource = m_jbtnconfig.getEvent(eventkey);
 
@@ -2006,16 +2047,15 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         } else {
             ScriptObject scr = new ScriptObject(m_oTicket, m_oTicketExt);
             scr.setSelectedIndex(m_ticketlines.getSelectedIndex());
-            Object result = evalScript(scr, resource, args);   
+            Object result = evalScript(scr, resource, args);
             refreshTicket();
             setSelectedIndex(scr.getSelectedIndex());
             return result;
         }
     }
-   
-    
-    private Object executeEvent(TicketInfo ticket, Object ticketext, String eventkey, ScriptArg ... args) {
-        
+
+    private Object executeEvent(TicketInfo ticket, Object ticketext, String eventkey, ScriptArg... args) {
+
         String resource = m_jbtnconfig.getEvent(eventkey);
         if (resource == null) {
             return null;
@@ -2024,7 +2064,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             return evalScript(scr, resource, args);
         }
     }
-    
+
     /**
      *
      * @param sresourcename
@@ -2042,23 +2082,24 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     public BufferedImage getResourceAsImage(String sresourcename) {
         return dlSystem.getResourceAsImage(sresourcename);
     }
-    
+
     private void setSelectedIndex(int i) {
-        
+
         if (i >= 0 && i < m_oTicket.getLinesCount()) {
             m_ticketlines.setSelectedIndex(i);
         } else if (m_oTicket.getLinesCount() > 0) {
             m_ticketlines.setSelectedIndex(m_oTicket.getLinesCount() - 1);
-        }    
+        }
     }
-     
+
     /**
      *
      */
     public static class ScriptArg {
+
         private final String key;
         private final Object value;
-        
+
         /**
          *
          * @param key
@@ -2086,55 +2127,54 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
     }
 
-    
-    private String setTempjPrice(String jPrice){
-        jPrice = jPrice.replace(".","");
+    private String setTempjPrice(String jPrice) {
+        jPrice = jPrice.replace(".", "");
 // remove all leading zeros from the string        
-        long tempL=Long.parseLong(jPrice);
+        long tempL = Long.parseLong(jPrice);
         jPrice = Long.toString(tempL);
-        
-        while (jPrice.length()<3){
-            jPrice="0"+jPrice;                        
+
+        while (jPrice.length() < 3) {
+            jPrice = "0" + jPrice;
         }
-        return (jPrice.length()<= 2)? jPrice : (new StringBuffer(jPrice).insert(jPrice.length()-2,".").toString());
+        return (jPrice.length() <= 2) ? jPrice : (new StringBuffer(jPrice).insert(jPrice.length() - 2, ".").toString());
     }
 
     public void checkStock() {
         int i = m_ticketlines.getSelectedIndex();
 
         if (i < 0) {
-            } else {
-                try {            
-                    TicketLineInfo line = m_oTicket.getLine(i);
-                    String pId = line.getProductID();
-                    
+        } else {
+            try {
+                TicketLineInfo line = m_oTicket.getLine(i);
+                String pId = line.getProductID();
+
                 String lName = (m_App.getProperties().getProperty("machine.department"));
                 lName = "'" + lName + "'";
-                    ProductStock checkProduct;
-                    String location = m_App.getInventoryLocation();
-                    checkProduct = dlSales.getProductStockState(pId, location);
-                    
-                    if (checkProduct != null) {
-        
-                        if (checkProduct.getUnits() <=0) {
-                            jCheckStock.setForeground(Color.magenta);
-                        } else {
-                            jCheckStock.setForeground(Color.darkGray);
-                        }
+                ProductStock checkProduct;
+                String location = m_App.getInventoryLocation();
+                checkProduct = dlSales.getProductStockState(pId, location);
 
-                        double dUnits = checkProduct.getUnits();
-                        int iUnits;
-                        iUnits = (int) dUnits;
-                        jCheckStock.setText(Integer.toString(iUnits));
+                if (checkProduct != null) {
+
+                    if (checkProduct.getUnits() <= 0) {
+                        jCheckStock.setForeground(Color.magenta);
                     } else {
-                        jCheckStock.setText(null);
+                        jCheckStock.setForeground(Color.darkGray);
                     }
-                } catch (BasicException ex) {
-                    Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                }                    
-            } 
+
+                    double dUnits = checkProduct.getUnits();
+                    int iUnits;
+                    iUnits = (int) dUnits;
+                    jCheckStock.setText(Integer.toString(iUnits));
+                } else {
+                    jCheckStock.setText(null);
+                }
+            } catch (BasicException ex) {
+                Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    
+    }
+
     public void checkCustomer() {
         if (m_oTicket.getCustomer().isVIP() == true) {
 
@@ -2152,35 +2192,34 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             } else {
                 discount = AppLocal.getIntString("message.discno");
             }
-                                
-            content = "<html>"+
-                "<b>" + AppLocal.getIntString("label.vip") + " : " + "</b>" + vip + "<br>" +
-                "<b>" + AppLocal.getIntString("label.discount") + " : " + "</b>" + discount + "<br>";
-                    
+
+            content = "<html>"
+                    + "<b>" + AppLocal.getIntString("label.vip") + " : " + "</b>" + vip + "<br>"
+                    + "<b>" + AppLocal.getIntString("label.discount") + " : " + "</b>" + discount + "<br>";
 
             JFrame frame = new JFrame();
-            JOptionPane.showMessageDialog(frame, 
-                content,                             
-                "Info", 
-                JOptionPane.WARNING_MESSAGE);  
-        }        
+            JOptionPane.showMessageDialog(frame,
+                    content,
+                    "Info",
+                    JOptionPane.WARNING_MESSAGE);
+        }
     }
-    
+
     /**
      *
      */
     public class ScriptObject {
-        
+
         private final TicketInfo ticket;
         private final Object ticketext;
-        
+
         private int selectedindex;
-        
+
         private ScriptObject(TicketInfo ticket, Object ticketext) {
             this.ticket = ticket;
             this.ticketext = ticketext;
         }
-        
+
         /**
          *
          * @return
@@ -2192,7 +2231,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 return 0.0;
             }
         }
-        
+
         /**
          *
          * @return
@@ -2200,7 +2239,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         public int getSelectedIndex() {
             return selectedindex;
         }
-        
+
         /**
          *
          * @param i
@@ -2216,7 +2255,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         public void printReport(String resourcefile) {
             JPanelTicket.this.printReport(resourcefile, ticket, ticketext);
         }
-        
+
         /**
          *
          * @param sresourcename
@@ -2225,7 +2264,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             JPanelTicket.this.printTicket(sresourcename, ticket, ticketext);
             j_btnRemotePrt.setEnabled(false);
         }
-        
+
         /**
          *
          * @param code
@@ -2234,44 +2273,43 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
          * @throws ScriptException
          */
         public Object evalScript(String code, ScriptArg... args) throws ScriptException {
-            
-        ScriptEngine script = ScriptFactory.getScriptEngine(ScriptFactory.BEANSHELL);            
 
-        String sDBUser = m_App.getProperties().getProperty("db.user");
-        String sDBPassword = m_App.getProperties().getProperty("db.password");
-        
-        if (sDBUser != null && sDBPassword != null && sDBPassword.startsWith("crypt:")) {
-            AltEncrypter cypher = new AltEncrypter("cypherkey" + sDBUser);
-            sDBPassword = cypher.decrypt(sDBPassword.substring(6));
-        } 
+            ScriptEngine script = ScriptFactory.getScriptEngine(ScriptFactory.BEANSHELL);
+
+            String sDBUser = m_App.getProperties().getProperty("db.user");
+            String sDBPassword = m_App.getProperties().getProperty("db.password");
+
+            if (sDBUser != null && sDBPassword != null && sDBPassword.startsWith("crypt:")) {
+                AltEncrypter cypher = new AltEncrypter("cypherkey" + sDBUser);
+                sDBPassword = cypher.decrypt(sDBPassword.substring(6));
+            }
             script.put("hostname", m_App.getProperties().getProperty("machine.hostname"));
-            script.put("dbURL", m_App.getProperties().getProperty("db.URL")+m_App.getProperties().getProperty("db.schema"));
+            script.put("dbURL", m_App.getProperties().getProperty("db.URL") + m_App.getProperties().getProperty("db.schema"));
             script.put("dbUser", sDBUser);
             script.put("dbPassword", sDBPassword);
-            
+
             script.put("ticket", ticket);
             script.put("place", ticketext);
             script.put("taxes", taxcollection);
-            script.put("taxeslogic", taxeslogic);             
+            script.put("taxeslogic", taxeslogic);
             script.put("user", m_App.getAppUserView().getUser());
             script.put("sales", this);
-            script.put("taxesinc",m_jaddtax.isSelected());
-            script.put("warranty",warrantyPrint);
-            script.put("pickupid",getPickupString(ticket));
+            script.put("taxesinc", m_jaddtax.isSelected());
+            script.put("warranty", warrantyPrint);
+            script.put("pickupid", getPickupString(ticket));
 
-            for(ScriptArg arg : args) {
+            for (ScriptArg arg : args) {
                 script.put(arg.getKey(), arg.getValue());
-            }             
+            }
 
             return script.eval(code);
-        }  
+        }
     }
-    
-    
-/** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the FormEditor.
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the FormEditor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -2799,16 +2837,16 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     private void m_jbtnScaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jbtnScaleActionPerformed
 
         stateTransition('\u00a7');
-        
+
     }//GEN-LAST:event_m_jbtnScaleActionPerformed
 
     private void m_jEditLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jEditLineActionPerformed
 
         count = (int) m_oTicket.getArticlesCount();     // get existing line value
-            
+
         int i = m_ticketlines.getSelectedIndex();
-        
-        if (i < 0){
+
+        if (i < 0) {
             Toolkit.getDefaultToolkit().beep(); // no line selected
         } else {
             try {
@@ -2816,7 +2854,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 if (newline != null) {
                     paintTicketLine(i, newline);
                 }
-                    
+
             } catch (BasicException e) {
                 new MessageInf(e).show(this);
             }
@@ -2836,7 +2874,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         j_btnRemotePrt.setEnabled(true);
         j_btnRemotePrt.revalidate();
-         
+
     }//GEN-LAST:event_m_jNumberKeysKeyPerformed
 
     private void m_jKeyFactoryKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_m_jKeyFactoryKeyTyped
@@ -2850,38 +2888,38 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     private void m_jDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jDeleteActionPerformed
         int i = m_ticketlines.getSelectedIndex();
         if (m_App.getProperties().getProperty("override.check").equals("true")) {
-            pinOK=false;
+            pinOK = false;
             if (changeCount(pinOK)) {
-                if (i < 0){
+                if (i < 0) {
                     Toolkit.getDefaultToolkit().beep();
-                } else {               
+                } else {
                     removeTicketLine(i);
                     jCheckStock.setText("");
-                }                     
+                }
             }
         } else {
-            if (i < 0){
+            if (i < 0) {
                 Toolkit.getDefaultToolkit().beep();
-            } else {               
+            } else {
                 removeTicketLine(i);
                 jCheckStock.setText("");
-            }                                 
+            }
         }
     }//GEN-LAST:event_m_jDeleteActionPerformed
 
     private void m_jListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jListActionPerformed
 
-        ProductInfoExt prod = JProductFinder.showMessage(JPanelTicket.this, dlSales);    
+        ProductInfoExt prod = JProductFinder.showMessage(JPanelTicket.this, dlSales);
         if (prod != null) {
             buttonTransition(prod);
         }
-        
+
     }//GEN-LAST:event_m_jListActionPerformed
 
     private void jEditAttributesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jEditAttributesActionPerformed
-       if (listener  != null) {
+        if (listener != null) {
             listener.stop();
-        } 
+        }
         int i = m_ticketlines.getSelectedIndex();
         if (i < 0) {
             Toolkit.getDefaultToolkit().beep(); // no line selected
@@ -2897,56 +2935,57 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     paintTicketLine(i, line);
                 }
             } catch (BasicException ex) {
-                JOptionPane.showMessageDialog(this, 
-                    AppLocal.getIntString("message.cannotfindattributes"), 
-                    AppLocal.getIntString("message.title"), 
-                    JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        AppLocal.getIntString("message.cannotfindattributes"),
+                        AppLocal.getIntString("message.title"),
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         }
 
-        if (listener  != null){           
-            listener.restart(); 
+        if (listener != null) {
+            listener.restart();
         }
 }//GEN-LAST:event_jEditAttributesActionPerformed
 
     private void jbtnMooringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnMooringActionPerformed
 // Display vessel selection box on screen if reply is good add to the ticket
-       if (listener  != null) {
+        if (listener != null) {
             listener.stop();
-        } 
-       JMooringDetails mooring = JMooringDetails.getMooringDetails(this, m_App.getSession());
-       mooring.setVisible(true);
-       if (mooring.isCreate()){ 
-           if (((mooring.getVesselDays()>0 )) &&  ((mooring.getVesselSize()>1))){          
-            try{
-                ProductInfoExt vProduct = dlSales.getProductInfoByCode("BFeesDay1");
-                vProduct.setName("Berth Fees 1st Day " + mooring.getVesselName());
-                addTicketLine(vProduct, mooring.getVesselSize(), vProduct.getPriceSell());
+        }
+        JMooringDetails mooring = JMooringDetails.getMooringDetails(this, m_App.getSession());
+        mooring.setVisible(true);
+        if (mooring.isCreate()) {
+            if (((mooring.getVesselDays() > 0)) && ((mooring.getVesselSize() > 1))) {
+                try {
+                    ProductInfoExt vProduct = dlSales.getProductInfoByCode("BFeesDay1");
+                    vProduct.setName("Berth Fees 1st Day " + mooring.getVesselName());
+                    addTicketLine(vProduct, mooring.getVesselSize(), vProduct.getPriceSell());
 
-                if (mooring.getVesselDays()>1){
-                    vProduct = dlSales.getProductInfoByCode("BFeesDay2");
-                    vProduct.setName("Additional Days " +(mooring.getVesselDays()-1));
-                    addTicketLine(vProduct, mooring.getVesselSize() * (mooring.getVesselDays()-1), vProduct.getPriceSell());               
+                    if (mooring.getVesselDays() > 1) {
+                        vProduct = dlSales.getProductInfoByCode("BFeesDay2");
+                        vProduct.setName("Additional Days " + (mooring.getVesselDays() - 1));
+                        addTicketLine(vProduct, mooring.getVesselSize() * (mooring.getVesselDays() - 1), vProduct.getPriceSell());
+                    }
+
+                    if (mooring.getVesselPower()) {
+                        vProduct = dlSales.getProductInfoByCode("PowerSupplied");
+                        addTicketLine(vProduct, mooring.getVesselDays(), vProduct.getPriceSell());
+                    }
+                } catch (BasicException e) {
                 }
-
-                if (mooring.getVesselPower()){
-                    vProduct = dlSales.getProductInfoByCode("PowerSupplied");
-                    addTicketLine(vProduct, mooring.getVesselDays(), vProduct.getPriceSell());               
-                }         
-           }catch (BasicException e){}
             }
         }
-               refreshTicket(); 
+        refreshTicket();
     }//GEN-LAST:event_jbtnMooringActionPerformed
 
     private void j_btnRemotePrtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j_btnRemotePrtActionPerformed
-        
+
         String rScript = (dlSystem.getResourceAsText("script.SendOrder"));
 
-            Interpreter i = new Interpreter(); 
-        try {                       
-            i.set("ticket", m_oTicket);  
-            i.set("place",  m_oTicketExt);             
+        Interpreter i = new Interpreter();
+        try {
+            i.set("ticket", m_oTicket);
+            i.set("place", m_oTicketExt);
             i.set("user", m_App.getAppUserView().getUser());
             i.set("sales", this);
             i.set("pickupid", m_oTicket.getPickupId());
@@ -2959,20 +2998,20 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
 
         remoteOrderDisplay();
-        
+
     }//GEN-LAST:event_j_btnRemotePrtActionPerformed
 
     private void btnReprint1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReprint1ActionPerformed
         if (m_config.getProperty("lastticket.number") != null) {
             try {
                 TicketInfo ticket = dlSales.loadTicket(
-                        Integer.parseInt((m_config.getProperty("lastticket.type"))), 
+                        Integer.parseInt((m_config.getProperty("lastticket.type"))),
                         Integer.parseInt((m_config.getProperty("lastticket.number"))));
                 if (ticket == null) {
                     JFrame frame = new JFrame();
-                    JOptionPane.showMessageDialog(frame, 
-                            AppLocal.getIntString("message.notexiststicket"), 
-                            AppLocal.getIntString("message.notexiststickettitle"), 
+                    JOptionPane.showMessageDialog(frame,
+                            AppLocal.getIntString("message.notexiststicket"),
+                            AppLocal.getIntString("message.notexiststickettitle"),
                             JOptionPane.WARNING_MESSAGE);
                 } else {
                     m_ticket = ticket;
@@ -2982,7 +3021,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         TicketTaxInfo[] taxlist = m_ticket.getTaxLines();
                     } catch (TaxesException ex) {
                     }
-                    printTicket("Printer.ReprintTicket", m_ticket, null);                    
+                    printTicket("Printer.ReprintTicket", m_ticket, null);
                     Notify("'Printed'");
                 }
             } catch (BasicException e) {
@@ -2996,7 +3035,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         if (m_oTicket.getLinesCount() > 0) {
             ReceiptSplit splitdialog = ReceiptSplit.getDialog(this,
-                dlSystem.getResourceAsXML("Ticket.Line"), dlSales, dlCustomers, taxeslogic);
+                    dlSystem.getResourceAsXML("Ticket.Line"), dlSales, dlCustomers, taxeslogic);
 
             TicketInfo ticket1 = m_oTicket.copyTicket();
             TicketInfo ticket2 = new TicketInfo();
@@ -3013,10 +3052,10 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
     private void jCheckStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckStockActionPerformed
 
-        if (listener  != null) {
+        if (listener != null) {
             listener.stop();
-        } 
-        
+        }
+
         int i = m_ticketlines.getSelectedIndex();
         if (i < 0) {
             Toolkit.getDefaultToolkit().beep();
@@ -3030,21 +3069,21 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
                 if (checkProduct != null) {
 
-                    if (checkProduct.getUnits() <=0) {
+                    if (checkProduct.getUnits() <= 0) {
                         jCheckStock.setForeground(Color.magenta);
                     } else {
                         jCheckStock.setForeground(Color.darkGray);
                     }
 
                     String content;
-                    
+
                     if (!location.equals(checkProduct.getLocation())) {
                         content = AppLocal.getIntString("message.location.current");
                         JFrame frame = new JFrame();
                         JOptionPane.showMessageDialog(frame,
-                            content,
-                            "Info",
-                            JOptionPane.INFORMATION_MESSAGE);                        
+                                content,
+                                "Info",
+                                JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         double dUnits = checkProduct.getUnits();
                         int iUnits;
@@ -3057,21 +3096,21 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     jCheckStock.setText(null);
                 }
             } catch (BasicException ex) {
-                    Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }        
-        }       
-       
-        if (listener  != null){           
-            listener.restart(); 
+                Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (listener != null) {
+            listener.restart();
         }
     }//GEN-LAST:event_jCheckStockActionPerformed
 
     private void jCheckStockMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCheckStockMouseClicked
-        if (evt.getClickCount()==2) {
-            if (listener  != null) {
+        if (evt.getClickCount() == 2) {
+            if (listener != null) {
                 listener.stop();
-            } 
-   
+            }
+
             int i = m_ticketlines.getSelectedIndex();
             if (i < 0) {
                 Toolkit.getDefaultToolkit().beep();
@@ -3082,20 +3121,20 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     String location = m_App.getInventoryLocation();
                     ProductStock checkProduct;
                     checkProduct = dlSales.getProductStockState(pId, location);
-                   
+
                     Double pMin;
                     Double pMax;
                     Double pUnits;
                     Date pMemoDate;
                     String content;
-                    
+
                     if (!location.equals(checkProduct.getLocation())) {
                         content = AppLocal.getIntString("message.location.current");
                         JFrame frame = new JFrame();
                         JOptionPane.showMessageDialog(frame,
-                            content,
-                            "Info",
-                            JOptionPane.INFORMATION_MESSAGE);                      
+                                content,
+                                "Info",
+                                JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         if (checkProduct.getMinimum() != null) {
                             pMin = checkProduct.getMinimum();
@@ -3118,30 +3157,30 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                             pMemoDate = null;
                         }
 
-                        content = "<html>"+
-                            "<b>" + AppLocal.getIntString("label.currentstock") +
-                            " : " + "</b>" + checkProduct.getUnits() + "<br>" +
-                            "<b>" + AppLocal.getIntString("label.maximum") +
-                            " : " + "</b>" + pMax + "<br>" +
-                            "<b>" + AppLocal.getIntString("label.minimum") +
-                            " : " + "</b>" + pMin + "<br>" +
-                            "<b>" + AppLocal.getIntString("label.proddate") +
-                            " : " + "</b>" + pMemoDate + "<br>";
+                        content = "<html>"
+                                + "<b>" + AppLocal.getIntString("label.currentstock")
+                                + " : " + "</b>" + checkProduct.getUnits() + "<br>"
+                                + "<b>" + AppLocal.getIntString("label.maximum")
+                                + " : " + "</b>" + pMax + "<br>"
+                                + "<b>" + AppLocal.getIntString("label.minimum")
+                                + " : " + "</b>" + pMin + "<br>"
+                                + "<b>" + AppLocal.getIntString("label.proddate")
+                                + " : " + "</b>" + pMemoDate + "<br>";
 
                         JFrame frame = new JFrame();
                         JOptionPane.showMessageDialog(frame,
-                            content,
-                            "Info",
-                            JOptionPane.INFORMATION_MESSAGE);
+                                content,
+                                "Info",
+                                JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (BasicException ex) {
                     Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }       
-      
-            if (listener  != null){           
-                listener.restart(); 
-            }       
+            }
+
+            if (listener != null) {
+                listener.restart();
+            }
         }
     }//GEN-LAST:event_jCheckStockMouseClicked
 
@@ -3152,45 +3191,44 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     private void jTBtnShowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTBtnShowActionPerformed
         if (jTBtnShow.isSelected()) {
             m_jPanelScripts.setVisible(true);
-            m_jButtonsExt.setVisible(true);            
+            m_jButtonsExt.setVisible(true);
         } else {
             m_jPanelScripts.setVisible(false);
-            m_jButtonsExt.setVisible(false);            
+            m_jButtonsExt.setVisible(false);
         }
-            refreshTicket();        
+        refreshTicket();
         m_jKeyFactory.requestFocus();
     }//GEN-LAST:event_jTBtnShowActionPerformed
 
     private void jBtnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCustomerActionPerformed
-        if (listener  != null) {
+        if (listener != null) {
             listener.stop();
         }
-        Object[] options = {"Create", "Find","Cancel"};
-        
+        Object[] options = {"Create", "Find", "Cancel"};
+
         int n = JOptionPane.showOptionDialog(null,
-            AppLocal.getIntString("message.customeradd"),
-            AppLocal.getIntString("label.customer"),            
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            options,
-            options[2]);
+                AppLocal.getIntString("message.customeradd"),
+                AppLocal.getIntString("label.customer"),
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[2]);
 
         if (n == 0) {
-            JDialogNewCustomer dialog = JDialogNewCustomer.getDialog(this,m_App);
+            JDialogNewCustomer dialog = JDialogNewCustomer.getDialog(this, m_App);
             dialog.setVisible(true);
 
             CustomerInfoExt m_customerInfo = dialog.getSelectedCustomer();
-            if (dialog.getSelectedCustomer()!=null){
+            if (dialog.getSelectedCustomer() != null) {
                 try {
-                    m_oTicket.setCustomer(dlSales.loadCustomerExt
-                        (dialog.getSelectedCustomer().getId()));
+                    m_oTicket.setCustomer(dlSales.loadCustomerExt(dialog.getSelectedCustomer().getId()));
                 } catch (BasicException ex) {
                     Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }        
-        
+        }
+
         if (n == 1) {
             JCustomerFinder finder = JCustomerFinder.getCustomerFinder(this, dlCustomers);
 
@@ -3202,11 +3240,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
                 if (finder.getSelectedCustomer() != null) {
                     try {
-                        m_oTicket.setCustomer(dlSales.loadCustomerExt
-                            (finder.getSelectedCustomer().getId()));
+                        m_oTicket.setCustomer(dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()));
                         if ("restaurant".equals(m_App.getProperties().getProperty("machine.ticketsbag"))) {
-                            restDB.setCustomerNameInTableByTicketId(dlSales.loadCustomerExt
-                                (finder.getSelectedCustomer().getId()).toString(), m_oTicket.getId());
+                            restDB.setCustomerNameInTableByTicketId(dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()).toString(), m_oTicket.getId());
                         }
 
                         checkCustomer();
@@ -3215,7 +3251,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
                     } catch (BasicException e) {
                         MessageInf msg = new MessageInf(MessageInf.SGN_WARNING,
-                            AppLocal.getIntString("message.cannotfindcustomer"), e);
+                                AppLocal.getIntString("message.cannotfindcustomer"), e);
                         msg.show(this);
                     }
                 } else {
@@ -3226,45 +3262,43 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
             } else {
                 if (JOptionPane.showConfirmDialog(this,
-                    AppLocal.getIntString("message.customerchange"),
-                    AppLocal.getIntString("title.editor"),
-                    JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+                        AppLocal.getIntString("message.customerchange"),
+                        AppLocal.getIntString("title.editor"),
+                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
-                finder.setAppView(m_App);
-                finder.search(m_oTicket.getCustomer());
-                finder.executeSearch();
-                finder.setVisible(true);
+                    finder.setAppView(m_App);
+                    finder.search(m_oTicket.getCustomer());
+                    finder.executeSearch();
+                    finder.setVisible(true);
 
-                if (finder.getSelectedCustomer() != null) {
-                    try {
-                        m_oTicket.setCustomer(dlSales.loadCustomerExt
-                            (finder.getSelectedCustomer().getId()));
-                        if ("restaurant".equals(m_App.getProperties().getProperty("machine.ticketsbag"))) {
-                            restDB.setCustomerNameInTableByTicketId(dlSales.loadCustomerExt
-                                (finder.getSelectedCustomer().getId()).toString(), m_oTicket.getId());
+                    if (finder.getSelectedCustomer() != null) {
+                        try {
+                            m_oTicket.setCustomer(dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()));
+                            if ("restaurant".equals(m_App.getProperties().getProperty("machine.ticketsbag"))) {
+                                restDB.setCustomerNameInTableByTicketId(dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()).toString(), m_oTicket.getId());
+                            }
+
+                            checkCustomer();
+
+                            m_jTicketId.setText(m_oTicket.getName());
+
+                        } catch (BasicException e) {
+                            MessageInf msg = new MessageInf(MessageInf.SGN_WARNING,
+                                    AppLocal.getIntString("message.cannotfindcustomer"), e);
+                            msg.show(this);
                         }
-
-                        checkCustomer();
-
-                        m_jTicketId.setText(m_oTicket.getName());
-
-                    } catch (BasicException e) {
-                        MessageInf msg = new MessageInf(MessageInf.SGN_WARNING,
-                            AppLocal.getIntString("message.cannotfindcustomer"), e);
-                        msg.show(this);
+                    } else {
+                        restDB.setCustomerNameInTableByTicketId(null, m_oTicket.getId());
+                        m_oTicket.setCustomer(null);
                     }
-                } else {
-                    restDB.setCustomerNameInTableByTicketId(null, m_oTicket.getId());
-                    m_oTicket.setCustomer(null);
                 }
-            }    
             }
         }
-   
+
         refreshTicket();
-        
+
     }//GEN-LAST:event_jBtnCustomerActionPerformed
-                                       
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnReprint1;
     private javax.swing.JButton btnSplit;
@@ -3312,30 +3346,29 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     private javax.swing.JButton m_jbtnScale;
     // End of variables declaration//GEN-END:variables
 
-/* Remote Orders Display
+    /* Remote Orders Display
     We only know about uniCenta oPOS orders and won't try and handle any 
     that are injected from an external source
-*/    
-
+     */
     public void remoteOrderDisplay() {
         remoteOrderDisplay(remoteOrderId(), 1, true);
     }
 
     public void remoteOrderDisplay(String id) {
-        remoteOrderDisplay(id, 1, true);        
-    }        
-
-    public void remoteOrderDisplay(Integer display) {
-        remoteOrderDisplay(remoteOrderId(), display, false);        
+        remoteOrderDisplay(id, 1, true);
     }
 
-    public String remoteOrderId(){
+    public void remoteOrderDisplay(Integer display) {
+        remoteOrderDisplay(remoteOrderId(), display, false);
+    }
+
+    public String remoteOrderId() {
 
         String id = "";
 
         if ((m_oTicket.getCustomer() != null)) {
             return m_oTicket.getCustomer().getName();
-        } else if (m_oTicketExt!=null){
+        } else if (m_oTicketExt != null) {
             return m_oTicketExt.toString();
         } else {
             if (m_oTicket.getPickupId() == 0) {
@@ -3344,11 +3377,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 } catch (BasicException e) {
                     m_oTicket.setPickupId(0);
                 }
-            }            
+            }
 
-            return getPickupString(m_oTicket);                            
+            return getPickupString(m_oTicket);
         }
-    } 
+    }
 
     public void remoteOrderDisplay(String id, Integer display, boolean primary) {
 
@@ -3361,29 +3394,29 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        for (int i = 0; i < m_oTicket.getLinesCount(); i++) {           
+        for (int i = 0; i < m_oTicket.getLinesCount(); i++) {
             try {
-                if (primary){
-                    if ((m_oTicket.getLine(i).getProperty("display")==null)  
-                            || ("".equals(m_oTicket.getLine(i).getProperty("display")))){
+                if (primary) {
+                    if ((m_oTicket.getLine(i).getProperty("display") == null)
+                            || ("".equals(m_oTicket.getLine(i).getProperty("display")))) {
                         display = 1;
-                    }else{
+                    } else {
                         display = Integer.parseInt(m_oTicket.getLine(i).getProperty("display"));
                     }
                 }
 
-                dlSystem.addOrder(getPickupString(m_oTicket)
-                        , (int) m_oTicket.getLine(i).getMultiply()
-                        , m_oTicket.getLine(i).getProductName()
-                        , m_oTicket.getLine(i).getProductAttSetInstDesc()
-                        , m_oTicket.getLine(i).getProperty("notes")
-                        , id
-                        , null
-                        , display
-                        , null
-                        , null);                
+                dlSystem.addOrder(getPickupString(m_oTicket),
+                        (int) m_oTicket.getLine(i).getMultiply(),
+                        m_oTicket.getLine(i).getProductName(),
+                        m_oTicket.getLine(i).getProductAttSetInstDesc(),
+                        m_oTicket.getLine(i).getProperty("notes"),
+                        id,
+                        null,
+                        display,
+                        null,
+                        null);
 
-/* this block for future - right now we're deleting all ticketlines
+                /* this block for future - right now we're deleting all ticketlines
     and resending for consistency with actual ticketlines
                 dlSystem.updateOrder(getPickupString(m_oTicket)
                         , (int) m_oTicket.getLine(i).getMultiply()
@@ -3395,12 +3428,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         , display
                         , null
                         , null);                
-*/                
-                
+                 */
             } catch (BasicException ex) {
                 Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }    
-     
+    }
+
 }
