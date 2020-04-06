@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.ticket;
 
 import com.openbravo.format.Formats;
@@ -26,21 +25,24 @@ import com.openbravo.format.Formats;
  * @author JG uniCenta
  */
 public class TicketTaxInfo {
-    
+
     private TaxInfo tax;
-    
+
     private double subtotal;
     private double taxtotal;
-            
-    /** Creates a new instance of TicketTaxInfo
-     * @param tax */
+
+    /**
+     * Creates a new instance of TicketTaxInfo
+     *
+     * @param tax
+     */
     public TicketTaxInfo(TaxInfo tax) {
         this.tax = tax;
-        
+
         subtotal = 0.0;
         taxtotal = 0.0;
     }
-    
+
     /**
      *
      * @return
@@ -48,7 +50,7 @@ public class TicketTaxInfo {
     public TaxInfo getTaxInfo() {
         return tax;
     }
-    
+
     /**
      *
      * @param dValue
@@ -57,31 +59,31 @@ public class TicketTaxInfo {
         subtotal += dValue;
         taxtotal = subtotal * tax.getRate();
     }
-    
+
     /**
      *
      * @return
      */
-    public double getSubTotal() {    
+    public double getSubTotal() {
         return subtotal;
     }
-    
+
     /**
      *
      * @return
      */
-    public double getTax() {       
+    public double getTax() {
         return taxtotal;
     }
-    
+
     /**
      *
      * @return
      */
-    public double getTotal() {         
+    public double getTotal() {
         return subtotal + taxtotal;
     }
-    
+
     /**
      *
      * @return
@@ -96,7 +98,7 @@ public class TicketTaxInfo {
      */
     public String printTax() {
         return Formats.CURRENCY.formatValue(getTax());
-    }    
+    }
 
     /**
      *
@@ -104,5 +106,17 @@ public class TicketTaxInfo {
      */
     public String printTotal() {
         return Formats.CURRENCY.formatValue(getTotal());
-    }    
+    }
+
+    public String printTaxInfo() {
+        String nombre = tax.toString();
+        if (nombre.equals("IVA 0")) {
+            return "Tarifa 0%";
+        } else if (nombre.equals("IVA 12")) {
+            return "Tarifa 12% (i)";
+        } else if (tax.getTaxCategoryID().equals("003")) {
+            return "ICE";
+        }
+        return "";
+    }
 }

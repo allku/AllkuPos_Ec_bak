@@ -260,6 +260,10 @@ public class CustomerInfoExt extends CustomerInfo {
     public void setCemail(String cemail) {
         this.cemail = cemail;
     }
+    
+    public String printMail() {       
+        return Formats.STRING.formatValue(cemail);
+    }
 
     /**
      *
