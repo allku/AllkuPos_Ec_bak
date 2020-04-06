@@ -954,7 +954,7 @@ INSERT INTO products_cat(product) VALUES ('1');
 
 -- ADD Consumidor Final CUSTOMERS
 INSERT INTO customers (id,searchkey,taxid,name,maxdebt,address,address2,postal,firstname,lastname,notes,visible,isvip,discount) 
-VALUES ('9999999999999','9999999999999','9999999999999','Consumidor Final',0,NULL,NULL,'Consumidor Final','Final','Consumidor','',1,0,0);
+VALUES ('9999999999999','9999999999999','9999999999999','Consumidor Final',0,'Ibarra',NULL,'Consumidor Final','Final','Consumidor','',1,0,0);
 
 -- ADD LOCATION
 INSERT INTO locations(id, name, address) VALUES ('0','Location 1','Local');

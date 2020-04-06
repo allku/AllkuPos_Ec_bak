@@ -1,15 +1,15 @@
-//    uniCenta oPOS  - Touch Friendly Point Of Sale
-//    Copyright (c) 2009-2018 uniCenta & previous Openbravo POS works
-//    https://unicenta.com
+//    AllkuPos Ec  - Touch Friendly Point Of Sale
+//    Copyright (c) 2020 AllkuPos Ec & previous uniCenta & Openbravo POS works
+//    https://www.allku.expert
 //
-//    This file is part of uniCenta oPOS
+//    This file is part of AllkuPos Ec
 //
-//    uniCenta oPOS is free software: you can redistribute it and/or modify
+//    AllkuPos Ec is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//   uniCenta oPOS is distributed in the hope that it will be useful,
+//    AllkuPos Ec is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
@@ -520,13 +520,12 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         String newText = m_props.getProperty("start.text");
         if (newText != null) {
             if (newText.equals("")){
-                jLabel1.setText("<html><center>uniCenta oPOS - Touch Friendly Point of Sale<br>" +
-                "Copyright \u00A9  uniCenta <br>" +
-                "https://unicenta.com/<br>" +
+                jLabel1.setText("<html><center>AllkuPos Ec - Touch Friendly Point of Sale<br>" +
+                "https://www.allku.expert/<br>" +
                 "<br>" +
-                "uniCenta oPOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>" +
+                "AllkuPos Ec is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>" +
                 "<br>" +
-                "uniCenta oPOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>" +
+                "AllkuPos Ec is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>" +
                 "<br>" +
                 "You should have received a copy of the GNU General Public License along with uniCenta oPOS.  If not, see http://www.gnu.org/licenses/<br>" +
                 "</center>");
