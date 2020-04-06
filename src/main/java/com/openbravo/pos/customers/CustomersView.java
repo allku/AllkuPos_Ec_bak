@@ -124,6 +124,9 @@ public final class CustomersView extends javax.swing.JPanel implements EditorRec
             ComboDocumento.addItem("Cédula");
             ComboDocumento.addItem("Pasaporte");
             ComboDocumento.addItem("Consumidor Final");
+            
+            m_jSearchkey.setVisible(false);
+            jLabel8.setVisible(false);
 
             init();
         } catch (BeanFactoryException ex) {
@@ -382,6 +385,7 @@ public final class CustomersView extends javax.swing.JPanel implements EditorRec
         txtAddress.setText(Formats.STRING.formatValue(customer[7]));
         txtAddress2.setText(Formats.STRING.formatValue(customer[8]));
         txtPostal.setText(Formats.STRING.formatValue(customer[9]));
+        ComboDocumento.setSelectedItem(Formats.STRING.formatValue(customer[9]));
         txtCity.setText(Formats.STRING.formatValue(customer[10]));
         txtRegion.setText(Formats.STRING.formatValue(customer[11]));
         txtCountry.setText(Formats.STRING.formatValue(customer[12]));
@@ -463,6 +467,7 @@ public final class CustomersView extends javax.swing.JPanel implements EditorRec
         txtAddress.setText(Formats.STRING.formatValue(customer[7]));
         txtAddress2.setText(Formats.STRING.formatValue(customer[8]));
         txtPostal.setText(Formats.STRING.formatValue(customer[9]));
+        ComboDocumento.setSelectedItem(Formats.STRING.formatValue(customer[9]));
         txtCity.setText(Formats.STRING.formatValue(customer[10]));
         txtRegion.setText(Formats.STRING.formatValue(customer[11]));
         txtCountry.setText(Formats.STRING.formatValue(customer[12]));
@@ -589,9 +594,11 @@ public final class CustomersView extends javax.swing.JPanel implements EditorRec
         customer[26] = Formats.TIMESTAMP.parseValue(m_jdate.getText());
         customer[27] = (Object) getAppView();
 
-        String cadena = m_jName.getText();
-        cadena = cadena.replaceAll("\\s+", "");
-        if (cadena.isEmpty()) {
+        String name = m_jName.getText();
+        String id = m_jTaxID.getText();
+        name = name.replaceAll("\\s+", "");
+        id =id.replaceAll("\\s+", "");
+        if (name.isEmpty() || id.isEmpty()) {
             return null;
         }
 
