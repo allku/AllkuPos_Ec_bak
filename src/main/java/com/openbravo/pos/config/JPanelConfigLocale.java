@@ -167,7 +167,9 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
          
         config.setProperty("format.integer", readWithDefault(jcboInteger.getSelectedItem()));
         config.setProperty("format.double", readWithDefault(jcboDouble.getSelectedItem()));
-        config.setProperty("format.currency", readWithDefault(jcboCurrency.getSelectedItem()));
+//        config.setProperty("format.currency", readWithDefault(jcboCurrency.getSelectedItem()));
+//      Simple format 0.00
+        config.setProperty("format.currency", "0.00");
         config.setProperty("format.percent", readWithDefault(jcboPercent.getSelectedItem()));
         config.setProperty("format.date", readWithDefault(jcboDate.getSelectedItem()));
         config.setProperty("format.time", readWithDefault(jcboTime.getSelectedItem()));
