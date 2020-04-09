@@ -347,13 +347,4 @@
 
     </ticket>
 
-    #foreach ($paymentline in $ticket.payments)
-    #if ($paymentline.name == "cash")
-    <opendrawer/>
-    #end
-    #if ($paymentline.name == "cashrefund")
-    <opendrawer/>
-    #end
-    #end
-
 </output>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
   AllkuPos - Touch friendly Point Of Sale
-  Copyright (c) 2020 Allku.Expert
   https://github.com/allku/AllkuPos_Ec
 
   This file is part of AllkuPos
@@ -21,6 +20,15 @@
 -->
 
 <output>
+    
+    #foreach ($paymentline in $ticket.payments)
+    #if ($paymentline.name == "cash")
+    <opendrawer/>
+    #end
+    #if ($paymentline.name == "cashrefund")
+    <opendrawer/>
+    #end
+    #end
 
     <display>
         <line>
@@ -400,14 +408,5 @@
         #end
 
     </ticket>
-
-    #foreach ($paymentline in $ticket.payments)
-    #if ($paymentline.name == "cash")
-    <opendrawer/>
-    #end
-    #if ($paymentline.name == "cashrefund")
-    <opendrawer/>
-    #end
-    #end
 
 </output>
