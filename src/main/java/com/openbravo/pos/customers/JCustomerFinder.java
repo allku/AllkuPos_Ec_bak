@@ -1,15 +1,15 @@
-//    uniCenta oPOS  - Touch Friendly Point Of Sale
+//    AllkuPOS Ec  - Touch Friendly Point Of Sale
 //    Copyright (c) 2009-2018 uniCenta & previous Openbravo POS works
-//    https://unicenta.com
+//    https://www.allku.expert
 //
 //    This file is part of uniCenta oPOS
 //
-//    uniCenta oPOS is free software: you can redistribute it and/or modify
+//    AllkuPOS Ec is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//   uniCenta oPOS is distributed in the hope that it will be useful,
+//    AllkuPOS Ec is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
@@ -23,6 +23,7 @@ import com.openbravo.data.loader.QBFCompareEnum;
 import com.openbravo.data.user.EditorCreator;
 import com.openbravo.data.user.ListProvider;
 import com.openbravo.data.user.ListProviderCreator;
+import com.openbravo.editor.JEditorString;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppView;
 import java.awt.*;
@@ -711,4 +712,13 @@ private void jbtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private com.openbravo.editor.JEditorString m_jtxtSearchKey;
     private com.openbravo.editor.JEditorString m_jtxtTaxID;
     // End of variables declaration//GEN-END:variables
+
+    //Added by Jorge Luis
+    public JEditorString getM_jtxtTaxID() {
+        return m_jtxtTaxID;
+    }
+    //Added by Jorge Luis   
+    public void setM_jtxtTaxID(JEditorString m_jtxtTaxID) {
+        this.m_jtxtTaxID = m_jtxtTaxID;
+    }
 }

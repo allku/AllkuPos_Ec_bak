@@ -1,15 +1,15 @@
-//    uniCenta oPOS  - Touch Friendly Point Of Sale
+//    AllkuPOS Ec  - Touch Friendly Point Of Sale
 //    Copyright (c) 2009-2018 uniCenta & previous Openbravo POS works
-//    https://unicenta.com
+//    https://www.allku.expert
 //
-//    This file is part of uniCenta oPOS
+//    This file is part of AllkuPOS Ec
 //
-//    uniCenta oPOS is free software: you can redistribute it and/or modify
+//    AllkuPOS Ec is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//   uniCenta oPOS is distributed in the hope that it will be useful,
+//    AllkuPOS Ec is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
@@ -88,6 +88,7 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRMapArrayDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import com.openbravo.editor.JEditorString;
 
 /**
  *
@@ -945,6 +946,42 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     }
 
     /*
+        Added by Jorge Luis
+        Función para recuperar el cliente seleccionado en el JPaymentSelect. 
+     */
+    private boolean getCliente(String documento) {
+
+        System.out.println("Documento: " + documento);
+
+        CustomerInfo c = new CustomerInfo(documento);
+
+        JCustomerFinder finder = JCustomerFinder.getCustomerFinder(this, dlCustomers);
+        c.setSearchkey(documento);
+
+        com.openbravo.editor.JEditorString m_jtxtTax = new JEditorString();
+        m_jtxtTax.setText(documento);
+
+        finder.setM_jtxtTaxID(m_jtxtTax);
+
+        finder.executeSearchDirecto();
+        c = finder.getSelectedCustomer();
+        if (c == null) {
+            return false;
+        }
+        try {
+            m_oTicket.setCustomer(finder.getSelectedCustomer() == null
+                    ? null
+                    : dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()));
+        } catch (BasicException e) {
+            MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotfindcustomer"), e);
+            msg.show(this);
+        }
+
+        return true;
+    }
+
+    /*
+        Added by Jorge Luis
         Función para recuperar un consumidor final si no se elige.
      */
     private boolean getConsumidorFinal() {
@@ -1763,6 +1800,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     if (paymentdialog.showDialog(ticket.getTotal(), ticket.getCustomer())) {
 
                         ticket.setPayments(paymentdialog.getSelectedPayments());
+                        //Added by Jorge Luis
+                        getCliente(paymentdialogreceipt.getDocumento());
 
                         ticket.setUser(m_App.getAppUserView().getUser().getUserInfo());
                         ticket.setActiveCash(m_App.getActiveCashIndex());
@@ -1786,7 +1825,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                             executeEvent(ticket, ticketext, "ticket.close",
                                     new ScriptArg("print", paymentdialog.isPrintSelected()));
 
-                            //Added Print Ticket
+                            //Added by Jorge Luis
+                            //Added Print Ticket                            
                             ticket.setRuc(dlSystem.getResourceAsText("Empresa.RUC"));
                             ticket.setEstablecimiento(dlSystem.getResourceAsText("Empresa.Establecimiento"));
                             ticket.setPuntoEmision(dlSystem.getResourceAsText("Empresa.PuntoEmision"));
