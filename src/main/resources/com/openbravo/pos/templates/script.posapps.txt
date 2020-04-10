@@ -21,21 +21,21 @@
 // **************************************************************************
 // This script opens up the posapps settings / config screen
 
-import uk.co.pos_apps.PosApps;
-import java.awt.Window;
+//import uk.co.pos_apps.PosApps;
+//import java.awt.Window;
 
 System.out.println("Run posapps!");
 
-Window rootWindow ;
+//Window rootWindow ;
  
-Window[] allWindows = Window.getWindows();
+//Window[] allWindows = Window.getWindows();
  
-for (int i=0 ; i < allWindows.length; i++){
-    if (allWindows[i].getName().equals("frame0")){
-                 rootWindow = (Window)allWindows[i];
-             }
-}
+//for (int i=0 ; i < allWindows.length; i++){
+//    if (allWindows[i].getName().equals("frame0")){
+//                 rootWindow = (Window)allWindows[i];
+//             }
+//}
  
-PosApps posApps = new PosApps();
+//PosApps posApps = new PosApps();
  
-posApps.init(ticket,dbURL,dbUser,dbPassword,rootWindow,"Settings");
+//posApps.init(ticket,dbURL,dbUser,dbPassword,rootWindow,"Settings");

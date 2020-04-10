@@ -34,7 +34,9 @@ public class PaymentGatewayFac {
     public static PaymentGateway getPaymentGateway(AppProperties props) {
         
         String sReader = props.getProperty("payment.gateway");
+        System.out.println("Geteway for payment only in Unicenta version");
 // JG 16 May 12 use switch
+/*
         switch (sReader) {
             case "external":
                 return new PaymentGatewayExt();
@@ -47,5 +49,7 @@ public class PaymentGatewayFac {
             default:
                 return null;
         }
+*/
+        return null;
     }      
 }

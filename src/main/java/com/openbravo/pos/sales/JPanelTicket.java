@@ -1822,9 +1822,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                                 Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                             }
 
+                            /*
+                            //Comented by Jorge Luis to disable print ticket unicenta pos message app
                             executeEvent(ticket, ticketext, "ticket.close",
                                     new ScriptArg("print", paymentdialog.isPrintSelected()));
-
+                             */
                             //Added by Jorge Luis
                             //Added Print Ticket                            
                             ticket.setRuc(dlSystem.getResourceAsText("Empresa.RUC"));

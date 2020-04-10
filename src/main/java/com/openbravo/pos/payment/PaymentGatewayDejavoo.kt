@@ -1,12 +1,12 @@
 package com.openbravo.pos.payment
 
-import uk.co.pos_apps.PosApps;
-import uk.co.pos_apps.payment.dejavoo.DejavooProcessor;
+//import uk.co.pos_apps.PosApps;
+//import uk.co.pos_apps.payment.dejavoo.DejavooProcessor;
 
-class PaymentGatewayDejavoo :PaymentGateway {
+class PaymentGatewayDejavoo /*:PaymentGateway*/ {
 
     val PAYMENT_PROCESSOR = "Dejavoo"
-
+/*
     override fun execute(payinfo: PaymentInfoMagcard?) {
         DejavooProcessor.paymentComplete = false
 
@@ -35,4 +35,5 @@ class PaymentGatewayDejavoo :PaymentGateway {
         }
 
     }
+*/
 }

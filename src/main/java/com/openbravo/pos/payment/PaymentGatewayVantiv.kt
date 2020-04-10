@@ -1,12 +1,12 @@
 package com.openbravo.pos.payment
 
-import uk.co.pos_apps.PosApps
-import uk.co.pos_apps.common.AppContext
+//import uk.co.pos_apps.PosApps
+//import uk.co.pos_apps.common.AppContext
 
-class PaymentGatewayVantiv :PaymentGateway {
+class PaymentGatewayVantiv /*:PaymentGateway */{
 
     val PAYMENT_PROCESSOR = "Vantiv"
-
+    /*
     override fun execute(payinfo: PaymentInfoMagcard?) {
 
         AppContext.paymentComplete = false
@@ -37,4 +37,5 @@ class PaymentGatewayVantiv :PaymentGateway {
             payinfo?.paymentError("Transaction Error! Please try again", AppContext.paymentResult.transactionResult)
         }
     }
+*/
 }

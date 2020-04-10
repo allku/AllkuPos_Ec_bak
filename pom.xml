@@ -443,7 +443,7 @@
         <version>2.10</version>
       </extension>
     </extensions>
-    <finalName>unicentaopos</finalName> 
+    <finalName>AllkuPos_Ec</finalName> 
   </build>  
   <repositories> 
     <repository> 

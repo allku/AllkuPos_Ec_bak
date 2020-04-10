@@ -22,6 +22,7 @@
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
 // **************************************************************************
 
-import uk.co.pos_apps.PosApps;
+//import uk.co.pos_apps.PosApps;
 
-PosApps.createCustomer(device, customer);
+System.out.println("customer.created event!");
+//PosApps.createCustomer(device, customer);
