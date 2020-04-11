@@ -272,19 +272,23 @@ public class AppConfig implements AppProperties {
         m_propsconfig.setProperty("db.multi", "false");
         m_propsconfig.setProperty("override.check", "false");
         m_propsconfig.setProperty("override.pin", "");
-
+        //MySQL 5
+//        m_propsconfig.setProperty("db.driverlib", new File(new File(dirname),
+//                "mysql-connector-java-5.1.39.jar").getAbsolutePath());
+        //MySQL 8
         m_propsconfig.setProperty("db.driverlib", new File(new File(dirname),
-                "mysql-connector-java-5.1.39.jar").getAbsolutePath());
+                "mysql-connector-java-8.0.19.jar").getAbsolutePath());
+        
         m_propsconfig.setProperty("db.engine", "MySQL");
 //      Commented by Jorge Luis to MySQL 5
-      m_propsconfig.setProperty("db.driver", "com.mysql.jdbc.Driver");
+//      m_propsconfig.setProperty("db.driver", "com.mysql.jdbc.Driver");
 //      Added by Jorge Luis to MySQL 8
-//        m_propsconfig.setProperty("db.driver", "com.mysql.cj.jdbc.Driver");
+        m_propsconfig.setProperty("db.driver", "com.mysql.cj.jdbc.Driver");
 
 // primary DB
-        m_propsconfig.setProperty("db.name", "Main DB");
+        m_propsconfig.setProperty("db.name", "allkupos");
         m_propsconfig.setProperty("db.URL", "jdbc:mysql://localhost:3306/");
-        m_propsconfig.setProperty("db.schema", "unicentaopos");
+        m_propsconfig.setProperty("db.schema", "allkupos");
         m_propsconfig.setProperty("db.options", "?zeroDateTimeBehavior=convertToNull");
         m_propsconfig.setProperty("db.user", "username");
         m_propsconfig.setProperty("db.password", "password");
@@ -292,7 +296,7 @@ public class AppConfig implements AppProperties {
 // secondary DB        
         m_propsconfig.setProperty("db1.name", "");
         m_propsconfig.setProperty("db1.URL", "jdbc:mysql://localhost:3306/");
-        m_propsconfig.setProperty("db1.schema", "allkupos_ec");
+        m_propsconfig.setProperty("db1.schema", "allkupos");
         m_propsconfig.setProperty("db1.options", "?zeroDateTimeBehavior=convertToNull");
         m_propsconfig.setProperty("db1.user", "");
         m_propsconfig.setProperty("db1.password", "");
