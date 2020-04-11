@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.config;
 
 import com.openbravo.data.user.DirtyManager;
@@ -28,22 +27,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang.LocaleUtils;
 
 /**
  *
- * @author  adrianromero
+ * @author adrianromero
  */
 public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfig {
-    
+
     private final DirtyManager dirty = new DirtyManager();
-    
+
     private final static String DEFAULT_VALUE = "(Default)";
 
-    /** Creates new form JPanelConfigLocale */
+    /**
+     * Creates new form JPanelConfigLocale
+     */
     public JPanelConfigLocale() {
-        
+
         initComponents();
-        
+
         jcboLocale.addActionListener(dirty);
         jcboInteger.addActionListener(dirty);
         jcboDouble.addActionListener(dirty);
@@ -52,40 +54,42 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
         jcboDate.addActionListener(dirty);
         jcboTime.addActionListener(dirty);
         jcboDatetime.addActionListener(dirty);
-        
+
         List<Locale> availablelocales = new ArrayList<>();
-        availablelocales.addAll(Arrays.asList(Locale.getAvailableLocales())); // Available java locales
+//        availablelocales.addAll(Arrays.asList(Locale.getAvailableLocales())); // Available java locales
+        //Added by Jorge Luis
+        availablelocales.add(LocaleUtils.toLocale("es_EC"));
 //        addLocale(availablelocales, new Locale("en", "GB", "")); // English GB
 //        addLocale(availablelocales, new Locale("en", "US", "")); // English USA
-        
+
         Collections.sort(availablelocales, new LocaleComparator());
-        
-        jcboLocale.addItem(new LocaleInfo (null));
+
+        jcboLocale.addItem(new LocaleInfo(null));
         for (Locale l : availablelocales) {
             jcboLocale.addItem(new LocaleInfo(l));
         }
-        
+
         jcboInteger.addItem(DEFAULT_VALUE);
         jcboInteger.addItem("#0");
         jcboInteger.addItem("#,##0");
-        
+
         jcboDouble.addItem(DEFAULT_VALUE);
         jcboDouble.addItem("#0.0");
         jcboDouble.addItem("#,##0.#");
-        
+
         jcboCurrency.addItem(DEFAULT_VALUE);
         jcboCurrency.addItem("\u00A4 #0.00");
         jcboCurrency.addItem("'$' #,##0.00");
-        
+
         jcboPercent.addItem(DEFAULT_VALUE);
         jcboPercent.addItem("#,##0.##%");
-        
+
         jcboDate.addItem(DEFAULT_VALUE);
-        
+
         jcboTime.addItem(DEFAULT_VALUE);
-        
+
         jcboDatetime.addItem(DEFAULT_VALUE);
-               
+
     }
 
     private void addLocale(List<Locale> ll, Locale l) {
@@ -93,7 +97,7 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
             ll.add(l);
         }
     }
-    
+
     /**
      *
      * @return
@@ -102,7 +106,7 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
     public boolean hasChanged() {
         return dirty.isDirty();
     }
-    
+
     /**
      *
      * @return
@@ -111,31 +115,31 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
     public Component getConfigComponent() {
         return this;
     }
-   
+
     /**
      *
      * @param config
      */
     @Override
     public void loadProperties(AppConfig config) {
-        
+
         String slang = config.getProperty("user.language");
         String scountry = config.getProperty("user.country");
         String svariant = config.getProperty("user.variant");
-        
-        if (slang != null && !slang.equals("") && scountry != null && svariant != null) {                    
+
+        if (slang != null && !slang.equals("") && scountry != null && svariant != null) {
             Locale currentlocale = new Locale(slang, scountry, svariant);
-            for (int i = 0 ; i < jcboLocale.getItemCount(); i++)  {
+            for (int i = 0; i < jcboLocale.getItemCount(); i++) {
                 LocaleInfo l = (LocaleInfo) jcboLocale.getItemAt(i);
                 if (currentlocale.equals(l.getLocale())) {
                     jcboLocale.setSelectedIndex(i);
                     break;
                 }
-            }        
+            }
         } else {
             jcboLocale.setSelectedIndex(0);
         }
-        
+
         jcboInteger.setSelectedItem(writeWithDefault(config.getProperty("format.integer")));
         jcboDouble.setSelectedItem(writeWithDefault(config.getProperty("format.double")));
         jcboCurrency.setSelectedItem(writeWithDefault(config.getProperty("format.currency")));
@@ -143,17 +147,17 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
         jcboDate.setSelectedItem(writeWithDefault(config.getProperty("format.date")));
         jcboTime.setSelectedItem(writeWithDefault(config.getProperty("format.time")));
         jcboDatetime.setSelectedItem(writeWithDefault(config.getProperty("format.datetime")));
-               
+
         dirty.setDirty(false);
     }
-    
+
     /**
      *
      * @param config
      */
     @Override
     public void saveProperties(AppConfig config) {
-        
+
         Locale l = ((LocaleInfo) jcboLocale.getSelectedItem()).getLocale();
         if (l == null) {
             config.setProperty("user.language", "");
@@ -164,7 +168,7 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
             config.setProperty("user.country", l.getCountry());
             config.setProperty("user.variant", l.getVariant());
         }
-         
+
         config.setProperty("format.integer", readWithDefault(jcboInteger.getSelectedItem()));
         config.setProperty("format.double", readWithDefault(jcboDouble.getSelectedItem()));
 //        config.setProperty("format.currency", readWithDefault(jcboCurrency.getSelectedItem()));
@@ -174,10 +178,10 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
         config.setProperty("format.date", readWithDefault(jcboDate.getSelectedItem()));
         config.setProperty("format.time", readWithDefault(jcboTime.getSelectedItem()));
         config.setProperty("format.datetime", readWithDefault(jcboDatetime.getSelectedItem()));
-        
+
         dirty.setDirty(false);
     }
-    
+
     private String readWithDefault(Object value) {
         if (DEFAULT_VALUE.equals(value)) {
             return "";
@@ -185,7 +189,7 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
             return value.toString();
         }
     }
-    
+
     private Object writeWithDefault(String value) {
         if (value == null || value.equals("") || value.equals(DEFAULT_VALUE)) {
             return DEFAULT_VALUE;
@@ -193,28 +197,31 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
             return value;
         }
     }
-    
+
     private static class LocaleInfo {
+
         private final Locale locale;
-        
+
         public LocaleInfo(Locale locale) {
             this.locale = locale;
         }
+
         public Locale getLocale() {
             return locale;
         }
+
         @Override
         public String toString() {
-            return locale == null 
-                    ? "(System default)" 
+            return locale == null
+                    ? "(System default)"
                     : locale.getDisplayName();
         }
     }
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -402,8 +409,8 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
                 .addContainerGap(148, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -423,5 +430,5 @@ public class JPanelConfigLocale extends javax.swing.JPanel implements PanelConfi
     private javax.swing.JComboBox jcboPercent;
     private javax.swing.JComboBox jcboTime;
     // End of variables declaration//GEN-END:variables
-    
+
 }

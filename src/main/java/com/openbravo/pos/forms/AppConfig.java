@@ -286,7 +286,7 @@ public class AppConfig implements AppProperties {
 // secondary DB        
         m_propsconfig.setProperty("db1.name", "");        
         m_propsconfig.setProperty("db1.URL", "jdbc:mysql://localhost:3306/"); 
-        m_propsconfig.setProperty("db1.schema", "unicentaopos");
+        m_propsconfig.setProperty("db1.schema", "allkupos_ec");
         m_propsconfig.setProperty("db1.options", "?zeroDateTimeBehavior=convertToNull");        
         m_propsconfig.setProperty("db1.user", "");
         m_propsconfig.setProperty("db1.password", ""); 
@@ -343,7 +343,7 @@ public class AppConfig implements AppProperties {
 
         m_propsconfig.setProperty("tkt.header1", "AllkuPos Ec");
         m_propsconfig.setProperty("tkt.header2", "Touch Friendly Point Of Sale");
-        m_propsconfig.setProperty("tkt.header3", "Copyright (c) 2020 Allku");
+        m_propsconfig.setProperty("tkt.header3", "www.allku.expert");
         m_propsconfig.setProperty("tkt.header4", "Change header text in Configuration");                
         
         m_propsconfig.setProperty("tkt.footer1", "Descarga tú factura en:");        
