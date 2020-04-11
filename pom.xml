@@ -269,11 +269,11 @@
             <version>7.1.00</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-        <dependency>
+<!--        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.4.1208</version>
-        </dependency>
+        </dependency>-->
     </dependencies>  
     <build> 
         <plugins> 
