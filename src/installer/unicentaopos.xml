@@ -18,7 +18,7 @@
             <show>1</show>
             <desktopShortcutList>
                 <shortcut>
-                    <comment>uniCenta oPOS - Touch Friendly Point Of Sale</comment>
+                    <comment>AllkuPos Ec - Touch Point of Sale</comment>
                     <exec>sh ${installdir}/start.sh</exec>
                     <icon>${installdir}/unicentaopos.png</icon>
                     <name>uniCenta oPOS</name>
@@ -247,7 +247,7 @@ Then continue with uniCenta oPOS installation.</text>
         </launchBrowser>
     </postInstallationActionList>
     <createOsxBundleZip>1</createOsxBundleZip>
-    <description>uniCenta oPOS - Touch Friendly Point of Sale</description>
+    <description>AllkuPos Ec - Touch Point of Sale</description>
     <enableRollback>1</enableRollback>
     <enableTimestamp>1</enableTimestamp>
     <licenseFileEncoding>utf-8</licenseFileEncoding>
@@ -299,7 +299,7 @@ Then continue with uniCenta oPOS installation.</text>
     </parameterList>
     <platformOptionsList>
         <platformOptions>
-            <description>uniCenta oPOS - Touch Friendly Point Of Sale</description>
+            <description>AllkuPos Ec - Touch Point of Sale</description>
             <platform>deb</platform>
             <release>1</release>
             <summary>POS</summary>

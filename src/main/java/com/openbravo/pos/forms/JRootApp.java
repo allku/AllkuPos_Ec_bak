@@ -200,8 +200,7 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         
         initComponents ();            
         jScrollPane1.getVerticalScrollBar().setPreferredSize(new Dimension(30, 30));
-        serverMonitor.setVisible(false);
-        webMemoryBar1.setShowMaximumMemory ( true );
+        serverMonitor.setVisible(false);        
     }
     private DSPortAdapter m_oneWireAdapter;
     private DeviceMonitor m_oneWireMonitor;
@@ -520,7 +519,7 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         String newText = m_props.getProperty("start.text");
         if (newText != null) {
             if (newText.equals("")){
-                jLabel1.setText("<html><center>AllkuPos Ec - Touch Friendly Point of Sale<br>" +
+                jLabel1.setText("<html><center>AllkuPos Ec - Friendly Point of Sale<br>" +
                 "https://www.allku.expert/<br>" +
                 "<br>" +
                 "AllkuPos Ec is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>" +
@@ -968,7 +967,6 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
 
         m_jPanelTitle = new javax.swing.JPanel();
         m_jLblTitle = new javax.swing.JLabel();
-        poweredby = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         m_jPanelContainer = new javax.swing.JPanel();
         m_jPanelLogin = new javax.swing.JPanel();
@@ -986,7 +984,6 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         m_jPanelDown = new javax.swing.JPanel();
         panelTask = new javax.swing.JPanel();
         m_jHost = new javax.swing.JLabel();
-        webMemoryBar1 = new com.alee.extended.statusbar.WebMemoryBar();
         serverMonitor = new com.alee.laf.progressbar.WebProgressBar();
         jPanel3 = new javax.swing.JPanel();
 
@@ -1002,14 +999,6 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         m_jLblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         m_jLblTitle.setText("Window.Title");
         m_jPanelTitle.add(m_jLblTitle, java.awt.BorderLayout.CENTER);
-
-        poweredby.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        poweredby.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/poweredby_uni.png"))); // NOI18N
-        poweredby.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        poweredby.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        poweredby.setMaximumSize(new java.awt.Dimension(180, 34));
-        poweredby.setPreferredSize(new java.awt.Dimension(180, 34));
-        m_jPanelTitle.add(poweredby, java.awt.BorderLayout.LINE_END);
 
         jLabel2.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
@@ -1027,13 +1016,12 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         jLabel1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/unicenta.png"))); // NOI18N
-        jLabel1.setText("<html><center>uniCenta oPOS - Touch Friendly Point of Sale<br>" +
-            "Copyright \u00A9 2009-2018 uniCenta <br>" +
-            "https://unicenta.com<br>" +
+        jLabel1.setText("<html><center>AllkuPos Ec - Touch Point of Sale<br>" +
+            "https://www.allku.expert<br>" +
             "<br>" +
-            "uniCenta oPOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>" +
+            "AllkuPos Ec is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>" +
             "<br>" +
-            "uniCenta oPOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>" +
+            "AllkuPos Ec is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>" +
             "<br>" +
             "You should have received a copy of the GNU General Public License along with uniCenta oPOS.  If not, see http://www.gnu.org/licenses/<br>" +
             "</center>");
@@ -1147,14 +1135,6 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         m_jHost.setText("*Hostname");
         panelTask.add(m_jHost);
 
-        webMemoryBar1.setBackground(new java.awt.Color(153, 153, 153));
-        webMemoryBar1.setText("");
-        webMemoryBar1.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        webMemoryBar1.setPreferredSize(new java.awt.Dimension(150, 30));
-        webMemoryBar1.setUsedBorderColor(new java.awt.Color(0, 204, 204));
-        webMemoryBar1.setUsedFillColor(new java.awt.Color(0, 204, 255));
-        panelTask.add(webMemoryBar1);
-
         serverMonitor.setToolTipText("");
         serverMonitor.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         serverMonitor.setMaximumSize(new java.awt.Dimension(50, 18));
@@ -1205,8 +1185,6 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
     private javax.swing.JPanel m_jPanelTitle;
     private javax.swing.JTextField m_txtKeys;
     private javax.swing.JPanel panelTask;
-    private javax.swing.JLabel poweredby;
     private com.alee.laf.progressbar.WebProgressBar serverMonitor;
-    private com.alee.extended.statusbar.WebMemoryBar webMemoryBar1;
     // End of variables declaration//GEN-END:variables
 }
