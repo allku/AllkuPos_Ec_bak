@@ -761,13 +761,17 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             } else {
                 if (i < 1) {
                     if (m_App.getAppUserView().getUser().hasPermission("sales.DeleteLines")) {
+                        //Updated by Jorge Luis, remove message delete item from list
+                        m_oTicket.removeLine(i);
+                        m_ticketlines.removeTicketLine(i);
+                        /*
                         int input = JOptionPane.showConfirmDialog(this,
                                 AppLocal.getIntString("message.deletelineyes"),
                                 AppLocal.getIntString("label.deleteline"), JOptionPane.YES_NO_OPTION);
                         if (input == 0) {
                             m_oTicket.removeLine(i);
                             m_ticketlines.removeTicketLine(i);
-                        }
+                        }*/
                     } else {
                         JOptionPane.showMessageDialog(this,
                                 AppLocal.getIntString("message.deletelineno"),
