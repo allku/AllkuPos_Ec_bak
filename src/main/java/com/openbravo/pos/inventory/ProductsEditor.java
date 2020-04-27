@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.inventory;
 
 import com.openbravo.basic.BasicException;
@@ -73,7 +72,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public final class ProductsEditor extends javax.swing.JPanel implements EditorRecord {
 
     private AppProperties m_props;
-    
+
     private static final long serialVersionUID = 1L;
     private Object m_oId;
 
@@ -85,9 +84,9 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
     private final SentenceList attsent;
     private ComboBoxValModel attmodel;
-    
+
     private final SentenceList m_sentsuppliers;
-    private ComboBoxValModel m_SuppliersModel;      
+    private ComboBoxValModel m_SuppliersModel;
 
     private final SentenceList taxsent;
     private TaxesLogic taxeslogic;
@@ -97,45 +96,50 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
     private boolean reportlock = false;
     private int btn;
-    
+
     private List<ProductStock> productStockList;
-    private ProductsEditor.StockTableModel stockModel;   
-    
+    private ProductsEditor.StockTableModel stockModel;
+
     private SentenceList m_sentuom;
     private ComboBoxValModel m_UomModel;
 
     private DirtyManager m_Dirty;
-    private DataLogicSales dlSales;    
-    private DataLogicSystem m_dlSystem;     
-    private DataLogicSuppliers m_dlSuppliers;    
-    
-    private AppView appView;   
+    private DataLogicSales dlSales;
+    private DataLogicSystem m_dlSystem;
+    private DataLogicSuppliers m_dlSuppliers;
+
+    private AppView appView;
 
     private final SentenceFind loadimage; // JG 3 feb 16 speedup    
-    
+
     private Session s;
-    private Connection con;  
+    private Connection con;
     private Statement stmt;
     private PreparedStatement pstmt;
     private String SQL;
     private ResultSet rs;
     private AppView m_App;
 
-    protected DataLogicSystem dlSystem;    
-    
-    
-    /** Creates new form JEditProduct
+    protected DataLogicSystem dlSystem;
+
+    DataLogicSales product;
+
+    /**
+     * Creates new form JEditProduct
+     *
      * @param app
-     * @param dirty */
+     * @param dirty
+     */
     public ProductsEditor(AppView app, DirtyManager dirty) {
 
         setAppView(app);
-            dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
-            m_dlSystem = (DataLogicSystem) app.getBean("com.openbravo.pos.forms.DataLogicSystem");            
-            m_dlSuppliers = (DataLogicSuppliers) app.getBean("com.openbravo.pos.suppliers.DataLogicSuppliers");
-            
+        dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
+        m_dlSystem = (DataLogicSystem) app.getBean("com.openbravo.pos.forms.DataLogicSystem");
+        m_dlSuppliers = (DataLogicSuppliers) app.getBean("com.openbravo.pos.suppliers.DataLogicSuppliers");
+
         initComponents();
-        
+        product = dlSales;
+
         loadimage = dlSales.getProductImage(); // JG 3 feb 16 speedup
 
         taxsent = dlSales.getTaxList();
@@ -148,12 +152,12 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
         attsent = dlSales.getAttributeSetList();
         attmodel = new ComboBoxValModel();
-        
+
         m_sentsuppliers = m_dlSuppliers.getSupplierList();
-        m_SuppliersModel =  new ComboBoxValModel();
-        
+        m_SuppliersModel = new ComboBoxValModel();
+
         m_sentuom = dlSales.getUomList();
-        m_UomModel = new ComboBoxValModel();        
+        m_UomModel = new ComboBoxValModel();
 
 // Tab General        
         m_jRef.getDocument().addDocumentListener(dirty);
@@ -162,41 +166,41 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jName.getDocument().addDocumentListener(dirty);
         m_jCategory.addActionListener(dirty);
         m_jAtt.addActionListener(dirty);
-        m_jVerpatrib.addActionListener(dirty); 
+        m_jVerpatrib.addActionListener(dirty);
         m_jTax.addActionListener(dirty);
-        m_jUom.addActionListener(dirty);        
+        m_jUom.addActionListener(dirty);
         m_jPriceBuy.getDocument().addDocumentListener(dirty);
         m_jPriceSell.getDocument().addDocumentListener(dirty);
         m_jPrintTo.addActionListener(dirty);
-        
+
 // Tab Stock        
         m_jInCatalog.addActionListener(dirty);
         m_jConstant.addActionListener(dirty);
         m_jCatalogOrder.getDocument().addDocumentListener(dirty);
-        m_jSupplier.addActionListener(dirty);        
-        
+        m_jSupplier.addActionListener(dirty);
+
         m_jService.addActionListener(dirty);
-        m_jCheckWarrantyReceipt.addActionListener(dirty);       
+        m_jCheckWarrantyReceipt.addActionListener(dirty);
         m_jComment.addActionListener(dirty);
         m_jScale.addActionListener(dirty);
         m_jVprice.addActionListener(dirty);
         m_jstockcost.getDocument().addDocumentListener(dirty);
         m_jstockvolume.getDocument().addDocumentListener(dirty);
         m_jPrintKB.addActionListener(dirty);
-        m_jSendStatus.addActionListener(dirty);        
-        
+        m_jSendStatus.addActionListener(dirty);
+
 // Tab Image
         m_jImage.addPropertyChangeListener("image", dirty);
 
 // Tab Button
-        m_jDisplay.getDocument().addDocumentListener(dirty); 
-        m_jTextTip.getDocument().addDocumentListener(dirty); 
+        m_jDisplay.getDocument().addDocumentListener(dirty);
+        m_jTextTip.getDocument().addDocumentListener(dirty);
         colourChooser.addActionListener(dirty);
         m_jDisplay.addCaretListener(null);
 
 // Tab Properties
         txtAttributes.getDocument().addDocumentListener(dirty);
-        
+
         FieldsManager fm = new FieldsManager();
         m_jPriceBuy.getDocument().addDocumentListener(fm);
         m_jPriceSell.getDocument().addDocumentListener(new PriceSellManager());
@@ -205,22 +209,25 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jmargin.getDocument().addDocumentListener(new MarginManager());
         m_jGrossProfit.getDocument().addDocumentListener(new MarginManager());
 
-        m_jdate.getDocument().addDocumentListener(dirty);        
-        
-            init();
+        m_jdate.getDocument().addDocumentListener(dirty);
+
+        m_jRef.setEditable(false);
+
+        init();
     }
-    
+
     private void init() {
-        writeValueEOF(); 
-    }        
+        writeValueEOF();
+    }
 
     /**
      * Instantiate object
+     *
      * @throws BasicException
      */
     @SuppressWarnings("unchecked")
     public void activate() throws BasicException {
-        
+
         taxeslogic = new TaxesLogic(taxsent.list());
 
         m_CategoryModel = new ComboBoxValModel(m_sentcat.list());
@@ -232,14 +239,14 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         attmodel = new ComboBoxValModel(attsent.list());
         attmodel.add(0, null);
         m_jAtt.setModel(attmodel);
-        
+
         m_SuppliersModel = new ComboBoxValModel(m_sentsuppliers.list());
         m_jSupplier.setModel(m_SuppliersModel);
 
         m_UomModel = new ComboBoxValModel(m_sentuom.list());
-        m_jUom.setModel(m_UomModel);         
-        
-        String pId = null;              
+        m_jUom.setModel(m_UomModel);
+
+        String pId = null;
     }
 
     /**
@@ -269,20 +276,20 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         taxcatmodel.setSelectedKey(null);
         attmodel.setSelectedKey(null);
         m_jVerpatrib.setSelected(false);
-        m_UomModel.setSelectedKey(0);        
+        m_UomModel.setSelectedKey(0);
         m_jPriceBuy.setText("0");
         setPriceSell(null);
-        m_SuppliersModel.setSelectedKey(0);               
-        
+        m_SuppliersModel.setSelectedKey(0);
+
 // Tab Stock        
         m_jInCatalog.setSelected(false);
         m_jConstant.setSelected(false);
         m_jCatalogOrder.setText(null);
-        m_jPrintTo.setSelectedIndex(1);        
-	m_jService.setSelected(false);        
-        m_jCheckWarrantyReceipt.setSelected(false);   
+        m_jPrintTo.setSelectedIndex(1);
+        m_jService.setSelected(false);
+        m_jCheckWarrantyReceipt.setSelected(false);
         m_jComment.setSelected(false);
-        m_jScale.setSelected(false);        
+        m_jScale.setSelected(false);
         m_jVprice.setSelected(false);
         m_jstockcost.setText("0");
         m_jstockvolume.setText("0");
@@ -296,9 +303,9 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
 // Tab Button
         m_jDisplay.setText(null);
-        m_jTextTip.setText(null); 
+        m_jTextTip.setText(null);
 //        colourChooser.setText("#000000");
-        
+
 // Tab Properties
         txtAttributes.setText(null);
 
@@ -311,44 +318,56 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jName.setEnabled(false);
         m_jCategory.setEnabled(false);
         m_jAtt.setEnabled(false);
-        m_jVerpatrib.setEnabled(false);  
+        m_jVerpatrib.setEnabled(false);
         m_jTax.setEnabled(false);
-        m_jUom.setEnabled(false);        
+        m_jUom.setEnabled(false);
         m_jPriceBuy.setEnabled(false);
         m_jPriceSell.setEnabled(false);
         m_jPriceSellTax.setEnabled(false);
         m_jmargin.setEnabled(false);
-        m_jSupplier.setEnabled(false);        
-        
+        m_jSupplier.setEnabled(false);
+
 // Tab Stock        
         m_jInCatalog.setEnabled(false);
-	m_jConstant.setEnabled(false);        
+        m_jConstant.setEnabled(false);
         m_jCatalogOrder.setEnabled(false);
         m_jPrintTo.setEnabled(false);
-	m_jService.setEnabled(false);
-        m_jCheckWarrantyReceipt.setEnabled(false);        
+        m_jService.setEnabled(false);
+        m_jCheckWarrantyReceipt.setEnabled(false);
         m_jComment.setEnabled(false);
         m_jScale.setEnabled(false);
         m_jVprice.setEnabled(false);
         m_jstockcost.setEnabled(false);
-        m_jstockvolume.setEnabled(false);        
-        jTableProductStock.setEnabled(false);   
+        m_jstockvolume.setEnabled(false);
+        jTableProductStock.setEnabled(false);
         m_jdate.setEnabled(false);
-        
+
 // Tab Image
         m_jImage.setEnabled(false);
 
 // Tab Button
         m_jDisplay.setEnabled(false);
-        m_jTextTip.setEnabled(false); 
+        m_jTextTip.setEnabled(false);
         colourChooser.setEnabled(false);
-        
+
 // Tab Properties
         txtAttributes.setEnabled(false);
 
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
+    }
+
+    //Retorna el último número más uno de la columna referencia de la tabla products
+    private String getSequence() {
+        SentenceList sequence = product.getProductSequence();
+        try {
+            List l = sequence.list("secuencia");
+            return (String) l.get(0);
+        } catch (BasicException ex) {
+            Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
+            return "0";
+        }
     }
 
     @Override
@@ -360,7 +379,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
         m_jTitle.setText(AppLocal.getIntString("label.recordnew"));
 
-// Tab General        
+        // Tab General        
         m_oId = UUID.randomUUID().toString();
         m_jRef.setText(null);
         m_jCode.setText(null);
@@ -368,21 +387,21 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jName.setText(null);
         m_CategoryModel.setSelectedKey("000");
         attmodel.setSelectedKey(null);
-        m_jVerpatrib.setSelected(false);                
+        m_jVerpatrib.setSelected(false);
         taxcatmodel.setSelectedKey("001");
-        m_UomModel.setSelectedKey("0");        
+        m_UomModel.setSelectedKey("0");
         m_jPriceBuy.setText("0");
-        setPriceSell(null);        
+        setPriceSell(null);
 //        m_SuppliersModel.setSelectedKey(0);
-        m_jSupplier.setSelectedIndex(selectedIndex);        
-        
+        m_jSupplier.setSelectedIndex(selectedIndex);
+
 // Tab Stock        
         m_jInCatalog.setSelected(true);
         m_jConstant.setSelected(false);
         m_jCatalogOrder.setText(null);
         m_jPrintTo.setSelectedIndex(1);
         m_jService.setSelected(false);
-        m_jCheckWarrantyReceipt.setSelected(false); 
+        m_jCheckWarrantyReceipt.setSelected(false);
         m_jComment.setSelected(false);
         m_jScale.setSelected(false);
         m_jVprice.setSelected(false);
@@ -394,10 +413,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jImage.setImage(null);
 
 // Tab Button
-        m_jDisplay.setText(null);        
-        m_jTextTip.setText(null);       
-        colourChooser.setEnabled(false);        
-        
+        m_jDisplay.setText(null);
+        m_jTextTip.setText(null);
+        colourChooser.setEnabled(false);
+
 // Tab Properties
         txtAttributes.setText(null);
 
@@ -412,18 +431,18 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jTax.setEnabled(true);
         m_jAtt.setEnabled(true);
         m_jVerpatrib.setEnabled(true);
-        m_jUom.setEnabled(true);        
+        m_jUom.setEnabled(true);
         m_jPriceBuy.setEnabled(true);
         m_jPriceSell.setEnabled(true);
         m_jPriceSellTax.setEnabled(true);
         m_jmargin.setEnabled(true);
-        m_jSupplier.setEnabled(true);        
+        m_jSupplier.setEnabled(true);
 
 // Tab Stock        
         m_jInCatalog.setEnabled(true);
-	m_jConstant.setEnabled(true);
+        m_jConstant.setEnabled(true);
         m_jCatalogOrder.setEnabled(false);
-	m_jPrintTo.setEnabled(true);
+        m_jPrintTo.setEnabled(true);
         m_jService.setEnabled(true);
         m_jCheckWarrantyReceipt.setEnabled(true);
         m_jComment.setEnabled(true);
@@ -432,22 +451,22 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jstockcost.setEnabled(true);
         m_jstockvolume.setEnabled(true);
         jTableProductStock.setEnabled(false);
-        m_jdate.setEnabled(true);        
-        
+        m_jdate.setEnabled(true);
+
 // Tab Image        
         m_jImage.setEnabled(true);
 
 // Tab Button
         m_jDisplay.setEnabled(true);
         m_jTextTip.setEnabled(true);
-        colourChooser.setEnabled(true);        
-        
+        colourChooser.setEnabled(true);
+
 // Tab Properties        
         txtAttributes.setEnabled(true);
-        
+
         calculateMargin();
         calculatePriceSellTax();
-        calculateGP();        
+        calculateGP();
     }
 
     /**
@@ -458,11 +477,28 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     @Override
     public Object createValue() throws BasicException {
 
-        Object[] myprod = new Object[32];        
+        Object[] myprod = new Object[32];
+        String sequence = getSequence();
 
-        myprod[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;        
-        myprod[1] = m_jRef.getText();
-        myprod[2] = m_jCode.getText();
+        myprod[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
+//        myprod[1] = m_jRef.getText();
+        if (m_jRef.getText().equals("")
+                || m_jRef.getText() == null
+                || m_jRef.getText().isEmpty()) {
+            myprod[1] = sequence;
+        } else {
+            myprod[1] = m_jRef.getText();
+        }
+
+//        myprod[2] = m_jCode.getText();
+        if (m_jCode.getText().equals("")
+                || m_jCode.getText() == null
+                || m_jCode.getText().isEmpty()) {
+            myprod[2] = sequence;
+        } else {
+            myprod[2] = m_jCode.getText();
+        }
+
         myprod[3] = m_jCodetype.getSelectedItem();
         myprod[4] = m_jName.getText();
         myprod[5] = Formats.CURRENCY.parseValue(m_jPriceBuy.getText());
@@ -471,22 +507,22 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         myprod[8] = taxcatmodel.getSelectedKey();
         myprod[9] = attmodel.getSelectedKey();
         myprod[10] = Formats.CURRENCY.parseValue(m_jstockcost.getText());
-        myprod[11] = Formats.DOUBLE.parseValue(m_jstockvolume.getText());        
+        myprod[11] = Formats.DOUBLE.parseValue(m_jstockvolume.getText());
         myprod[12] = m_jImage.getImage();
         myprod[13] = m_jComment.isSelected();
         myprod[14] = m_jScale.isSelected();
-	myprod[15] = m_jConstant.isSelected();
-	myprod[16] = m_jPrintKB.isSelected(); 
-	myprod[17] = m_jSendStatus.isSelected();         
-	myprod[18] = m_jService.isSelected();
+        myprod[15] = m_jConstant.isSelected();
+        myprod[16] = m_jPrintKB.isSelected();
+        myprod[17] = m_jSendStatus.isSelected();
+        myprod[18] = m_jService.isSelected();
         myprod[19] = Formats.BYTEA.parseValue(txtAttributes.getText());
-        myprod[20] = m_jDisplay.getText();        
-	myprod[21] = m_jVprice.isSelected();  
+        myprod[20] = m_jDisplay.getText();
+        myprod[21] = m_jVprice.isSelected();
         myprod[22] = m_jVerpatrib.isSelected();
         myprod[23] = m_jTextTip.getText();
         myprod[24] = m_jCheckWarrantyReceipt.isSelected();
-        myprod[25] = Formats.DOUBLE.parseValue(m_jStockUnits.getText());        
-        myprod[26] = m_jPrintTo.getSelectedItem().toString();        
+        myprod[25] = Formats.DOUBLE.parseValue(m_jStockUnits.getText());
+        myprod[26] = m_jPrintTo.getSelectedItem().toString();
         myprod[27] = m_SuppliersModel.getSelectedKey();
         myprod[28] = m_UomModel.getSelectedKey();
         myprod[29] = Formats.TIMESTAMP.parseValue(m_jdate.getText());
@@ -494,7 +530,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         myprod[30] = m_jInCatalog.isSelected();
         myprod[31] = Formats.INT.parseValue(m_jCatalogOrder.getText());
 
-        return myprod;        
+        return myprod;
     }
 
     /**
@@ -505,10 +541,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     public void writeValueEdit(Object value) {
 
         reportlock = true;
-        
+
         Object[] myprod = (Object[]) value;
-        
-        m_jTitle.setText(Formats.STRING.formatValue(myprod[1]) 
+
+        m_jTitle.setText(Formats.STRING.formatValue(myprod[1])
                 + " - " + Formats.STRING.formatValue(myprod[4]));
         m_oId = myprod[0];
         m_jRef.setText(Formats.STRING.formatValue(myprod[1]));
@@ -523,29 +559,29 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jstockcost.setText(Formats.CURRENCY.formatValue(myprod[10]));
         m_jstockvolume.setText(Formats.DOUBLE.formatValue(myprod[11]));
 //  JG 3 feb 16 speedup   m_jImage.setImage((BufferedImage) myprod[12]); 
-        m_jImage.setImage(findImage(m_oId));       
-        m_jComment.setSelected(((Boolean)myprod[13]));
-        m_jScale.setSelected(((Boolean)myprod[14]));
-	m_jConstant.setSelected(((Boolean)myprod[15]));
-        m_jPrintKB.setSelected(((Boolean)myprod[16]));
-        m_jSendStatus.setSelected(((Boolean)myprod[17]));        
-	m_jService.setSelected(((Boolean)myprod[18]));
+        m_jImage.setImage(findImage(m_oId));
+        m_jComment.setSelected(((Boolean) myprod[13]));
+        m_jScale.setSelected(((Boolean) myprod[14]));
+        m_jConstant.setSelected(((Boolean) myprod[15]));
+        m_jPrintKB.setSelected(((Boolean) myprod[16]));
+        m_jSendStatus.setSelected(((Boolean) myprod[17]));
+        m_jService.setSelected(((Boolean) myprod[18]));
         txtAttributes.setText(Formats.BYTEA.formatValue(myprod[19]));
         m_jDisplay.setText(Formats.STRING.formatValue(myprod[20]));
-	m_jVprice.setSelected(((Boolean)myprod[21]));
-        m_jVerpatrib.setSelected(((Boolean)myprod[22]));
+        m_jVprice.setSelected(((Boolean) myprod[21]));
+        m_jVerpatrib.setSelected(((Boolean) myprod[22]));
         m_jTextTip.setText(Formats.STRING.formatValue(myprod[23]));
-        m_jCheckWarrantyReceipt.setSelected(((Boolean)myprod[24]));  
+        m_jCheckWarrantyReceipt.setSelected(((Boolean) myprod[24]));
         m_jStockUnits.setText(Formats.DOUBLE.formatValue(myprod[25]));
-        m_jPrintTo.setSelectedItem(myprod[26]);         
+        m_jPrintTo.setSelectedItem(myprod[26]);
         m_SuppliersModel.setSelectedKey(myprod[27]);
-        m_UomModel.setSelectedKey(myprod[28]);        
+        m_UomModel.setSelectedKey(myprod[28]);
 
-        m_jdate.setText(Formats.DATE.formatValue(myprod[29]));      
-        
-        m_jInCatalog.setSelected(((Boolean)myprod[30]));
+        m_jdate.setText(Formats.DATE.formatValue(myprod[29]));
+
+        m_jInCatalog.setSelected(((Boolean) myprod[30]));
         m_jCatalogOrder.setText(Formats.INT.formatValue(myprod[31]));
-        
+
         txtAttributes.setCaretPosition(0);
         reportlock = false;
 
@@ -563,24 +599,24 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jPriceSell.setEnabled(true);
         m_jPriceSellTax.setEnabled(true);
         m_jmargin.setEnabled(true);
-        m_jSupplier.setEnabled(true);        
-        
+        m_jSupplier.setEnabled(true);
+
 // Tab Stock        
         m_jInCatalog.setEnabled(true);
         m_jConstant.setEnabled(true);
         m_jCatalogOrder.setEnabled(m_jInCatalog.isSelected());
         m_jPrintTo.setEnabled(true);
-	m_jService.setEnabled(true);
-        m_jCheckWarrantyReceipt.setEnabled(true);         
+        m_jService.setEnabled(true);
+        m_jCheckWarrantyReceipt.setEnabled(true);
         m_jComment.setEnabled(true);
         m_jScale.setEnabled(true);
         m_jVprice.setEnabled(true);
         m_jstockcost.setEnabled(true);
-        m_jstockvolume.setEnabled(true);   
+        m_jstockvolume.setEnabled(true);
         m_jdate.setEnabled(true);
         jTableProductStock.setVisible(false);
         jTableProductStock.setEnabled(true);
-        
+
 // Tab Image        
         m_jImage.setEnabled(true);
 
@@ -589,18 +625,18 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jTextTip.setEnabled(true);
         colourChooser.setEnabled(true);
         setButtonHTML();
-        
-        resetTranxTable();     
-        jTableProductStock.repaint();        
+
+        resetTranxTable();
+        jTableProductStock.repaint();
 
 // Tab Properties
         txtAttributes.setEnabled(true);
 
         calculateMargin();
         calculatePriceSellTax();
-        calculateGP();        
+        calculateGP();
     }
-    
+
     /**
      *
      * @param value
@@ -610,10 +646,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
         reportlock = true;
         Object[] myprod = (Object[]) value;
-        m_jTitle.setText(Formats.STRING.formatValue(myprod[1]) 
-                + " - " + Formats.STRING.formatValue(myprod[4]) 
+        m_jTitle.setText(Formats.STRING.formatValue(myprod[1])
+                + " - " + Formats.STRING.formatValue(myprod[4])
                 + " " + AppLocal.getIntString("label.recorddeleted"));
-        
+
         m_oId = myprod[0];
         m_jRef.setText(Formats.STRING.formatValue(myprod[1]));
         m_jCode.setText(Formats.STRING.formatValue(myprod[2]));
@@ -628,29 +664,29 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jstockvolume.setText(Formats.DOUBLE.formatValue(myprod[11]));
 // JG 3 feb 16 speed test        m_jImage.setImage((BufferedImage) myprod[12]);
         m_jImage.setImage(findImage(m_oId));
-        m_jComment.setSelected(((Boolean)myprod[13]));
-        m_jScale.setSelected(((Boolean)myprod[14]));
-	m_jConstant.setSelected(((Boolean)myprod[15]));
-        m_jPrintKB.setSelected(((Boolean)myprod[16]));
-        m_jService.setSelected(((Boolean)myprod[17]));      
-        m_jSendStatus.setSelected(((Boolean)myprod[18]));
+        m_jComment.setSelected(((Boolean) myprod[13]));
+        m_jScale.setSelected(((Boolean) myprod[14]));
+        m_jConstant.setSelected(((Boolean) myprod[15]));
+        m_jPrintKB.setSelected(((Boolean) myprod[16]));
+        m_jService.setSelected(((Boolean) myprod[17]));
+        m_jSendStatus.setSelected(((Boolean) myprod[18]));
         txtAttributes.setText(Formats.BYTEA.formatValue(myprod[19]));
-        m_jDisplay.setText(Formats.STRING.formatValue(myprod[20]));        
-	m_jVprice.setSelected(((Boolean)myprod[21]));
-        m_jVerpatrib.setSelected(((Boolean)myprod[22])); 
-        m_jTextTip.setText(Formats.STRING.formatValue(myprod[23])); 
-        m_jCheckWarrantyReceipt.setSelected(((Boolean)myprod[24]));
-        m_jStockUnits.setText(Formats.DOUBLE.formatValue(myprod[25]));       
-        m_jPrintTo.setSelectedItem(myprod[26]);                
+        m_jDisplay.setText(Formats.STRING.formatValue(myprod[20]));
+        m_jVprice.setSelected(((Boolean) myprod[21]));
+        m_jVerpatrib.setSelected(((Boolean) myprod[22]));
+        m_jTextTip.setText(Formats.STRING.formatValue(myprod[23]));
+        m_jCheckWarrantyReceipt.setSelected(((Boolean) myprod[24]));
+        m_jStockUnits.setText(Formats.DOUBLE.formatValue(myprod[25]));
+        m_jPrintTo.setSelectedItem(myprod[26]);
         m_SuppliersModel.setSelectedKey(myprod[27]);
-        m_UomModel.setSelectedKey(myprod[28]);   
+        m_UomModel.setSelectedKey(myprod[28]);
         m_jdate.setText(Formats.DATE.formatValue(myprod[29]));
-        
-        m_jInCatalog.setSelected(((Boolean)myprod[30]));
+
+        m_jInCatalog.setSelected(((Boolean) myprod[30]));
         m_jCatalogOrder.setText(Formats.INT.formatValue(myprod[31]));
 
         txtAttributes.setCaretPosition(0);
-        
+
         reportlock = false;
 
 // Tab General
@@ -661,39 +697,39 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jCategory.setEnabled(false);
         m_jTax.setEnabled(false);
         m_jAtt.setEnabled(false);
-        m_jVerpatrib.setEnabled(false); 
+        m_jVerpatrib.setEnabled(false);
         m_jUom.setEnabled(false);
         m_jPriceBuy.setEnabled(false);
         m_jPriceSell.setEnabled(false);
         m_jPriceSellTax.setEnabled(false);
         m_jmargin.setEnabled(false);
         m_jPrintTo.setEnabled(false);
-        
+
 // Tab Stock
         m_jInCatalog.setEnabled(false);
         m_jConstant.setEnabled(false);
         m_jCatalogOrder.setEnabled(false);
-        m_jSupplier.setEnabled(false);        
-	m_jService.setEnabled(false);
+        m_jSupplier.setEnabled(false);
+        m_jService.setEnabled(false);
         m_jCheckWarrantyReceipt.setEnabled(false);
         m_jComment.setEnabled(false);
         m_jScale.setEnabled(false);
-        m_jVprice.setEnabled(false);        
+        m_jVprice.setEnabled(false);
         m_jstockcost.setEnabled(false);
         m_jstockvolume.setEnabled(false);
-        stockModel = new ProductsEditor.StockTableModel(getProductOfName((String) m_oId));        
+        stockModel = new ProductsEditor.StockTableModel(getProductOfName((String) m_oId));
         jTableProductStock.setModel(stockModel);
         jTableProductStock.setEnabled(false);
-        m_jdate.setEnabled(false);        
+        m_jdate.setEnabled(false);
 
 // Tab Image
-        m_jImage.setEnabled(false);        
-        
+        m_jImage.setEnabled(false);
+
 // Tab Button
-        m_jDisplay.setEnabled(false);        
+        m_jDisplay.setEnabled(false);
         m_jTextTip.setEnabled(false);
         colourChooser.setEnabled(false);
-        
+
 // Tab Properties        
         txtAttributes.setEnabled(false);
 
@@ -702,19 +738,18 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         calculateGP();
     }
 
-
     public void resetTranxTable() {
 
-    jTableProductStock.getColumnModel().getColumn(0).setPreferredWidth(100);                    
-    jTableProductStock.getColumnModel().getColumn(1).setPreferredWidth(50);                            
-    jTableProductStock.getColumnModel().getColumn(2).setPreferredWidth(50);                
-    jTableProductStock.getColumnModel().getColumn(3).setPreferredWidth(50);        
-    
-    jTableProductStock.repaint();
-    
-}
-    
-        /**
+        jTableProductStock.getColumnModel().getColumn(0).setPreferredWidth(100);
+        jTableProductStock.getColumnModel().getColumn(1).setPreferredWidth(50);
+        jTableProductStock.getColumnModel().getColumn(2).setPreferredWidth(50);
+        jTableProductStock.getColumnModel().getColumn(3).setPreferredWidth(50);
+
+        jTableProductStock.repaint();
+
+    }
+
+    /**
      *
      * @return this
      */
@@ -724,22 +759,23 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     }
 
     private void setCode() {
-        
-        Long lDateTime= new Date().getTime();
-        
+
+        Long lDateTime = new Date().getTime();
+
         if (!reportlock) {
             reportlock = true;
-            
+
             if (m_jRef == null) {
                 m_jCode.setText(Long.toString(lDateTime));
             } else {
-                if (m_jCode.getText()==null || "".equals(m_jCode.getText())){
-                m_jCode.setText(m_jRef.getText());}
+                if (m_jCode.getText() == null || "".equals(m_jCode.getText())) {
+                    m_jCode.setText(m_jRef.getText());
+                }
             }
             reportlock = false;
         }
     }
-    
+
     private List<ProductStock> getProductOfName(String pId) {
 
         try {
@@ -757,7 +793,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                 productList.add(productStock);
             }
         }
-        
+
         repaint();
         refresh();
 
@@ -773,6 +809,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     }
 
     class StockTableModel extends AbstractTableModel {
+
         String loc = AppLocal.getIntString("label.tblProdHeaderCol1");
         String qty = AppLocal.getIntString("label.tblProdHeaderCol2");
         String min = AppLocal.getIntString("label.tblProdHeaderCol3");
@@ -798,10 +835,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         @Override
         public Object getValueAt(int row, int column) {
             ProductStock productStock = stockList.get(row);
-        
+
             switch (column) {
                 case 0:
-                    return productStock.getLocation();                                        
+                    return productStock.getLocation();
                 case 1:
                     return productStock.getUnits();
                 case 2:
@@ -819,11 +856,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         public String getColumnName(int col) {
             return columnNames[col];
         }
-    }    
-    
+    }
 
     private void setDisplay(int btn) {
-    
+
         String htmlString = (m_jDisplay.getText());
         String ohtmlString = "<html><center>" + m_jName.getText();
 
@@ -831,51 +867,53 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             case 1:
                 m_jDisplay.insert("<br>", m_jDisplay.getCaretPosition());
                 break;
-            case 2: 
-                String hexcolor = color2HexString(colourChooser.getColor());                
-                m_jDisplay.insert("<font color=" + hexcolor + ">"                
-                    , m_jDisplay.getCaretPosition());
+            case 2:
+                String hexcolor = color2HexString(colourChooser.getColor());
+                m_jDisplay.insert("<font color=" + hexcolor + ">",
+                        m_jDisplay.getCaretPosition());
                 break;
             case 3:
-                m_jDisplay.insert("<font size=+2>"
-                    , m_jDisplay.getCaretPosition());
+                m_jDisplay.insert("<font size=+2>",
+                        m_jDisplay.getCaretPosition());
                 break;
             case 4:
-                m_jDisplay.insert("<font size=-2>"
-                    , m_jDisplay.getCaretPosition());
+                m_jDisplay.insert("<font size=-2>",
+                        m_jDisplay.getCaretPosition());
                 break;
             case 5:
-                m_jDisplay.insert("<b> </b>"
-                    , m_jDisplay.getCaretPosition());
+                m_jDisplay.insert("<b> </b>",
+                        m_jDisplay.getCaretPosition());
                 break;
             case 6:
-                m_jDisplay.insert("<i> </i>"
-                    , m_jDisplay.getCaretPosition());
+                m_jDisplay.insert("<i> </i>",
+                        m_jDisplay.getCaretPosition());
                 break;
             case 7:
 // defaults to file:/ for local disk
 // http:// also usable for remote image                
                 JFileChooser fc = new JFileChooser();
                 FileFilter imageFilter = new FileNameExtensionFilter(
-                    "Image files", ImageIO.getReaderFileSuffixes());
-                fc.setFileFilter(imageFilter);                
+                        "Image files", ImageIO.getReaderFileSuffixes());
+                fc.setFileFilter(imageFilter);
                 int returnValue = fc.showOpenDialog(null);
                 File selectedFile = fc.getSelectedFile();
                 if (selectedFile != null) {
-                    m_jDisplay.insert("<img src=file:" +  selectedFile.getAbsolutePath() + ">"
-                    , m_jDisplay.getCaretPosition());
+                    m_jDisplay.insert("<img src=file:" + selectedFile.getAbsolutePath() + ">",
+                            m_jDisplay.getCaretPosition());
                 }
-                break;                
-                
-            case 8: htmlString = ohtmlString;
+                break;
+
+            case 8:
+                htmlString = ohtmlString;
                 m_jDisplay.setText(htmlString);
                 break;
-            case 9: 
-                m_jDisplay.insert("<div style=background-color:black;color:white;padding:10px;>"
-                    , m_jDisplay.getCaretPosition());
+            case 9:
+                m_jDisplay.insert("<div style=background-color:black;color:white;padding:10px;>",
+                        m_jDisplay.getCaretPosition());
                 break;
-            default: htmlString +="";
-                m_jDisplay.setText(htmlString);                            
+            default:
+                htmlString += "";
+                m_jDisplay.setText(htmlString);
         }
     }
 
@@ -883,10 +921,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
         jButtonHTML.setText(m_jDisplay.getText());
     }
-    
+
     public String color2HexString(Color color) {
         return "#" + Integer.toHexString(color.getRGB() & 0x00ffffff);
-    }   
+    }
 
 // 3 feb 16 speed test
     private BufferedImage findImage(Object id) {
@@ -897,6 +935,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }
 // end of speed test
+
     private void calculateMargin() {
 
         if (!reportlock) {
@@ -920,7 +959,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             reportlock = true;
 
             Double dPriceSell = (Double) pricesell;
-            
+
             if (dPriceSell == null) {
                 m_jPriceSellTax.setText(null);
             } else {
@@ -931,26 +970,25 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }
 
-        private void calculateGP() {
+    private void calculateGP() {
 
         if (!reportlock) {
             reportlock = true;
 
             Double dPriceBuy = readCurrency(m_jPriceBuy.getText());
             Double dPriceSell = (Double) pricesell;
- 
+
             if (dPriceBuy == null || dPriceSell == null) {
                 m_jGrossProfit.setText(null);
             } else {
                 m_jGrossProfit.setText(Formats.PERCENT.formatValue(
-                    (dPriceSell.doubleValue() - dPriceBuy.doubleValue())
-                    /dPriceSell.doubleValue()));
+                        (dPriceSell.doubleValue() - dPriceBuy.doubleValue())
+                        / dPriceSell.doubleValue()));
             }
             reportlock = false;
         }
     }
-    
-    
+
     private void calculatePriceSellfromMargin() {
 
         if (!reportlock) {
@@ -958,7 +996,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
             Double dPriceBuy = readCurrency(m_jPriceBuy.getText());
             Double dMargin = readPercent(m_jmargin.getText());
-            
+
             if (dMargin == null || dPriceBuy == null) {
                 setPriceSell(null);
             } else {
@@ -988,7 +1026,6 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }
 
-    
     private void setPriceSell(Object value) {
 
         if (!priceselllock) {
@@ -1000,6 +1037,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     }
 
     private class PriceSellManager implements DocumentListener {
+
         @Override
         public void changedUpdate(DocumentEvent e) {
             if (!priceselllock) {
@@ -1009,8 +1047,9 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             }
             calculateMargin();
             calculatePriceSellTax();
-            calculateGP();            
+            calculateGP();
         }
+
         @Override
         public void insertUpdate(DocumentEvent e) {
             if (!priceselllock) {
@@ -1020,9 +1059,9 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             }
             calculateMargin();
             calculatePriceSellTax();
-            calculateGP();            
+            calculateGP();
         }
-        
+
         @Override
         public void removeUpdate(DocumentEvent e) {
             if (!priceselllock) {
@@ -1032,77 +1071,87 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             }
             calculateMargin();
             calculatePriceSellTax();
-            calculateGP();            
+            calculateGP();
         }
     }
 
     private class FieldsManager implements DocumentListener, ActionListener {
+
         @Override
         public void changedUpdate(DocumentEvent e) {
             calculateMargin();
             calculatePriceSellTax();
-            calculateGP();           
-            
+            calculateGP();
+
         }
+
         @Override
         public void insertUpdate(DocumentEvent e) {
             calculateMargin();
             calculatePriceSellTax();
-            calculateGP();            
+            calculateGP();
         }
+
         @Override
         public void removeUpdate(DocumentEvent e) {
             calculateMargin();
             calculatePriceSellTax();
-            calculateGP();            
+            calculateGP();
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             calculateMargin();
             calculatePriceSellTax();
-            calculateGP();            
+            calculateGP();
         }
     }
 
     private class PriceTaxManager implements DocumentListener {
+
         @Override
         public void changedUpdate(DocumentEvent e) {
             calculatePriceSellfromPST();
             calculateMargin();
-            calculateGP();            
+            calculateGP();
         }
+
         @Override
         public void insertUpdate(DocumentEvent e) {
             calculatePriceSellfromPST();
             calculateMargin();
-            calculateGP();            
+            calculateGP();
         }
+
         @Override
         public void removeUpdate(DocumentEvent e) {
             calculatePriceSellfromPST();
             calculateMargin();
-            calculateGP();            
+            calculateGP();
         }
     }
 
-    private class MarginManager implements DocumentListener  {
+    private class MarginManager implements DocumentListener {
+
         @Override
         public void changedUpdate(DocumentEvent e) {
             calculatePriceSellfromMargin();
             calculatePriceSellTax();
             calculateGP();
         }
+
         @Override
         public void insertUpdate(DocumentEvent e) {
             calculatePriceSellfromMargin();
             calculatePriceSellTax();
             calculateGP();
         }
+
         @Override
         public void removeUpdate(DocumentEvent e) {
             calculatePriceSellfromMargin();
             calculatePriceSellTax();
-            calculateGP();            
+            calculateGP();
         }
     }
 
@@ -1122,10 +1171,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -2136,71 +2185,71 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             StringSelection stringSelection = new StringSelection(uuidString);
             Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
             clpbrd.setContents(stringSelection, null);
-        
-            JOptionPane.showMessageDialog(null, 
-                AppLocal.getIntString("message.uuidcopy"));
+
+            JOptionPane.showMessageDialog(null,
+                    AppLocal.getIntString("message.uuidcopy"));
         }
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jBtnXmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnXmlActionPerformed
         txtAttributes.setText(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>  \n" +
-            "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n" +
-            "<properties>\n" +
-            "    <entry key=\"identifier\">value</entry>\n" +
-            "</properties>");
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>  \n"
+                + "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
+                + "<properties>\n"
+                + "    <entry key=\"identifier\">value</entry>\n"
+                + "</properties>");
     }//GEN-LAST:event_jBtnXmlActionPerformed
 
     private void jBtnSmallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSmallActionPerformed
-        btn=4;
+        btn = 4;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnSmallActionPerformed
 
     private void jBtnBreakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBreakActionPerformed
-        btn=1;
+        btn = 1;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnBreakActionPerformed
 
     private void jBtnColourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnColourActionPerformed
-        btn=2;
+        btn = 2;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnColourActionPerformed
 
     private void jBtnLargeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnLargeActionPerformed
-        btn=3;
+        btn = 3;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnLargeActionPerformed
 
     private void jBtnBoldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBoldActionPerformed
-        btn=5;
+        btn = 5;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnBoldActionPerformed
 
     private void jBtnItalicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnItalicActionPerformed
-        btn=6;
+        btn = 6;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnItalicActionPerformed
 
     private void jBtnImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnImageActionPerformed
-        btn=7;
+        btn = 7;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnImageActionPerformed
 
     private void jBtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnResetActionPerformed
-        btn=8;
+        btn = 8;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnResetActionPerformed
 
     private void jBtnStyleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnStyleActionPerformed
-        btn=9;
+        btn = 9;
         setDisplay(btn);
     }//GEN-LAST:event_jBtnStyleActionPerformed
 
     private void jBtnSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSupplierActionPerformed
         JDialogNewSupplier dialog = JDialogNewSupplier.getDialog(this, appView);
         dialog.setVisible(true);
-  
-        if (dialog.getSelectedSupplier()!=null){
+
+        if (dialog.getSelectedSupplier() != null) {
             try {
                 m_SuppliersModel = new ComboBoxValModel(m_sentsuppliers.list());
                 m_jSupplier.setModel(m_SuppliersModel);
@@ -2215,7 +2264,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     }//GEN-LAST:event_colourChooserActionPerformed
 
     private void m_jCodeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_jCodeFocusLost
-        if (m_jCode.getText().length()< 8) {
+        if (m_jCode.getText().length() < 8) {
             m_jCodetype.setSelectedIndex(2);
         }
     }//GEN-LAST:event_m_jCodeFocusLost
@@ -2239,12 +2288,12 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         if (pId != null) {
             stockModel = new StockTableModel(getProductOfName(pId));
             jTableProductStock.setModel(stockModel);
-            if (stockModel.getRowCount()> 0){
+            if (stockModel.getRowCount() > 0) {
                 jTableProductStock.setVisible(true);
-            }else{
+            } else {
                 jTableProductStock.setVisible(false);
                 JOptionPane.showMessageDialog(null,
-                    "No Stock Locations for this Product", "Locations", JOptionPane.INFORMATION_MESSAGE);
+                        "No Stock Locations for this Product", "Locations", JOptionPane.INFORMATION_MESSAGE);
             }
             resetTranxTable();
         }
@@ -2351,5 +2400,5 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     private javax.swing.JTextArea txtAttributes;
     private com.alee.laf.label.WebLabel webLabel1;
     // End of variables declaration//GEN-END:variables
-    
+
 }
