@@ -1013,7 +1013,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         if (!reportlock) {
             reportlock = true;
 
-            Double dPriceSellTax = readCurrency(m_jPriceSellTax.getText());
+            //Update by Jorge Luis, replace dot (.) in case use the keyboard numeric
+            Double dPriceSellTax = readCurrency(m_jPriceSellTax
+                    .getText()
+                    .replace(".", ","));
 
             if (dPriceSellTax == null) {
                 setPriceSell(null);
