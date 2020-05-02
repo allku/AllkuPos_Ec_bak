@@ -1805,7 +1805,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
                         ticket.setPayments(paymentdialog.getSelectedPayments());
                         //Added by Jorge Luis
-                        getCliente(paymentdialogreceipt.getDocumento());
+                        if (getCliente(paymentdialogreceipt.getDocumento())) {
+                            ticket.setCustomer(m_oTicket.getCustomer());
+                        }
 
                         ticket.setUser(m_App.getAppUserView().getUser().getUserInfo());
                         ticket.setActiveCash(m_App.getActiveCashIndex());
