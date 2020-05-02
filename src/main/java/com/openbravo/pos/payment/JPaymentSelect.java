@@ -1,15 +1,15 @@
-//    uniCenta oPOS  - Touch Friendly Point Of Sale
+//    AllkuPOS Ec  - Touch Friendly Point Of Sale
 //    Copyright (c) 2009-2018 uniCenta
-//    https://unicenta.com
+//    https://www.allku.expert
 //
 //    This file is part of uniCenta oPOS
 //
-//    uniCenta oPOS is free software: you can redistribute it and/or modify
+//    AllkuPOS Ec is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//   uniCenta oPOS is distributed in the hope that it will be useful,
+//    AllkuPOS Ec is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
@@ -47,12 +47,12 @@ import expert.allku.documento.util.UtilityPos;
  */
 public abstract class JPaymentSelect extends javax.swing.JDialog
         implements JPaymentNotifier {
-
+    
     private PaymentInfoList m_aPaymentInfo;
     private boolean printselected;
-
+    
     private boolean accepted;
-
+    
     private AppView app;
     private double m_dTotal;
     private CustomerInfoExt customerext;
@@ -66,19 +66,19 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     private static PaymentInfo returnPayment = null;
     private String tipoDocumento = "Consumidor Final";
     private String documento = "";
-
+    
     public String getDocumento() {
         return documento;
     }
-
+    
     public void setDocumento(String documento) {
         this.documento = documento;
     }
-
+    
     public static PaymentInfo getReturnPayment() {
         return returnPayment;
     }
-
+    
     public static void setReturnPayment(PaymentInfo returnPayment) {
         JPaymentSelect.returnPayment = returnPayment;
     }
@@ -95,7 +95,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         initComponents();
         this.applyComponentOrientation(o);
         getRootPane().setDefaultButton(m_jButtonOK);
-
+        
     }
 
     /**
@@ -108,7 +108,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     protected JPaymentSelect(java.awt.Dialog parent, boolean modal, ComponentOrientation o) {
         super(parent, modal);
         initComponents();
-
+        
         m_jButtonPrint.setVisible(true);
         this.applyComponentOrientation(o);
         if (printselected) {
@@ -117,45 +117,45 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
             jlblPrinterStatus.setText("Printer OFF");
         }
     }
-
+    
     public void init(AppView app) {
         this.app = app;
         dlSystem = (DataLogicSystem) app.getBean("com.openbravo.pos.forms.DataLogicSystem");
         dlCustomers = (DataLogicCustomers) app.getBean("com.openbravo.pos.customers.DataLogicCustomers");
         dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
-
+        
         printselected = false;
         if (printselected) {
             jlblPrinterStatus.setText("Printer ON");
         } else {
             jlblPrinterStatus.setText("Printer OFF");
         }
-
+        
     }
-
+    
     public void setPrintSelected(boolean value) {
         printselected = value;
     }
-
+    
     public boolean isPrintSelected() {
         return printselected;
     }
-
+    
     public List<PaymentInfo> getSelectedPayments() {
         return m_aPaymentInfo.getPayments();
     }
-
+    
     public boolean showDialog(double total, CustomerInfoExt customerext, double deposit) {
         m_aPaymentInfo = new PaymentInfoList();
         accepted = false;
         total -= deposit;
         m_dTotal = total;
-
+        
         this.customerext = customerext;
         m_jButtonPrint.setVisible(true);
         m_jButtonPrint.setSelected(printselected);
         m_jTotalEuros.setText(Formats.CURRENCY.formatValue(m_dTotal));
-
+        
         addTabs();
 
         // gets the print button state
@@ -163,19 +163,23 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
 
         // remove all tabs        
         m_jTabPayment.removeAll();
-
+        
         return accepted;
     }
-
+    
     public boolean showDialog(double total, CustomerInfoExt customerext) {
-
+        
         m_aPaymentInfo = new PaymentInfoList();
         accepted = false;
-
+        
         m_dTotal = total;
-
+        
         this.customerext = customerext;
-
+        System.out.println("Customer: "
+                + this.customerext.getName() + " "
+                + this.customerext.getTaxid() + " "
+                + this.customerext.getPcode());
+        
         setPrintSelected(!Boolean.parseBoolean(app.getProperties().getProperty("till.receiptprintoff")));
         m_jButtonPrint.setSelected(printselected);
         m_jTotalEuros.setText(Formats.CURRENCY.formatValue(m_dTotal));
@@ -184,15 +188,31 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         System.out.println("radioConsumidorFinal.isSelected() "
                 + radioConsumidorFinal.isSelected());
         if (radioConsumidorFinal.isSelected()) {
-            txtDocumento.setText("9999999999999");
-            txtRazonSocial.setText("Consumidor Final");
-            txtCorreoElectronico.setText("");
-            txtDocumento.setEditable(false);
-            txtRazonSocial.setEditable(false);
-            txtDireccion.setEditable(false);
-            txtCorreoElectronico.setEditable(false);
+            requestConsumidorFinal();
         }
-
+        
+        if (!this.customerext.getPcode().equals("Consumidor Final")) {
+            if (this.customerext.getPcode().equals("Cédula")) {
+                requestCi();
+                txtDocumento.setText(this.customerext.getTaxid());
+                txtRazonSocial.setText(this.customerext.getName());
+                radioCI.setSelected(true);
+            } else if (this.customerext.getPcode().equals("RUC")) {
+                requestRuc();
+                txtDocumento.setText(this.customerext.getTaxid());
+                txtRazonSocial.setText(this.customerext.getName());
+                radioRUC.setSelected(true);
+            } else if (this.customerext.getPcode().equals("Pasaporte")) {
+                requestPasaporte();
+                txtDocumento.setText(this.customerext.getTaxid());
+                txtRazonSocial.setText(this.customerext.getName());
+                radioPasaporte.setSelected(true);
+            }
+        } else {
+            requestConsumidorFinal();
+            radioConsumidorFinal.setSelected(true);
+        }
+        
         if (printselected) {
             jlblPrinterStatus.setText("Printer ON");
         } else {
@@ -208,9 +228,9 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         int x = (screenDim.width - thisDim.width) / 2;
         int y = (screenDim.height - thisDim.height) / 2;
         this.setLocation(x, y);
-
+        
         addTabs();
-
+        
         if (m_jTabPayment.getTabCount() == 0) {
             // No payment panels available            
             m_aPaymentInfo.add(getDefaultPayment(total));
@@ -226,33 +246,33 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
 
         // remove all tabs        
         m_jTabPayment.removeAll();
-
+        
         return accepted;
     }
-
+    
     protected abstract void addTabs();
-
+    
     protected abstract void setStatusPanel(boolean isPositive, boolean isComplete);
-
+    
     protected abstract PaymentInfo getDefaultPayment(double total);
-
+    
     protected void setOKEnabled(boolean value) {
         m_jButtonOK.setEnabled(value);
     }
-
+    
     protected void setAddEnabled(boolean value) {
         m_jButtonAdd.setEnabled(value);
     }
-
+    
     protected void addTabPayment(JPaymentCreator jpay) {
         if (app.getAppUserView().getUser().hasPermission(jpay.getKey())) {
-
+            
             JPaymentInterface jpayinterface = payments.get(jpay.getKey());
             if (jpayinterface == null) {
                 jpayinterface = jpay.createJPayment();
                 payments.put(jpay.getKey(), jpayinterface);
             }
-
+            
             jpayinterface.getComponent().applyComponentOrientation(getComponentOrientation());
             m_jTabPayment.addTab(
                     AppLocal.getIntString(jpay.getLabelKey()),
@@ -260,296 +280,296 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
                     jpayinterface.getComponent());
         }
     }
-
+    
     public interface JPaymentCreator {
-
+        
         public JPaymentInterface createJPayment();
-
+        
         public String getKey();
-
+        
         public String getLabelKey();
-
+        
         public String getIconKey();
     }
-
+    
     public class JPaymentCashCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentCashPos(JPaymentSelect.this, dlSystem);
         }
-
+        
         @Override
         public String getKey() {
             return "payment.cash";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.cash";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/cash.png";
         }
     }
-
+    
     public class JPaymentChequeCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentCheque(JPaymentSelect.this);
         }
-
+        
         @Override
         public String getKey() {
             return "payment.cheque";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.cheque";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/cheque.png";
         }
     }
-
+    
     public class JPaymentVoucherCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentVoucher(app, JPaymentSelect.this, "voucherin");
         }
-
+        
         @Override
         public String getKey() {
             return "payment.voucher";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.voucher";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/voucher.png";
         }
     }
-
+    
     public class JPaymentMagcardCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentMagcard(app, JPaymentSelect.this);
         }
-
+        
         @Override
         public String getKey() {
             return "payment.magcard";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.magcard";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/ccard.png";
         }
     }
-
+    
     public class JPaymentFreeCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentFree(JPaymentSelect.this);
         }
-
+        
         @Override
         public String getKey() {
             return "payment.free";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.free";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/wallet.png";
         }
     }
-
+    
     public class JPaymentDebtCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentDebt(JPaymentSelect.this);
         }
-
+        
         @Override
         public String getKey() {
             return "payment.debt";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.debt";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/customer.png";
         }
     }
-
+    
     public class JPaymentCashRefundCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentRefund(JPaymentSelect.this, "cashrefund");
         }
-
+        
         @Override
         public String getKey() {
             return "refund.cash";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.cashrefund";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/cash.png";
         }
     }
-
+    
     public class JPaymentChequeRefundCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentRefund(JPaymentSelect.this, "chequerefund");
         }
-
+        
         @Override
         public String getKey() {
             return "refund.cheque";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.chequerefund";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/cheque.png";
         }
     }
-
+    
     public class JPaymentVoucherRefundCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentRefund(JPaymentSelect.this, "voucherout");
         }
-
+        
         @Override
         public String getKey() {
             return "refund.voucher";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.voucher";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/voucher.png";
         }
     }
-
+    
     public class JPaymentMagcardRefundCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentMagcard(app, JPaymentSelect.this);
         }
-
+        
         @Override
         public String getKey() {
             return "refund.magcard";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.magcard";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/ccard.png";
         }
     }
-
+    
     public class JPaymentBankCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentBank(JPaymentSelect.this);
         }
-
+        
         @Override
         public String getKey() {
             return "payment.bank";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.bank";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/bank.png";
         }
     }
-
+    
     public class JPaymentSlipCreator implements JPaymentCreator {
-
+        
         @Override
         public JPaymentInterface createJPayment() {
             return new JPaymentSlip(JPaymentSelect.this);
         }
-
+        
         @Override
         public String getKey() {
             return "payment.slip";
         }
-
+        
         @Override
         public String getLabelKey() {
             return "tab.slip";
         }
-
+        
         @Override
         public String getIconKey() {
             return "/com/openbravo/images/slip.png";
         }
     }
-
+    
     private void printState() {
-
+        
         m_jRemaininglEuros.setText(Formats.CURRENCY.formatValue(
                 m_dTotal - m_aPaymentInfo.getTotal()));
         m_jButtonRemove.setEnabled(!m_aPaymentInfo.isEmpty());
@@ -559,7 +579,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
                         m_dTotal - m_aPaymentInfo.getTotal(),
                         m_sTransactionID);
     }
-
+    
     protected static Window getWindow(Component parent) {
         if (parent == null) {
             return new JFrame();
@@ -569,13 +589,13 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
             return getWindow(parent.getParent());
         }
     }
-
+    
     @Override
     public void setStatus(boolean isPositive, boolean isComplete) {
-
+        
         setStatusPanel(isPositive, isComplete);
     }
-
+    
     public void setTransactionID(String tID) {
         this.m_sTransactionID = tID;
     }
@@ -920,14 +940,14 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_jButtonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jButtonRemoveActionPerformed
-
+        
         m_aPaymentInfo.removeLast();
         printState();
 
     }//GEN-LAST:event_m_jButtonRemoveActionPerformed
 
     private void m_jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jButtonAddActionPerformed
-
+        
         PaymentInfo returnPayment = ((JPaymentInterface) m_jTabPayment.getSelectedComponent())
                 .executePayment();
         if (returnPayment != null) {
@@ -938,7 +958,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     }//GEN-LAST:event_m_jButtonAddActionPerformed
 
     private void m_jTabPaymentStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_m_jTabPaymentStateChanged
-
+        
         if (m_jTabPayment.getSelectedComponent() != null) {
             ((JPaymentInterface) m_jTabPayment.getSelectedComponent())
                     .activate(customerext,
@@ -952,25 +972,25 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     }//GEN-LAST:event_m_jTabPaymentStateChanged
 
     private void m_jButtonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jButtonOKActionPerformed
-
+        
         if (!validaVacio(txtDocumento, "Documento")) {
             return;
         }
-
+        
         if (!validaVacio(txtRazonSocial, "Razón Social")) {
             return;
         }
-
+        
         if (!validaDocumento(txtDocumento)) {
             return;
         }
-
+        
         if (!getCliente(txtDocumento.getText())) {
             saveCliente();
         }
-
+        
         this.documento = txtDocumento.getText();
-
+        
         SwingWorker worker = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
@@ -979,7 +999,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
                                 .executePayment());
                 return null;
             }
-
+            
             @Override
             public void done() {
                 m_jButtonOK.setEnabled(true);
@@ -991,17 +1011,17 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
                 }
             }
         };
-
+        
         worker.execute();
-
+        
         radioConsumidorFinal.setSelected(true);
     }//GEN-LAST:event_m_jButtonOKActionPerformed
-
+    
     private void saveCliente() {
         UtilityPos u = new UtilityPos();
         String apellido = u.extraerApellido(txtRazonSocial.getText().trim());
         String nombre = u.extraerNombre(txtRazonSocial.getText().trim());
-
+        
         try {
             Connection connect = app.getSession().getConnection();
             PreparedStatement preparedStatement = connect.
@@ -1016,7 +1036,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
                             + "LASTNAME, "
                             + "EMAIL) "
                             + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
+            
             preparedStatement.setString(1, txtDocumento.getText());
             preparedStatement.setString(2, txtDocumento.getText());
             preparedStatement.setString(3, txtDocumento.getText());
@@ -1026,15 +1046,15 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
             preparedStatement.setString(7, nombre.toUpperCase());
             preparedStatement.setString(8, apellido.toUpperCase());
             preparedStatement.setString(9, txtCorreoElectronico.getText());
-
+            
             preparedStatement.execute();
-
+            
             connect.close();
         } catch (SQLException ex) {
             Logger.getLogger(JPaymentSelect.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     private Boolean getCliente(String cliente) {
         Boolean existe = false;
         try {
@@ -1044,7 +1064,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
                             + "where TAXID = ?");
             preparedStatement.setString(1, cliente);
             ResultSet resultSet = preparedStatement.executeQuery();
-
+            
             while (resultSet.next()) {
                 existe = true;
                 txtRazonSocial.setText(resultSet.getString("name"));
@@ -1059,7 +1079,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         }
         return existe;
     }
-
+    
     private Boolean validaVacio(javax.swing.JTextField campo, String nombre) {
         String cadena = campo.getText();
         cadena = cadena.replaceAll("\\s+", "");
@@ -1072,7 +1092,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         }
         return true;
     }
-
+    
     private Boolean validaDocumento(javax.swing.JTextField campo) {
         String documento = campo.getText();
         if (tipoDocumento.equals("RUC")) {
@@ -1102,12 +1122,12 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
                 return false;
             }
         }
-
+        
         return true;
     }
 
     private void m_jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jButtonCancelActionPerformed
-
+        
         dispose();
 
     }//GEN-LAST:event_m_jButtonCancelActionPerformed
@@ -1121,9 +1141,9 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     }//GEN-LAST:event_m_jButtonPrintActionPerformed
 
     private void m_jTabPaymentKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_m_jTabPaymentKeyPressed
-
+        
         if (evt.getKeyCode() == KeyEvent.VK_F1) {
-
+            
         } else if (evt.getKeyCode() == KeyEvent.VK_F2) {
 //            m_jEditLine.doClick();
         }
@@ -1131,29 +1151,37 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
 
     private void radioConsumidorFinalItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioConsumidorFinalItemStateChanged
         if (radioConsumidorFinal.isSelected()) {
-            txtDocumento.setText("9999999999999");
-            txtRazonSocial.setText("Consumidor Final");
-            txtCorreoElectronico.setText("");
-            txtDocumento.setEditable(false);
-            txtRazonSocial.setEditable(false);
-            txtCorreoElectronico.setEditable(false);
-            txtDireccion.setEditable(false);
-            this.tipoDocumento = "Consumidor Final";
+            requestConsumidorFinal();
         }
     }//GEN-LAST:event_radioConsumidorFinalItemStateChanged
+    
+    private void requestConsumidorFinal() {
+        txtDocumento.setText("9999999999999");
+        txtRazonSocial.setText("Consumidor Final");
+        txtCorreoElectronico.setText("");
+        txtDocumento.setEditable(false);
+        txtRazonSocial.setEditable(false);
+        txtCorreoElectronico.setEditable(false);
+        txtDireccion.setEditable(false);
+        this.tipoDocumento = "Consumidor Final";
+    }
 
     private void radioRUCItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioRUCItemStateChanged
         if (radioRUC.isSelected()) {
-            txtDocumento.requestFocus();
-            txtDocumento.setEditable(true);
-            txtRazonSocial.setEditable(true);
-            txtCorreoElectronico.setEditable(true);
-            txtDireccion.setEditable(true);
-            this.tipoDocumento = "RUC";
-            cleanWhenConsumidorFinal();
+            requestRuc();
         }
     }//GEN-LAST:event_radioRUCItemStateChanged
-
+    
+    private void requestRuc() {
+        txtDocumento.requestFocus();
+        txtDocumento.setEditable(true);
+        txtRazonSocial.setEditable(true);
+        txtCorreoElectronico.setEditable(true);
+        txtDireccion.setEditable(true);
+        this.tipoDocumento = "RUC";
+        cleanWhenConsumidorFinal();
+    }
+    
     private void cleanWhenConsumidorFinal() {
         if (txtDocumento.getText().equals("9999999999999")) {
             txtDocumento.setText("");
@@ -1165,27 +1193,35 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
 
     private void radioCIItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioCIItemStateChanged
         if (radioCI.isSelected()) {
-            txtDocumento.requestFocus();
-            txtDocumento.setEditable(true);
-            txtRazonSocial.setEditable(true);
-            txtCorreoElectronico.setEditable(true);
-            txtDireccion.setEditable(true);
-            this.tipoDocumento = "Cédula";
-            cleanWhenConsumidorFinal();
+            requestCi();
         }
     }//GEN-LAST:event_radioCIItemStateChanged
+    
+    private void requestCi() {
+        txtDocumento.requestFocus();
+        txtDocumento.setEditable(true);
+        txtRazonSocial.setEditable(true);
+        txtCorreoElectronico.setEditable(true);
+        txtDireccion.setEditable(true);
+        this.tipoDocumento = "Cédula";
+        cleanWhenConsumidorFinal();
+    }
 
     private void radioPasaporteItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioPasaporteItemStateChanged
         if (radioPasaporte.isSelected()) {
-            txtDocumento.requestFocus();
-            txtDocumento.setEditable(true);
-            txtRazonSocial.setEditable(true);
-            txtCorreoElectronico.setEditable(true);
-            txtDireccion.setEditable(true);
-            this.tipoDocumento = "Pasaporte";
-            cleanWhenConsumidorFinal();
+            requestPasaporte();
         }
     }//GEN-LAST:event_radioPasaporteItemStateChanged
+    
+    private void requestPasaporte() {
+        txtDocumento.requestFocus();
+        txtDocumento.setEditable(true);
+        txtRazonSocial.setEditable(true);
+        txtCorreoElectronico.setEditable(true);
+        txtDireccion.setEditable(true);
+        this.tipoDocumento = "Pasaporte";
+        cleanWhenConsumidorFinal();
+    }
 
     private void txtDocumentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDocumentoFocusGained
         txtDocumento.selectAll();
@@ -1205,7 +1241,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     }//GEN-LAST:event_txtDocumentoActionPerformed
 
     private void txtRazonSocialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRazonSocialFocusGained
-
+        
         txtRazonSocial.selectAll();
     }//GEN-LAST:event_txtRazonSocialFocusGained
 

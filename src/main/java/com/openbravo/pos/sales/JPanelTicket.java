@@ -989,7 +989,6 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         //Added by Jorge Luis, if Customer is null then search Consumidor Final
         if (m_oTicket.getCustomer() == null) {
-            System.out.println(m_oTicket.getCustomer());
             //Added to cliente default is Consumidor Final
             if (getCliente("9999999999999") == false) {
                 JOptionPane.showMessageDialog(this, "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe", JOptionPane.ERROR_MESSAGE);
@@ -3283,9 +3282,14 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         msg.show(this);
                     }
                 } else {
+                    if (getCliente("9999999999999") == false) {
+                        JOptionPane.showMessageDialog(this,
+                                "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                     restDB.setCustomerNameInTableByTicketId(null, m_oTicket.getId());
-                    m_oTicket.setCustomer(null);
-//                    Notify("notify.customerremove");
+                    //m_oTicket.setCustomer(null);
+                    //Notify("notify.customerremove");
                 }
 
             } else {
