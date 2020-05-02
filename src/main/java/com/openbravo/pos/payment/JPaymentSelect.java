@@ -806,6 +806,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         jPanel7.add(jLabel2);
 
         txtRazonSocial.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        txtRazonSocial.setToolTipText("Apellido Nombre");
         txtRazonSocial.setName(""); // NOI18N
         txtRazonSocial.setPreferredSize(new java.awt.Dimension(300, 40));
         txtRazonSocial.addFocusListener(new java.awt.event.FocusAdapter() {

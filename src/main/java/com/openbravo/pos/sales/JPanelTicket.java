@@ -984,42 +984,17 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         return true;
     }
 
-    /*
-        Added by Jorge Luis
-        Función para recuperar un consumidor final si no se elige.
-     */
-    private boolean getConsumidorFinal() {
-        CustomerInfo c = new CustomerInfo("9999999999999");
-
-        if (m_oTicket.getCustomer() == null) {
-            JCustomerFinder finder = JCustomerFinder.getCustomerFinder(this, dlCustomers);
-            c.setSearchkey("9999999999999");
-            c.setName("CONSUMIDOR FINAL");
-            finder.executeSearchDirecto();
-            c = finder.getSelectedCustomer();
-            if (c == null) {
-                return false;
-            }
-            try {
-                m_oTicket.setCustomer(finder.getSelectedCustomer() == null
-                        ? null
-                        : dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()));
-            } catch (BasicException e) {
-                MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotfindcustomer"), e);
-                msg.show(this);
-            }
-
-        }
-        return true;
-    }
-
     @SuppressWarnings("empty-statement")
     private void stateTransition(char cTrans) {
 
-        //Added to cliente default is Consumidor Final
-        if (getConsumidorFinal() == false) {
-            JOptionPane.showMessageDialog(this, "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe", JOptionPane.ERROR_MESSAGE);
-            return;
+        //Added by Jorge Luis, if Customer is null then search Consumidor Final
+        if (m_oTicket.getCustomer() == null) {
+            System.out.println(m_oTicket.getCustomer());
+            //Added to cliente default is Consumidor Final
+            if (getCliente("9999999999999") == false) {
+                JOptionPane.showMessageDialog(this, "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
 
         if ((cTrans == '\n') || (cTrans == '?')) {
@@ -3252,7 +3227,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         if (listener != null) {
             listener.stop();
         }
-        Object[] options = {"Create", "Find", "Cancel"};
+        //Comented by Jorge Luis, only search option
+        /*
+        Object[] options = {"Crear", "Buscar", "Cancelar"};
 
         int n = JOptionPane.showOptionDialog(null,
                 AppLocal.getIntString("message.customeradd"),
@@ -3262,7 +3239,10 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 null,
                 options,
                 options[2]);
-
+         */
+        //Only search option
+        int n = 1;
+        //Crea un nuevo cliente
         if (n == 0) {
             JDialogNewCustomer dialog = JDialogNewCustomer.getDialog(this, m_App);
             dialog.setVisible(true);
@@ -3276,7 +3256,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 }
             }
         }
-
+        //Busca un cliente
         if (n == 1) {
             JCustomerFinder finder = JCustomerFinder.getCustomerFinder(this, dlCustomers);
 
@@ -3305,7 +3285,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 } else {
                     restDB.setCustomerNameInTableByTicketId(null, m_oTicket.getId());
                     m_oTicket.setCustomer(null);
-                    Notify("notify.customerremove");
+//                    Notify("notify.customerremove");
                 }
 
             } else {
