@@ -510,7 +510,7 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
         String newLogo = m_props.getProperty("start.logo");
         if (newLogo != null) {
            if ("".equals(newLogo)){
-                jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/logo.png")));
+                jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/capu.png")));
            }else{
                 jLabel1.setIcon(new javax.swing.ImageIcon (newLogo));
             }
@@ -1015,7 +1015,7 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
 
         jLabel1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/unicenta.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/capu.png"))); // NOI18N
         jLabel1.setText("<html><center>AllkuPos Ec - Touch Point of Sale<br>" +
             "https://www.allku.expert<br>" +
             "<br>" +
