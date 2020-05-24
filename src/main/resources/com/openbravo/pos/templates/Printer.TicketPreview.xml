@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
    AllkuPos - Touch friendly Point Of Sale
-   Copyright (c) 2020 Allku.Expert
+   https://www.allku.expert
    https://github.com/allku/AllkuPos_Ec
 
    This file is part of AllkuPos
@@ -17,7 +17,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
+   along with AllkuPos Ec.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <output>

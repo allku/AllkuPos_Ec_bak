@@ -1,5 +1,5 @@
-//    AllkuPos Ec  - Touch Friendly Point Of Sale
-//    Copyright (c) 2020 AllkuPos Ec & previous uniCenta & Openbravo POS works
+//    AllkuPos Ec - Touch Friendly Point Of Sale
+//    AllkuPos Ec & previous uniCenta & Openbravo POS works
 //    https://www.allku.expert
 //
 //    This file is part of AllkuPos Ec
@@ -15,7 +15,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>
+//    along with AllkuPos Ec.  If not, see <http://www.gnu.org/licenses/>
 
 package com.openbravo.pos.forms;
 
