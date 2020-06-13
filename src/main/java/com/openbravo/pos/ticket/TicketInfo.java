@@ -1,15 +1,15 @@
-//    uniCenta oPOS  - Touch Friendly Point Of Sale
+//    AllkuPOS Ec  - Touch Friendly Point Of Sale
 //    Copyright (c) 2009-2018 uniCenta
-//    https://unicenta.com
+//    https://www.allku.expert
 //
 //    This file is part of uniCenta oPOS
 //
-//    uniCenta oPOS is free software: you can redistribute it and/or modify
+//    AllkuPOS Ec oPOS is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//   uniCenta oPOS is distributed in the hope that it will be useful,
+//    AllkuPOS Ec is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
@@ -102,7 +102,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
      * Creates new TicketModel
      */
     public TicketInfo() {
-        m_sId = UUID.randomUUID().toString();
+        m_sId = UUID.randomUUID().toString() + "-" + Hostname;
         tickettype = RECEIPT_NORMAL;
         m_iTicketId = 0; // incrementamos
         m_dDate = new Date();
@@ -736,7 +736,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
 
     public String getTicketHeaderFooterData(String data) {
         AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")),
-                 AppLocal.APP_ID + ".properties"));
+                AppLocal.APP_ID + ".properties"));
         m_config.load();
         String row = (m_config.getProperty("tkt." + data));
 
