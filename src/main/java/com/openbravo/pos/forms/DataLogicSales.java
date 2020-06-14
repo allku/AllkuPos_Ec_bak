@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.io.File;
+import java.math.BigInteger;
 
 /**
  *
@@ -1871,7 +1872,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      * @return @throws BasicException
      */
     public final Integer getNextPickupIndex() throws BasicException {
-        return (Integer) s.DB.getSequenceSentence(s, "pickup_number").find();
+        BigInteger sequence = (BigInteger) s.DB.getSequenceSentence(s, "pickup_number").find();
+        return sequence.intValue();
     }
 
     /**
@@ -1879,7 +1881,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      * @return @throws BasicException
      */
     public final Integer getNextTicketIndex() throws BasicException {
-        return (Integer) s.DB.getSequenceSentence(s, "ticketsnum").find();
+        BigInteger sequence = (BigInteger) s.DB.getSequenceSentence(s, "ticketsnum").find();
+        return sequence.intValue();
     }
 
     /**
@@ -1887,7 +1890,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      * @return @throws BasicException
      */
     public final Integer getNextTicketRefundIndex() throws BasicException {
-        return (Integer) s.DB.getSequenceSentence(s, "ticketsnum_refund").find();
+        BigInteger sequence = (BigInteger) s.DB.getSequenceSentence(s, "ticketsnum_refund").find();
+        return sequence.intValue();
     }
 
     /**
@@ -1895,7 +1899,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      * @return @throws BasicException
      */
     public final Integer getNextTicketPaymentIndex() throws BasicException {
-        return (Integer) s.DB.getSequenceSentence(s, "ticketsnum_payment").find();
+        BigInteger sequence = (BigInteger) s.DB.getSequenceSentence(s, "ticketsnum_payment").find();
+        return sequence.intValue();
     }
 
 // JG 3 Feb 16 - Product load speedup

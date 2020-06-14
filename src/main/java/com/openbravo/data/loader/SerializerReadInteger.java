@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
@@ -26,16 +25,18 @@ import com.openbravo.basic.BasicException;
  * @author JG uniCenta
  */
 public class SerializerReadInteger implements SerializerRead {
-    
+
     /**
      *
      */
     public static final SerializerRead INSTANCE = new SerializerReadInteger();
-    
-    /** Creates a new instance of SerializerReadInteger */
+
+    /**
+     * Creates a new instance of SerializerReadInteger
+     */
     private SerializerReadInteger() {
     }
-    
+
     /**
      *
      * @param dr
@@ -43,6 +44,7 @@ public class SerializerReadInteger implements SerializerRead {
      * @throws BasicException
      */
     public Object readValues(DataRead dr) throws BasicException {
-        return Datas.INT.getValue(dr,1);
-    }    
+        Object o = Datas.OBJECT.getValue(dr, 1);
+        return o;
+    }
 }
