@@ -1025,17 +1025,17 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         try {
             Connection connect = app.getSession().getConnection();
             PreparedStatement preparedStatement = connect.
-                    prepareStatement("INSERT INTO CUSTOMERS "
-                            + "(ID, "
-                            + "SEARCHKEY, "
-                            + "TAXID, "
-                            + "NAME, "
-                            + "ADDRESS, "
-                            + "POSTAL, "
-                            + "FIRSTNAME, "
-                            + "LASTNAME, "
-                            + "EMAIL) "
-                            + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    prepareStatement("insert into customers "
+                            + "(id, "
+                            + "searchkey, "
+                            + "taxid, "
+                            + "name, "
+                            + "address, "
+                            + "postal, "
+                            + "firstname, "
+                            + "lastname, "
+                            + "email) "
+                            + "values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
             
             preparedStatement.setString(1, txtDocumento.getText());
             preparedStatement.setString(2, txtDocumento.getText());
@@ -1047,7 +1047,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
             preparedStatement.setString(8, apellido.toUpperCase());
             preparedStatement.setString(9, txtCorreoElectronico.getText());
             
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             
             connect.close();
         } catch (SQLException ex) {
@@ -1060,7 +1060,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         try {
             Connection connect = app.getSession().getConnection();
             PreparedStatement preparedStatement = connect.
-                    prepareStatement("select name, email, address from CUSTOMERS "
+                    prepareStatement("select name, email, address from customers "
                             + "where TAXID = ?");
             preparedStatement.setString(1, cliente);
             ResultSet resultSet = preparedStatement.executeQuery();
