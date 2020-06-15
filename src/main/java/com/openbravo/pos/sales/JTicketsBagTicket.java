@@ -197,7 +197,7 @@ public class JTicketsBagTicket extends JTicketsBag {
         return this;
     }
 
-    private void readTicket(int iTicketid, int iTickettype, String person) {
+    private void readTicket(int iTicketid, int iTickettype, String name) {
         Integer findTicket = 0;
         try {
             findTicket = m_jTicketEditor.getValueInteger();
@@ -207,8 +207,8 @@ public class JTicketsBagTicket extends JTicketsBag {
         try {
 
             TicketInfo ticket = (iTicketid == -1)
-                    ? m_dlSales.loadTicket(iTickettype, findTicket, person)
-                    : m_dlSales.loadTicket(iTickettype, iTicketid, person);
+                    ? m_dlSales.loadTicket(iTickettype, findTicket, name)
+                    : m_dlSales.loadTicket(iTickettype, iTicketid, name);
 
             if (ticket == null) {
                 JFrame frame = new JFrame();
@@ -574,17 +574,15 @@ public class JTicketsBagTicket extends JTicketsBag {
         refundticket.setOldTicket(true);
         m_panelticketedit.setActiveTicket(refundticket, null);
     }//GEN-LAST:event_m_jRefundActionPerformed
-
+    //Get ticket by default user in session
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
-        readTicket(-1, jrbSales.isSelected() ? 0 : 1, "");
-
+        readTicket(-1, jrbSales.isSelected() ? 0 : 1,
+                m_App.getAppUserView().getUser().getName());
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    //Get ticket default user in session
     private void m_jKeysActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jKeysActionPerformed
-
-        readTicket(-1, jrbSales.isSelected() ? 0 : 1, "");
-
+        readTicket(-1, jrbSales.isSelected() ? 0 : 1,
+                m_App.getAppUserView().getUser().getName());
     }//GEN-LAST:event_m_jKeysActionPerformed
 
 private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

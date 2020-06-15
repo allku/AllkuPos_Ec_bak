@@ -1527,11 +1527,11 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      *
      * @param tickettype
      * @param ticketid
-     * @param person
+     * @param name
      * @return
      * @throws BasicException
      */
-    public final TicketInfo loadTicket(final int tickettype, final int ticketid, final String person) throws BasicException {
+    public final TicketInfo loadTicket(final int tickettype, final int ticketid, final String name) throws BasicException {
         TicketInfo ticket = (TicketInfo) new PreparedSentence(s,
                 "SELECT "
                 + "T.ID, "
@@ -1556,7 +1556,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     public void writeValues() throws BasicException {
                         setInt(1, tickettype);
                         setInt(2, ticketid);
-                        setString(3, person);
+                        setString(3, name);
                     }
                 });
 
