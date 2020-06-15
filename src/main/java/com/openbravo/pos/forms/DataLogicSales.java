@@ -1056,7 +1056,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
     public SentenceList getTicketsList() {
         return new StaticSentence(s,
                 new QBFBuilder(
-                        "SELECT "                        
+                        "SELECT "
                         + "T.TICKETID, "
                         + "T.TICKETTYPE, "
                         + "R.DATENEW, "
@@ -1079,7 +1079,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         + "ORDER BY R.DATENEW DESC, T.TICKETID",
                         new String[]{
                             "T.TICKETID", "T.TICKETTYPE", "PM.TOTAL", "R.DATENEW", "R.DATENEW", "P.NAME", "C.NAME"}),
-                new SerializerWriteBasic(new Datas[]{            
+                new SerializerWriteBasic(new Datas[]{
             Datas.OBJECT, Datas.INT,
             Datas.OBJECT, Datas.INT,
             Datas.OBJECT, Datas.DOUBLE,
@@ -1527,10 +1527,11 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      *
      * @param tickettype
      * @param ticketid
+     * @param person
      * @return
      * @throws BasicException
      */
-    public final TicketInfo loadTicket(final int tickettype, final int ticketid) throws BasicException {
+    public final TicketInfo loadTicket(final int tickettype, final int ticketid, final String person) throws BasicException {
         TicketInfo ticket = (TicketInfo) new PreparedSentence(s,
                 "SELECT "
                 + "T.ID, "
@@ -1546,7 +1547,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "FROM receipts R "
                 + "JOIN tickets T ON R.ID = T.ID "
                 + "LEFT OUTER JOIN people P ON T.PERSON = P.ID "
-                + "WHERE T.TICKETTYPE = ? AND T.TICKETID = ? "
+                + "WHERE T.TICKETTYPE = ? AND T.TICKETID = ? AND P.NAME = ?"
                 + "ORDER BY R.DATENEW DESC",
                 SerializerWriteParams.INSTANCE,
                 new SerializerReadClass(TicketInfo.class))
@@ -1555,6 +1556,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     public void writeValues() throws BasicException {
                         setInt(1, tickettype);
                         setInt(2, ticketid);
+                        setString(3, person);
                     }
                 });
 

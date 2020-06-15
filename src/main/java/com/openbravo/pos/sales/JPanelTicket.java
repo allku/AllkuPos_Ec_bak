@@ -3028,7 +3028,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             try {
                 TicketInfo ticket = dlSales.loadTicket(
                         Integer.parseInt((m_config.getProperty("lastticket.type"))),
-                        Integer.parseInt((m_config.getProperty("lastticket.number"))));
+                        Integer.parseInt((m_config.getProperty("lastticket.number"))),
+                        m_App.getAppUserView().getUser().getName());
                 if (ticket == null) {
                     JFrame frame = new JFrame();
                     JOptionPane.showMessageDialog(frame,
