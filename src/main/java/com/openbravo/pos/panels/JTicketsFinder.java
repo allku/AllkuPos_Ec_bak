@@ -68,7 +68,7 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
     private JTicketsFinder(java.awt.Dialog parent, boolean modal) {
         super(parent, modal);
     }
-    
+
     /**
      *
      * @param parent
@@ -78,9 +78,9 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
      */
     public static JTicketsFinder getReceiptFinder(Component parent, DataLogicSales dlSales, DataLogicCustomers dlCustomers) {
         Window window = getWindow(parent);
-        
+
         JTicketsFinder myMsg;
-        if (window instanceof Frame) { 
+        if (window instanceof Frame) {
             myMsg = new JTicketsFinder((Frame) window, true);
         } else {
             myMsg = new JTicketsFinder((Dialog) window, true);
@@ -89,7 +89,7 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
         myMsg.applyComponentOrientation(parent.getComponentOrientation());
         return myMsg;
     }
-    
+
     /**
      *
      * @return
@@ -99,10 +99,10 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
     }
 
     private void init(DataLogicSales dlSales, DataLogicCustomers dlCustomers) {
-        
+
         this.dlSales = dlSales;
         this.dlCustomers = dlCustomers;
-        
+
         initComponents();
 
         jScrollPane1.getVerticalScrollBar().setPreferredSize(new Dimension(35, 35));
@@ -113,49 +113,49 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
         lpr = new ListProviderCreator(dlSales.getTicketsList(), this);
 
         jListTickets.setCellRenderer(new FindTicketsRenderer());
-        
+
         getRootPane().setDefaultButton(jcmdOK);
-        
+
         initCombos();
-        
+
         defaultValues();
 
         selectedTicket = null;
- 
+
     }
- 
+
     /**
      *
      */
     public void executeSearch() {
 
         jLblTicketCount.setVisible(false);
-        jLblReturnCount.setVisible(false);        
-        jLblTicketCount.setText(null); 
+        jLblReturnCount.setVisible(false);
+        jLblTicketCount.setText(null);
 
         try {
             jListTickets.setModel(new MyListData(lpr.loadData()));
             if (jListTickets.getModel().getSize() > 0) {
                 String count = String.valueOf(jListTickets.getModel().getSize());
                 jLblTicketCount.setVisible(true);
-                jLblReturnCount.setVisible(true);                   
+                jLblReturnCount.setVisible(true);
                 jListTickets.setSelectedIndex(0);
                 jLblTicketCount.setText(count);
             }
         } catch (BasicException e) {
-        }        
+        }
     }
-    
+
     private void initCombos() {
         String[] values = new String[] {AppLocal.getIntString("label.sales"),
             AppLocal.getIntString("label.refunds"), AppLocal.getIntString("label.all")};
         jComboBoxTicket.setModel(new DefaultComboBoxModel(values));
-       
+
         jcboMoney.setModel(ListQBFModelNumber.getMandatoryNumber());
-        
+
         m_sentcat = dlSales.getUserList();
-        m_CategoryModel = new ComboBoxValModel(); 
-        
+        m_CategoryModel = new ComboBoxValModel();
+
         List catlist=null;
 
         try {
@@ -167,9 +167,9 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
         catlist.add(0, null);
 
         m_CategoryModel = new ComboBoxValModel(catlist);
-        jcboUser.setModel(m_CategoryModel);      
+        jcboUser.setModel(m_CategoryModel);
     }
-    
+
     private void defaultValues() {
 
         jListTickets.setModel(new MyListData(new ArrayList()));
@@ -192,14 +192,14 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
 
         jLblTicketCount.setVisible(false);
         jLblReturnCount.setVisible(false);
-        jLblTicketCount.setText(null);   
+        jLblTicketCount.setText(null);
 
-        Date startOfToday = Date.from(ZonedDateTime.now().with(LocalTime.MIN).toInstant());        
+        Date startOfToday = Date.from(ZonedDateTime.now().with(LocalTime.MIN).toInstant());
         jTxtStartDate.setText(Formats.TIMESTAMP.formatValue(startOfToday));
 
         repaint();
     }
-    
+
     /**
      *
      * @return
@@ -207,9 +207,9 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
      */
     @Override
     public Object createValue() throws BasicException {
-        
+
         Object[] afilter = new Object[14];
-        
+
         if (jtxtTicketID.getText() == null || jtxtTicketID.getText().equals("")) {
             afilter[0] = QBFCompareEnum.COMP_NONE;
             afilter[1] = null;
@@ -217,7 +217,7 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
             afilter[0] = QBFCompareEnum.COMP_EQUALS;
             afilter[1] = jtxtTicketID.getValueInteger();
         }
-        
+
         switch (jComboBoxTicket.getSelectedIndex()) {
             case 2:
                 afilter[2] = QBFCompareEnum.COMP_DISTINCT;
@@ -234,26 +234,26 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
             default:
                 break;
         }
-        
+
         afilter[5] = jtxtMoney.getDoubleValue();
         afilter[4] = afilter[5] == null ? QBFCompareEnum.COMP_NONE : jcboMoney.getSelectedItem();
-        
+
         Object startdate = Formats.TIMESTAMP.parseValue(jTxtStartDate.getText());
         Object enddate = Formats.TIMESTAMP.parseValue(jTxtEndDate.getText());
-        
+
         afilter[6] = (startdate == null) ? QBFCompareEnum.COMP_NONE : QBFCompareEnum.COMP_GREATEROREQUALS;
         afilter[7] = startdate;
         afilter[8] = (enddate == null) ? QBFCompareEnum.COMP_NONE : QBFCompareEnum.COMP_LESS;
         afilter[9] = enddate;
-        
+
         if (jcboUser.getSelectedItem() == null) {
             afilter[10] = QBFCompareEnum.COMP_NONE;
-            afilter[11] = null; 
+            afilter[11] = null;
         } else {
             afilter[10] = QBFCompareEnum.COMP_EQUALS;
             afilter[11] = ((TaxCategoryInfo)jcboUser.getSelectedItem()).getName(); 
         }
-        
+
         if (jtxtCustomer.getText() == null || jtxtCustomer.getText().equals("")) {
             afilter[12] = QBFCompareEnum.COMP_NONE;
             afilter[13] = null;
@@ -261,10 +261,10 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
             afilter[12] = QBFCompareEnum.COMP_RE;
             afilter[13] = "%" + jtxtCustomer.getText() + "%";
         }
-        
+
         return afilter;
 
-    } 
+    }
 
     private static Window getWindow(Component parent) {
         if (parent == null) {
@@ -278,36 +278,36 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
 
     
     private static class MyListData extends javax.swing.AbstractListModel {
-        
+
         private final java.util.List m_data;
-        
+
         public MyListData(java.util.List data) {
             m_data = data;
         }
-        
+
         @Override
         public Object getElementAt(int index) {
             return m_data.get(index);
         }
-        
+
         @Override
         public int getSize() {
             return m_data.size();
-        } 
+        }
     }
     /**
      *
      * @param d
      */
     public void setStartDate(Date d) {
-        Date startOfDay = Date.from(ZonedDateTime.now().with(LocalTime.MIN).toInstant());        
+        Date startOfDay = Date.from(ZonedDateTime.now().with(LocalTime.MIN).toInstant());
         jTxtStartDate.setText(Formats.TIMESTAMP.formatValue(startOfDay));
     }
     public void setEndDate(Date d) {
-        Date endOfDay = Date.from(ZonedDateTime.now().with(LocalTime.MAX).toInstant());        
+        Date endOfDay = Date.from(ZonedDateTime.now().with(LocalTime.MAX).toInstant());
         jTxtEndDate.setText(Formats.TIMESTAMP.formatValue(endOfDay));
-    }    
-    
+    }
+
    
     /** This method is called from within the constructor to
      * initialize the form.
@@ -649,39 +649,40 @@ public class JTicketsFinder extends javax.swing.JDialog implements EditorCreator
     private void jcmdOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcmdOKActionPerformed
 
         selectedTicket = (FindTicketsInfo) jListTickets.getSelectedValue();
+        System.out.println("Ticket # " + selectedTicket.getTicketId()
+                + " " + selectedTicket.getName() + " " + selectedTicket.getTicketType());
         dispose();
-        
     }//GEN-LAST:event_jcmdOKActionPerformed
 
     private void jcmdCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcmdCancelActionPerformed
 
         dispose();
-        
+
     }//GEN-LAST:event_jcmdCancelActionPerformed
 
     private void jbtnExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnExecuteActionPerformed
-        
+
         executeSearch();
 
         jLblTicketCount.setVisible(true);
-        jLblReturnCount.setVisible(true);        
-        jLblReturnCount.setText(" Tickets found");        
-        
+        jLblReturnCount.setVisible(true);
+        jLblReturnCount.setText(" Tickets found");
+
     }//GEN-LAST:event_jbtnExecuteActionPerformed
 
     private void jListTicketsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListTicketsValueChanged
 
         jcmdOK.setEnabled(jListTickets.getSelectedValue() != null);
-        
+
 }//GEN-LAST:event_jListTicketsValueChanged
 
     private void jListTicketsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListTicketsMouseClicked
-        
+
         if (evt.getClickCount() == 2) {
             selectedTicket = (FindTicketsInfo) jListTickets.getSelectedValue();
             dispose();
-    }
-        
+        }
+
 }//GEN-LAST:event_jListTicketsMouseClicked
 
 private void jbtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnResetActionPerformed
@@ -690,54 +691,54 @@ private void jbtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_jbtnResetActionPerformed
 
 private void btnDateStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDateStartActionPerformed
-    
+
     jLblTicketCount.setVisible(false);
-    jLblReturnCount.setVisible(false);  
-    
+    jLblReturnCount.setVisible(false);
+
     Date date;
-        try {
-            date = (Date) Formats.TIMESTAMP.parseValue(jTxtStartDate.getText());
-        } catch (BasicException e) {
-            date = null;
-        }        
-        date = JCalendarDialog.showCalendarTimeHours(this, date);
-        if (date != null) {
-            jTxtStartDate.setText(Formats.TIMESTAMP.formatValue(date));
-        }
+    try {
+        date = (Date) Formats.TIMESTAMP.parseValue(jTxtStartDate.getText());
+    } catch (BasicException e) {
+        date = null;
+    }
+    date = JCalendarDialog.showCalendarTimeHours(this, date);
+    if (date != null) {
+        jTxtStartDate.setText(Formats.TIMESTAMP.formatValue(date));
+    }
 }//GEN-LAST:event_btnDateStartActionPerformed
 
 private void btnDateEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDateEndActionPerformed
     jLblTicketCount.setVisible(false);
-    jLblReturnCount.setVisible(false);  
-    
+    jLblReturnCount.setVisible(false);
+
     Date date;
-        try {
-            date = (Date) Formats.TIMESTAMP.parseValue(jTxtEndDate.getText());
-        } catch (BasicException e) {
-            date = null;
-        }        
-        date = JCalendarDialog.showCalendarTimeHours(this, date);
-        if (date != null) {
-            jTxtEndDate.setText(Formats.TIMESTAMP.formatValue(date));
-        }
+    try {
+        date = (Date) Formats.TIMESTAMP.parseValue(jTxtEndDate.getText());
+    } catch (BasicException e) {
+        date = null;
+    }
+    date = JCalendarDialog.showCalendarTimeHours(this, date);
+    if (date != null) {
+        jTxtEndDate.setText(Formats.TIMESTAMP.formatValue(date));
+    }
 }//GEN-LAST:event_btnDateEndActionPerformed
 
 private void btnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerActionPerformed
     jLblTicketCount.setVisible(false);
-    jLblReturnCount.setVisible(false);      
-    
+    jLblReturnCount.setVisible(false);
+
     JCustomerFinder finder = JCustomerFinder.getCustomerFinder(this, dlCustomers);
-        finder.search(null);
-        finder.setVisible(true);
-        
-        try {
-            jtxtCustomer.setText(finder.getSelectedCustomer() == null
-                    ? null
-                    : dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()).toString());
-        } catch (BasicException e) {
-            MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotfindcustomer"), e);
-            msg.show(this);            
-        }
+    finder.search(null);
+    finder.setVisible(true);
+
+    try {
+        jtxtCustomer.setText(finder.getSelectedCustomer() == null
+                ? null
+                : dlSales.loadCustomerExt(finder.getSelectedCustomer().getId()).toString());
+    } catch (BasicException e) {
+        MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotfindcustomer"), e);
+        msg.show(this);
+    }
 
 }//GEN-LAST:event_btnCustomerActionPerformed
 
