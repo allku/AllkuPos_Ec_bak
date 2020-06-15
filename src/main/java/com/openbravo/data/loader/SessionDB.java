@@ -62,6 +62,14 @@ public interface SessionDB {
      * @return
      */
     public SentenceFind getSequenceSentence(Session s, String sequence);
+    
+    /**
+     *
+     * @param s
+     * @param sequence
+     * @return
+     */
+    public SentenceFind getSequenceSentence(Session s, String sequence, String person);
 
     /**
      *

@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
@@ -26,36 +25,51 @@ import com.openbravo.basic.BasicException;
  * @author JG uniCenta
  */
 public class SequenceForMySQL extends BaseSentence {
-    
+
     private BaseSentence sent1;
     private BaseSentence sent2;
-    
-    /** Creates a new instance of SequenceForMySQL
+
+    /**
+     * Creates a new instance of SequenceForMySQL
+     *
      * @param s
-     * @param sSeqTable */
+     * @param sSeqTable
+     */
     public SequenceForMySQL(Session s, String sSeqTable) {
-        
+
         sent1 = new StaticSentence(s, "UPDATE " + sSeqTable + " SET ID = LAST_INSERT_ID(ID + 1)");
         sent2 = new StaticSentence(s, "SELECT LAST_INSERT_ID()", null, SerializerReadInteger.INSTANCE);
     }
-    
+
+    /**
+     * Creates a new instance of SequenceForMySQL
+     *
+     * @param s
+     * @param sSeqTable
+     */
+    public SequenceForMySQL(Session s, String sSeqTable, String person) {
+
+        sent1 = new StaticSentence(s, "UPDATE " + sSeqTable
+                + " SET ID = LAST_INSERT_ID(ID + 1)"
+                + " where person = '" + person + "'");
+        sent2 = new StaticSentence(s, "SELECT LAST_INSERT_ID()", null, SerializerReadInteger.INSTANCE);
+    }
+
     // Funciones de bajo nivel
-        
     /**
      *
      * @param params
      * @return
      * @throws BasicException
      */
-        public DataResultSet openExec(Object params) throws BasicException {        
+    public DataResultSet openExec(Object params) throws BasicException {
         sent1.exec();
         return sent2.openExec(null);
-    }   
+    }
 
     /**
      *
-     * @return
-     * @throws BasicException
+     * @return @throws BasicException
      */
     public DataResultSet moreResults() throws BasicException {
         return sent2.moreResults();

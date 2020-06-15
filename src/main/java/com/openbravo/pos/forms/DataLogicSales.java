@@ -1056,7 +1056,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
     public SentenceList getTicketsList() {
         return new StaticSentence(s,
                 new QBFBuilder(
-                        "SELECT "
+                        "SELECT "                        
                         + "T.TICKETID, "
                         + "T.TICKETTYPE, "
                         + "R.DATENEW, "
@@ -1079,7 +1079,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         + "ORDER BY R.DATENEW DESC, T.TICKETID",
                         new String[]{
                             "T.TICKETID", "T.TICKETTYPE", "PM.TOTAL", "R.DATENEW", "R.DATENEW", "P.NAME", "C.NAME"}),
-                new SerializerWriteBasic(new Datas[]{
+                new SerializerWriteBasic(new Datas[]{            
             Datas.OBJECT, Datas.INT,
             Datas.OBJECT, Datas.INT,
             Datas.OBJECT, Datas.DOUBLE,
@@ -1599,7 +1599,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 if (ticket.getTicketId() == 0) {
                     switch (ticket.getTicketType()) {
                         case TicketInfo.RECEIPT_NORMAL:
-                            ticket.setTicketId(getNextTicketIndex());
+                            ticket.setTicketId(getNextTicketIndex(
+                                    ticket.getUser().getId()));
                             break;
                         case TicketInfo.RECEIPT_REFUND:
                             ticket.setTicketId(getNextTicketRefundIndex());
@@ -1882,6 +1883,15 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      */
     public final Integer getNextTicketIndex() throws BasicException {
         BigInteger sequence = (BigInteger) s.DB.getSequenceSentence(s, "ticketsnum").find();
+        return sequence.intValue();
+    }
+
+    /**
+     *
+     * @return @throws BasicException
+     */
+    public final Integer getNextTicketIndex(String person) throws BasicException {
+        BigInteger sequence = (BigInteger) s.DB.getSequenceSentence(s, "ticketsnum", person).find();
         return sequence.intValue();
     }
 

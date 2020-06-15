@@ -75,6 +75,17 @@ public class SessionDBMySQL implements SessionDB {
     public SentenceFind getSequenceSentence(Session s, String sequence) {
         return new SequenceForMySQL(s, sequence);
     }
+    
+    /**
+     *
+     * @param s
+     * @param sequence
+     * @return
+     */
+    @Override
+    public SentenceFind getSequenceSentence(Session s, String sequence, String person) {
+        return new SequenceForMySQL(s, sequence, person);
+    }
    
     /**
      *

@@ -84,4 +84,9 @@ public class SessionDBOracle implements SessionDB {
     public SentenceFind resetSequenceSentence(Session s, String sequence) {
         return new StaticSentence(s, "SELECT " + sequence + ".NEXTVAL FROM DUAL", null, SerializerReadInteger.INSTANCE);
     }
+
+    @Override
+    public SentenceFind getSequenceSentence(Session s, String sequence, String person) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
