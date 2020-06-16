@@ -1,8 +1,8 @@
 //    AllkuPOS Ec  - Touch Friendly Point Of Sale
-//    Copyright (c) 2009-2018 uniCenta
+//    
 //    https://www.allku.expert
 //
-//    This file is part of uniCenta oPOS
+//    
 //
 //    AllkuPOS Ec oPOS is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -83,9 +83,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     private String razonSocial;
     private String nombreComercial;
     private String direccion1;
-    private String direccion2;
-    private String establecimiento;
-    private String puntoEmision;
+    private String direccion2;    
     private String ambiente;
 
     private static String Hostname;
@@ -580,23 +578,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
 
     public void setDireccion2(String direccion2) {
         this.direccion2 = direccion2;
-    }
-
-    public String getEstablecimiento() {
-        return establecimiento;
-    }
-
-    public void setEstablecimiento(String establecimiento) {
-        this.establecimiento = establecimiento;
-    }
-
-    public String getPuntoEmision() {
-        return puntoEmision;
-    }
-
-    public void setPuntoEmision(String puntoEmision) {
-        this.puntoEmision = puntoEmision;
-    }
+    }    
 
     public String getAmbiente() {
         return ambiente;
@@ -609,9 +591,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public String printSecuencial() {
         if (m_iTicketId > 0) {
             // valid ticket id
-            return getEstablecimiento()
-                    + "-"
-                    + getPuntoEmision()
+            return getUser().getId()
                     + "-"
                     + String.format("%09d", m_iTicketId);
         } else {
@@ -878,7 +858,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             claveAcceso = new SimpleDateFormat("ddMMyyyy").format(getDate());
             claveAcceso = claveAcceso + codigoDocumeto;
             claveAcceso = claveAcceso + getRuc() + getAmbiente();
-            claveAcceso = claveAcceso + getEstablecimiento() + getPuntoEmision() + getSecuencial();
+            claveAcceso = claveAcceso + getUser().getId() + getSecuencial();
             claveAcceso = claveAcceso + "12345678" + "1";
             claveAcceso = claveAcceso + m11.modulo11(claveAcceso);
 

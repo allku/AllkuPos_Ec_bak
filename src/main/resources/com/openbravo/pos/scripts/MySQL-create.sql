@@ -834,9 +834,9 @@ INSERT INTO roles(id, name, permissions) VALUES('2', 'Employee role', $FILE{/com
 INSERT INTO roles(id, name, permissions) VALUES('3', 'Guest role', $FILE{/com/openbravo/pos/templates/Role.Guest.xml} );
 
 -- ADD people
-INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('0', 'Administrator', NULL, '0', TRUE, NULL);
-INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('1', 'Manager', NULL, '1', TRUE, NULL);
-INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('2', 'Employee', NULL, '2', TRUE, NULL);
+INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001001', 'Administrator', NULL, '0', TRUE, NULL);
+INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001002', 'Manager', NULL, '1', TRUE, NULL);
+INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001003', 'Employee', NULL, '2', TRUE, NULL);
 INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('3', 'Guest', NULL, '3', TRUE, NULL);
 
 -- ADD resources --
@@ -929,10 +929,6 @@ INSERT INTO resources(id, name, restype, content) VALUES('104', 'Empresa.Direcci
 INSERT INTO resources(id, name, restype, content) VALUES('105', 'Empresa.Direccion2', 0, $FILE{/com/openbravo/pos/templates/Empresa.Direccion2.txt});
 -- ADD Ambiente de facturación electrónica 1 => Pruebas, 2 => Producción
 INSERT INTO resources(id, name, restype, content) VALUES('106', 'Empresa.Ambiente', 0, $FILE{/com/openbravo/pos/templates/Empresa.Ambiente.txt});
--- ADD Establecimiento y Punto de Emisión.
-INSERT INTO resources(id, name, restype, content) VALUES('107', 'Empresa.Establecimiento', 0, $FILE{/com/openbravo/pos/templates/Empresa.Establecimiento.txt});
-INSERT INTO resources(id, name, restype, content) VALUES('108', 'Empresa.PuntoEmision', 0, $FILE{/com/openbravo/pos/templates/Empresa.PuntoEmision.txt});
-
 
 -- ADD CATEGORIES
 INSERT INTO categories(id, name) VALUES ('000', 'Categoría Standard');
@@ -1028,7 +1024,9 @@ INSERT INTO shift_breaks(id, shiftid, breakid, starttime, endtime) VALUES ('0', 
 
 -- ADD SEQUENCES
 INSERT INTO pickup_number VALUES(0);
-INSERT INTO ticketsnum VALUES(0, '0');
+INSERT INTO ticketsnum VALUES(0, '001001');
+INSERT INTO ticketsnum VALUES(0, '001002');
+INSERT INTO ticketsnum VALUES(0, '001003');
 INSERT INTO ticketsnum_refund VALUES(0);
 INSERT INTO ticketsnum_payment VALUES(0);
 

@@ -220,8 +220,6 @@ public class JTicketsBagTicket extends JTicketsBag {
             } else {
                 //Added Print Ticket
                 ticket.setRuc(m_dlSystem.getResourceAsText("Empresa.RUC"));
-                ticket.setEstablecimiento(m_dlSystem.getResourceAsText("Empresa.Establecimiento"));
-                ticket.setPuntoEmision(m_dlSystem.getResourceAsText("Empresa.PuntoEmision"));
                 ticket.setRazonSocial(m_dlSystem.getResourceAsText("Empresa.RazonSocial"));
                 ticket.setNombreComercial(m_dlSystem.getResourceAsText("Empresa.NombreComercial"));
                 ticket.setDireccion1(m_dlSystem.getResourceAsText("Empresa.Direccion1"));

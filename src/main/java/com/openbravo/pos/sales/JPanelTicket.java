@@ -1809,9 +1809,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                              */
                             //Added by Jorge Luis
                             //Added Print Ticket                            
-                            ticket.setRuc(dlSystem.getResourceAsText("Empresa.RUC"));
-                            ticket.setEstablecimiento(dlSystem.getResourceAsText("Empresa.Establecimiento"));
-                            ticket.setPuntoEmision(dlSystem.getResourceAsText("Empresa.PuntoEmision"));
+                            ticket.setRuc(dlSystem.getResourceAsText("Empresa.RUC"));                           
                             ticket.setRazonSocial(dlSystem.getResourceAsText("Empresa.RazonSocial"));
                             ticket.setNombreComercial(dlSystem.getResourceAsText("Empresa.NombreComercial"));
                             ticket.setDireccion1(dlSystem.getResourceAsText("Empresa.Direccion1"));
