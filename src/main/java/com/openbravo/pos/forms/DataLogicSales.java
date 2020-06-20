@@ -2489,6 +2489,20 @@ public class DataLogicSales extends BeanFactoryDataSingle {
         );
     }
 
+        /**
+     *
+     * @return
+     */
+    public final TableDefinition getTableTicketsNum() {
+        return new TableDefinition(s,
+                "ticketsnum",
+                new String[]{"ID", "PERSON"},
+                new String[]{"ID", "PERSON"},
+                new Datas[]{Datas.INT, Datas.STRING},
+                new Formats[]{Formats.INT, Formats.STRING},
+                new int[]{1}
+        );
+    }
     /**
      *
      */
