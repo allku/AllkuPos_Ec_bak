@@ -14,7 +14,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
+//    along with AllkuPOS Ec.  If not, see <http://www.gnu.org/licenses/>.
 package com.openbravo.pos.admin;
 
 import com.openbravo.basic.BasicException;
@@ -127,6 +127,6 @@ public class SequencesPanel extends JPanelTable {
      */
     @Override
     public String getTitle() {
-        return AppLocal.getIntString("Menu.Sequences");
+        return AppLocal.getIntString("Menu.SequenceSales");
     }
 }

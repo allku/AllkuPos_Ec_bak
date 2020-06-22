@@ -1,5 +1,4 @@
 //    AllkuPOS Ec  - Touch Friendly Point Of Sale
-//    Copyright (c) 2009-2018 uniCenta
 //    https://www.allku.expert
 //
 //    This file is part of uniCenta oPOS
@@ -15,7 +14,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
+//    along with AllkuPOS Ec.  If not, see <http://www.gnu.org/licenses/>.
 package com.openbravo.pos.forms;
 
 import com.openbravo.basic.BasicException;
@@ -23,6 +22,7 @@ import com.openbravo.data.loader.*;
 import com.openbravo.data.model.Field;
 import com.openbravo.data.model.Row;
 import com.openbravo.format.Formats;
+import com.openbravo.pos.admin.PeopleNotSequence;
 import com.openbravo.pos.catalog.CategoryStock;
 import com.openbravo.pos.customers.CustomerInfoExt;
 import com.openbravo.pos.customers.CustomerTransaction;
@@ -1281,9 +1281,38 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "WHERE tickets.CUSTOMER = ? "
                 + "GROUP BY customers.ID, receipts.DATENEW, tickets.TICKETID, "
                 + "products.NAME, tickets.TICKETTYPE "
-                + "ORDER BY receipts.DATENEW DESC",
+                + "ORDER BY receipts.DATENEW DESC "
+                + "LIMIT 99",
                 SerializerWriteString.INSTANCE,
                 CustomerTransaction.getSerializerRead()).list(cId);
+    }
+
+    /**
+     * User not sequences asigned
+     *
+     * @return
+     * @throws BasicException
+     */
+    @SuppressWarnings("unchecked")
+    public final List<PeopleNotSequence> getUserWithOutSequenceList(String cId) throws BasicException {
+
+        return new PreparedSentence(s,
+                "SELECT "
+                + "p.id, "
+                + "p.name, "
+                + "1 as CID "
+                + "from "
+                + "people p "
+                + "where "
+                + "p.id not in ( "
+                + "SELECT "
+                + "t.person "
+                + "from "
+                + "ticketsnum t) "
+                + "and p.visible = ? "
+                + "LIMIT 99",
+                SerializerWriteString.INSTANCE,
+                PeopleNotSequence.getSerializerRead()).list(cId);
     }
 
     /**
@@ -2489,7 +2518,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
         );
     }
 
-        /**
+    /**
      *
      * @return
      */
@@ -2503,6 +2532,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 new int[]{1}
         );
     }
+
     /**
      *
      */

@@ -825,6 +825,8 @@ ALTER TABLE `tickets` ADD CONSTRAINT `tickets_fk_id`
 ALTER TABLE `ticketsnum` ADD CONSTRAINT `ticketsnum_peaple_fk`
 	FOREIGN KEY ( `person` ) REFERENCES `people` ( `id` );
 
+ALTER TABLE `ticketsnum` 
+ADD UNIQUE INDEX `person_unique` (`person` ASC) VISIBLE;
 -- *****************************************************************************
 
 -- ADD roles
@@ -834,9 +836,9 @@ INSERT INTO roles(id, name, permissions) VALUES('2', 'Employee role', $FILE{/com
 INSERT INTO roles(id, name, permissions) VALUES('3', 'Guest role', $FILE{/com/openbravo/pos/templates/Role.Guest.xml} );
 
 -- ADD people
-INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001001', 'Administrator', NULL, '0', TRUE, NULL);
-INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001002', 'Manager', NULL, '1', TRUE, NULL);
-INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001003', 'Employee', NULL, '2', TRUE, NULL);
+INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001-901', 'Administrator', NULL, '0', TRUE, NULL);
+INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001-902', 'Manager', NULL, '1', TRUE, NULL);
+INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('001-903', 'Employee', NULL, '2', TRUE, NULL);
 INSERT INTO people(id, name, apppassword, role, visible, image) VALUES ('3', 'Guest', NULL, '3', TRUE, NULL);
 
 -- ADD resources --
@@ -1024,9 +1026,9 @@ INSERT INTO shift_breaks(id, shiftid, breakid, starttime, endtime) VALUES ('0', 
 
 -- ADD SEQUENCES
 INSERT INTO pickup_number VALUES(0);
-INSERT INTO ticketsnum VALUES(0, '001001');
-INSERT INTO ticketsnum VALUES(0, '001002');
-INSERT INTO ticketsnum VALUES(0, '001003');
+INSERT INTO ticketsnum VALUES(0, '001-901');
+INSERT INTO ticketsnum VALUES(0, '001-902');
+INSERT INTO ticketsnum VALUES(0, '001-903');
 INSERT INTO ticketsnum_refund VALUES(0);
 INSERT INTO ticketsnum_payment VALUES(0);
 
