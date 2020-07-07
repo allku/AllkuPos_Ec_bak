@@ -3054,10 +3054,13 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
     private void btnSplitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSplitActionPerformed
 
-        if (getCliente("9999999999999") == false) {
-            JOptionPane.showMessageDialog(this,
-                    "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe",
-                    JOptionPane.ERROR_MESSAGE);
+        if (m_oTicket.getCustomer() == null) {
+            if (getCliente("9999999999999") == false) {
+                JOptionPane.showMessageDialog(this,
+                        "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
 
         if (m_oTicket.getLinesCount() > 0) {
