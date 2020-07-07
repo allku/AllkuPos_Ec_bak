@@ -1809,7 +1809,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                              */
                             //Added by Jorge Luis
                             //Added Print Ticket                            
-                            ticket.setRuc(dlSystem.getResourceAsText("Empresa.RUC"));                           
+                            ticket.setRuc(dlSystem.getResourceAsText("Empresa.RUC"));
                             ticket.setRazonSocial(dlSystem.getResourceAsText("Empresa.RazonSocial"));
                             ticket.setNombreComercial(dlSystem.getResourceAsText("Empresa.NombreComercial"));
                             ticket.setDireccion1(dlSystem.getResourceAsText("Empresa.Direccion1"));
@@ -3053,6 +3053,12 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     }//GEN-LAST:event_btnReprint1ActionPerformed
 
     private void btnSplitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSplitActionPerformed
+
+        if (getCliente("9999999999999") == false) {
+            JOptionPane.showMessageDialog(this,
+                    "El  Consumidor Final, no existe. Crear Consumidor Final en clientes por favor", "Error: Cliente no existe",
+                    JOptionPane.ERROR_MESSAGE);
+        }
 
         if (m_oTicket.getLinesCount() > 0) {
             ReceiptSplit splitdialog = ReceiptSplit.getDialog(this,
