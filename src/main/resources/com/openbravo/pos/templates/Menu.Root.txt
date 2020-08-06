@@ -141,6 +141,7 @@ group = menu.addGroup("Menu.Backoffice");
     group.addChangePasswordAction();
     group.addPanel("/com/openbravo/images/configuration.png", "Menu.Configuration", "com.openbravo.pos.config.JPanelConfiguration");
     group.addPanel("/com/openbravo/images/printer.png", "Menu.Printer", "com.openbravo.pos.panels.JPanelPrinter");
+    group.addPanel("/com/openbravo/images/configuration.png", "Menu.ElectronicPos", "com.openbravo.pos.config.ConfigAllkuPos");
     group.addPanel("/com/openbravo/images/timer.png", "Menu.CheckInCheckOut", "com.openbravo.pos.epm.JPanelEmployeePresence");
 
 // Deprecated options. Only required with Openbravo ERP software
