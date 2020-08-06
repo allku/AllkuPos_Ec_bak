@@ -625,6 +625,7 @@ CREATE TABLE `tickets` (
 	`person` varchar(255) NOT NULL,
 	`customer` varchar(255) default NULL,
 	`status` int(11) NOT NULL default '0',
+	`documento` varchar(90) NULL,
 	PRIMARY KEY  ( `id` ),
 	KEY `tickets_customers_fk` ( `customer` ),
 	KEY `tickets_fk_2` ( `person` ),

@@ -43,6 +43,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import java.io.File;
 import java.math.BigInteger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -1671,8 +1672,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
 
                 // new ticket
                 new PreparedSentence(s,
-                        "INSERT INTO tickets (ID, TICKETTYPE, TICKETID, PERSON, CUSTOMER, STATUS) "
-                        + "VALUES (?, ?, ?, ?, ?, ?)",
+                        "INSERT INTO tickets (ID, TICKETTYPE, TICKETID, PERSON, CUSTOMER, STATUS, DOCUMENTO) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?)",
                         SerializerWriteParams.INSTANCE)
                         .exec(new DataParams() {
 
@@ -1684,6 +1685,11 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                                 setString(4, ticket.getUser().getId());
                                 setString(5, ticket.getCustomerId());
                                 setInt(6, ticket.getTicketStatus());
+                                setString(7, ticket.getUser().getId()
+                                        .replace("-", "")
+                                        .concat(StringUtils
+                                                .leftPad(Integer
+                                                        .toString(ticket.getTicketId()), 9, '0')));
                             }
                         });
 
