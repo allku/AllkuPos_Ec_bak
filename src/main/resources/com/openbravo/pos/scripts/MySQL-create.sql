@@ -625,7 +625,7 @@ CREATE TABLE `tickets` (
 	`person` varchar(255) NOT NULL,
 	`customer` varchar(255) default NULL,
 	`status` int(11) NOT NULL default '0',
-	`documento` varchar(90) NULL,
+	`documento` varchar(90) NOT NULL,
 	PRIMARY KEY  ( `id` ),
 	KEY `tickets_customers_fk` ( `customer` ),
 	KEY `tickets_fk_2` ( `person` ),
@@ -821,6 +821,9 @@ ALTER TABLE `tickets` ADD CONSTRAINT `tickets_fk_2`
 
 ALTER TABLE `tickets` ADD CONSTRAINT `tickets_fk_id`
 	FOREIGN KEY ( `id` ) REFERENCES `receipts` ( `id` );
+
+ALTER TABLE `tickets` 
+ADD UNIQUE INDEX `uk_ticket` USING BTREE (`tickettype`, `documento`) VISIBLE;
 
 -- Update foreign keys of ticketsnum
 ALTER TABLE `ticketsnum` ADD CONSTRAINT `ticketsnum_peaple_fk`

@@ -1778,9 +1778,9 @@ public final class Transfer extends JPanel implements JPanelView {
                         while (rs.next()) {
                             SQL = "INSERT INTO tickets("
                                 + "ID, TICKETTYPE, TICKETID, "
-                                + "PERSON, CUSTOMER, STATUS) "
+                                + "PERSON, CUSTOMER, STATUS, DOCUMENTO) "
                                 + "VALUES (?, ?, ?, "
-                                + "?, ?, ?)";
+                                + "?, ?, ?, ?)";
     
                             pstmt = con_target.prepareStatement(SQL);
                             pstmt.setString(1, rs.getString("ID"));
@@ -1789,6 +1789,7 @@ public final class Transfer extends JPanel implements JPanelView {
                             pstmt.setString(4, rs.getString("PERSON"));
                             pstmt.setString(5, rs.getString("CUSTOMER"));
                             pstmt.setInt(6, rs.getInt("STATUS"));
+                            pstmt.setString(7, rs.getString("DOCUMENTO"));
                         
                             pstmt.executeUpdate();
                         }    
