@@ -635,8 +635,8 @@ CREATE TABLE `tickets` (
 /* Header line. Object: ticketsnum. Script date: 23/01/2018 08:00:00 */
 CREATE TABLE `ticketsnum` (
 	`id` int(11) NOT NULL,
-	`person` varchar(255) NOT NULL,
-	KEY `ticketsnum_peaple_fk` ( `person` )
+	`person` varchar(180) NOT NULL,
+	KEY `ticketsnum_people_fk` ( `person` )
 ) ENGINE = InnoDB;
 
 /* Header line. Object: ticketsnum_payment. Script date: 23/01/2018 08:00:00 */
@@ -647,7 +647,9 @@ CREATE TABLE `ticketsnum_payment` (
 
 /* Header line. Object: ticketsnum_refund. Script date: 23/01/2018 08:00:00 */
 CREATE TABLE `ticketsnum_refund` (
-	`id` int(11) NOT NULL
+	`id` int(11) NOT NULL,
+	`person` varchar(180) NOT NULL,
+	KEY `ticketsnum_refund_people_fk` ( `person` )
 ) ENGINE = InnoDB ;
 
 /* Header line. Object: uom. Script date: 23/01/2018 08:00:00 */
@@ -826,11 +828,19 @@ ALTER TABLE `tickets`
 ADD UNIQUE INDEX `uk_ticket` USING BTREE (`tickettype`, `documento`) VISIBLE;
 
 -- Update foreign keys of ticketsnum
-ALTER TABLE `ticketsnum` ADD CONSTRAINT `ticketsnum_peaple_fk`
+ALTER TABLE `ticketsnum` ADD CONSTRAINT `ticketsnum_people_fk`
 	FOREIGN KEY ( `person` ) REFERENCES `people` ( `id` );
 
 ALTER TABLE `ticketsnum` 
-ADD UNIQUE INDEX `person_unique` (`person` ASC) VISIBLE;
+ADD UNIQUE INDEX `person_ticketnum_uk` (`person` ASC) VISIBLE;
+
+-- Update foreign keys of ticketsnum
+ALTER TABLE `ticketsnum_refund` ADD CONSTRAINT `ticketsnum_refund_people_fk`
+	FOREIGN KEY ( `person` ) REFERENCES `people` ( `id` );
+
+ALTER TABLE `ticketsnum_refund` 
+ADD UNIQUE INDEX `person_ticketnum_refund_uk` (`person` ASC) VISIBLE;
+
 -- *****************************************************************************
 
 -- ADD roles
@@ -1033,7 +1043,11 @@ INSERT INTO pickup_number VALUES(0);
 INSERT INTO ticketsnum VALUES(0, '001-901');
 INSERT INTO ticketsnum VALUES(0, '001-902');
 INSERT INTO ticketsnum VALUES(0, '001-903');
-INSERT INTO ticketsnum_refund VALUES(0);
+
+INSERT INTO ticketsnum_refund VALUES(0, '001-901');
+INSERT INTO ticketsnum_refund VALUES(0, '001-902');
+INSERT INTO ticketsnum_refund VALUES(0, '001-903');
+
 INSERT INTO ticketsnum_payment VALUES(0);
 
 -- ADD APPLICATION VERSION

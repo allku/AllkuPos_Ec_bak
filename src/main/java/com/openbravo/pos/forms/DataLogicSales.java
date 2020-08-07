@@ -1632,10 +1632,13 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     switch (ticket.getTicketType()) {
                         case TicketInfo.RECEIPT_NORMAL:
                             ticket.setTicketId(getNextTicketIndex(
-                                    ticket.getUser().getId()));
+                                    ticket.getUser().getId()
+                            ));
                             break;
                         case TicketInfo.RECEIPT_REFUND:
-                            ticket.setTicketId(getNextTicketRefundIndex());
+                            ticket.setTicketId(getNextTicketRefundIndex(
+                                    ticket.getUser().getId()
+                            ));
                             break;
                         case TicketInfo.RECEIPT_PAYMENT:
                             ticket.setTicketId(getNextTicketPaymentIndex());
@@ -1924,11 +1927,22 @@ public class DataLogicSales extends BeanFactoryDataSingle {
     }
 
     /**
-     *
-     * @return @throws BasicException
+     * @param person
+     * @return sequence of user assigned for ticket invoice
      */
     public final Integer getNextTicketIndex(String person) throws BasicException {
-        BigInteger sequence = (BigInteger) s.DB.getSequenceSentence(s, "ticketsnum", person).find();
+        BigInteger sequence = (BigInteger) s.DB
+                .getSequenceSentence(s, "ticketsnum", person).find();
+        return sequence.intValue();
+    }
+
+    /**
+     * @param person
+     * @return sequence of user assigned for refund
+     */
+    public final Integer getNextTicketRefundIndex(String person) throws BasicException {
+        BigInteger sequence = (BigInteger) s.DB
+                .getSequenceSentence(s, "ticketsnum_refund", person).find();
         return sequence.intValue();
     }
 
