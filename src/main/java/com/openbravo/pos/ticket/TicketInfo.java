@@ -83,7 +83,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     private String razonSocial;
     private String nombreComercial;
     private String direccion1;
-    private String direccion2;    
+    private String direccion2;
     private String ambiente;
 
     private static String Hostname;
@@ -578,7 +578,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
 
     public void setDireccion2(String direccion2) {
         this.direccion2 = direccion2;
-    }    
+    }
 
     public String getAmbiente() {
         return ambiente;
@@ -846,6 +846,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public String printClaveAcceso() {
         try {
             String codigoDocumeto = "";
+            String serie = "";
             String claveAcceso = "";
             Modulo11 m11 = new Modulo11();
 
@@ -855,15 +856,19 @@ public final class TicketInfo implements SerializableRead, Externalizable {
                 codigoDocumeto = "04";
             }
 
+            serie = getUser().getId().replace("-", "");
+
             claveAcceso = new SimpleDateFormat("ddMMyyyy").format(getDate());
             claveAcceso = claveAcceso + codigoDocumeto;
             claveAcceso = claveAcceso + getRuc() + getAmbiente();
-            claveAcceso = claveAcceso + getUser().getId() + getSecuencial();
+            claveAcceso = claveAcceso + serie + getSecuencial();
             claveAcceso = claveAcceso + "12345678" + "1";
             claveAcceso = claveAcceso + m11.modulo11(claveAcceso);
 
             return claveAcceso;
         } catch (Exception e) {
+            System.err.println("Error printClaveAcceso: " + e.getMessage());
+            e.printStackTrace();
             return "";
         }
     }
