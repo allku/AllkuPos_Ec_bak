@@ -15,3 +15,15 @@ Software POS for Ecuador, based on OpenBravo and UniCenta (POS -> Point of Sale)
 5. $ mvn install
 6. Get into target folder and execute start.bat (windows)
 
+# Manual
+## Printer (Epson tmu-220, Epson tm-t20 or any model) for text mode (RECOMMENDED)
+### Windows
+1. Install printer and share, then execute in cmd:
+* C:\> net use LPT1: /delete
+* C:\> net use LPT1: \\computer-name\name-shared-printer /PERSISTENT:YES
+2. In Allku Pos Ec, in System -> Configuration -> Peripherals, set:
+* Printer 1 -> your-printer-model
+* Mode -> file
+* Port -> LPT1
+***
+
