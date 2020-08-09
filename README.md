@@ -26,4 +26,6 @@ Software POS for Ecuador, based on OpenBravo and UniCenta (POS -> Point of Sale)
 * Mode -> file
 * Port -> LPT1
 ***
-
+## Fonts
+### GNU/Linux
+* Install ttf-mscorefonts-installer package
