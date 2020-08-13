@@ -24,7 +24,7 @@
         <image>Printer.Ticket.Logo</image>
         <line></line>
         <line></line>
-        <line size=""><text align="center" length="40" bold="true">Reporte Parcial de Caja</text></line>
+        <line size="0"><text align="center" length="40" bold="true">Reporte Parcial de Caja</text></line>
         <line></line>
 
 <!-- START OF SEQUENCE DETAIL -->
@@ -37,7 +37,7 @@
 <!-- END OF SEQUENCE DETAIL -->
 
 <!-- START OF SALES -->
-        <line size=""><text align="center" length="40" bold="true">Ventas</text></line>
+        <line size="0"><text align="center" length="40" bold="true">Ventas</text></line>
         <line>
             <text align ="left" length="16" bold="true">Nombre</text>
             <text align ="right" length="6" bold="true">Cant.</text>
@@ -64,7 +64,7 @@
 <!-- END OF SALES SUMMARY -->
 
 <!-- START OF CATEGORIES SUMMARY -->
-        <line size=""><text align="center" length="40" bold="true"> Categorias de Productos</text></line>
+        <line size="0"><text align="center" length="40" bold="true"> Categorías de Productos</text></line>
         <line>
             <text align ="left" length="16" bold="true">Nombre</text>
             <text align ="right" length="6" bold="true">Cant.</text>
@@ -90,7 +90,7 @@
 <!-- END OF CATEGORIES SUMMARY -->
 
 <!-- START OF VOIDS -->
-        <line size=""><text align="center" length="40" bold="true">Line Voids</text></line>
+        <line size="0"><text align="center" length="40" bold="true">Line Voids</text></line>
         <line>
             <text align ="left" length="6" bold="true">Tkt</text>
             <text align ="left" length="12" bold="true">Usuario</text>
@@ -112,7 +112,7 @@
 <!-- END OF VOIDS -->
 
 <!-- START OF NO SALES -->
-        <line size=""><text align="center" length="40" bold="true">No Ventas</text></line>	
+        <line size="0"><text align="center" length="40" bold="true">No Ventas</text></line>	
         <line>
             <text align ="left" length="32" bold="true">Usuario</text>
             <text align ="right" length="8" bold="true">Ticket</text>
@@ -129,7 +129,7 @@
 <!-- END OF NO SALES -->
 
 <!-- START OF TAXES ANALYSIS -->
-        <line size=""><text align="center" length="40" bold="true">Impuestos</text></line>
+        <line size="0"><text align="center" length="40" bold="true">Impuestos</text></line>
         <line>
             <text align ="left" length="10" bold="true">Nombre</text>
             <text align ="right" length="10" bold="true">Neto</text>	
@@ -151,7 +151,7 @@
 <!-- END OF TAXES ANALYSIS -->
 
 <!-- START OF PAYMENTS -->
-        <line size=""><text align="center" length="40" bold="true">Pagos</text></line>
+        <line size="0"><text align="center" length="40" bold="true">Pagos</text></line>
         <line>
             <text align ="left" length="30" bold="true">Tipo</text>
             <text align ="right" length="10" bold="true">Total</text>
@@ -173,13 +173,13 @@
 <!-- END OF PAYMENTS RECEIVED -->
 
 <!-- START OF TOTALS SUMMARY -->
-        <line><text>****************************************</text></line>
-        <line size=""><text align="center" length="40" bold="true">RESUMEN</text></line>
-        <line><text>****************************************</text></line>
+        <line><text>- - - - - - - - - - - - - - - - - - - - </text></line>
+        <line size="0"><text align="center" length="40" bold="true">RESUMEN</text></line>
+        <line><text>- - - - - - - - - - - - - - - - - - - - </text></line>
         <line><text align ="left" length="28" bold="true">Tickets</text>
             <text align ="right" length="12" bold="true">${payments.printSales()}</text>
         </line>                
-        <line><text align ="left" length="28" bold="true">Lineas Ticket</text>
+        <line><text align ="left" length="28" bold="true">Líneas Ticket</text>
             <text align ="right" length="12" bold="true">${payments.printProductSalesRows()}</text>
         </line>
         <line><text align ="left" length="28" bold="true">Pagos</text>

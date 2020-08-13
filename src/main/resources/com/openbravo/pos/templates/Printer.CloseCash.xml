@@ -23,7 +23,7 @@
     <image>Printer.Ticket.Logo</image>
         <line></line>
         <line></line>
-        <line size="">
+        <line size="0">
             <text align ="center" bold="true" length="40">Reporte Cierre de Caja</text>
         </line>
         <line></line>
@@ -44,12 +44,12 @@
             <text align ="right" length="12" bold="true">${payments.printPaymentsTotal()}</text>
         </line>
         <line>
-            <text align ="left" length="28">Numero de pagos:</text>
+            <text align ="left" length="28">Número de pagos:</text>
             <text align ="right" length="12">${payments.printPayments()}</text>
         </line>
         <line></line>
         <line>
-            <text align ="left" bold="true" length="28">Analisis Fiscal</text>
+            <text align ="left" bold="true" length="28">Análisis Fiscal</text>
             <text align ="right" bold="true" length="12">Monto</text>
         </line>
         <line><text>----------------------------------------</text></line>
@@ -61,7 +61,7 @@
         #end
         <line><text>----------------------------------------</text></line>
 <!-- START OF VOIDS -->
-        <line size=""><text align="center" length="40" bold="true">Line Voids</text></line>
+        <line size="0"><text align="center" length="40" bold="true">Line Voids</text></line>
         <line>
             <text align ="left" length="6" bold="true">Tkt</text>
             <text align ="left" length="12" bold="true">Usuario</text>
@@ -83,7 +83,7 @@
 <!-- END OF VOIDS -->
 
 <!-- START OF NO SALES -->
-        <line size=""><text align="center" length="40" bold="true">No Ventas</text></line>	
+        <line size="0"><text align="center" length="40" bold="true">No Ventas</text></line>	
         <line>
             <text align ="left" length="32" bold="true">Usuario</text>
             <text align ="right" length="8" bold="true">Ticket</text>
@@ -100,19 +100,19 @@
 <!-- END OF NO SALES -->
         
         <line>
-            <text align ="left" length="28">Ingresos:</text>
+            <text align ="left" length="28">Número de Ventas:</text>
             <text align ="right" length="12">${payments.printSales()}</text>
         </line>
         <line></line>
-        <line size="">
+        <line size="0">
             <text align ="left" length="28" bold="true">SubTotal</text>
             <text align ="right" length="12" bold="true">${payments.printSalesBase()}</text>
         </line>
-        <line size="">
+        <line size="0">
             <text align ="left" length="28" bold="true">Impuestos</text>
             <text align ="right" length="12" bold="true">${payments.printSalesTaxes()}</text>
         </line>
-        <line size="">
+        <line size="0">
             <text align ="left" length="28" bold="true">Total</text>
             <text align ="right" length="12" bold="true">${payments.printSalesTotal()}</text>
         </line>
