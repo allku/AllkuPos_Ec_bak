@@ -23,105 +23,105 @@
     <image>Printer.Ticket.Logo</image>
         <line></line>
         <line></line>
-        <line size="1">
-            <text align ="center" bold="true" length="42">Close Cash Report</text>
+        <line size="0">
+            <text align ="center" bold="true" length="40">Reporte Cierre de Caja</text>
         </line>
         <line></line>
         <line>
-           <text align ="left" bold="true" length="30">Payments Report</text>
-           <text align ="right" bold="true" length="12">Amount</text>
+           <text align ="left" bold="true" length="28">Reporte Pagos</text>
+           <text align ="right" bold="true" length="12">Monto</text>
         </line>
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
         #foreach ($line in $payments.getPaymentLines())
         <line>
-            <text align ="left" length="30">${line.printType()} ${line.printReason()}</text>
+            <text align ="left" length="28">${line.printType()} ${line.printReason()}</text>
             <text align ="right" length="12">${line.printValue()}</text>
         </line>
         #end
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
         <line>
-            <text align ="left" length="30" bold="true">Total Sales</text>
+            <text align ="left" length="28" bold="true">Total Ventas</text>
             <text align ="right" length="12" bold="true">${payments.printPaymentsTotal()}</text>
         </line>
         <line>
-            <text align ="left" length="30">Number of Payments:</text>
+            <text align ="left" length="28">Número de pagos:</text>
             <text align ="right" length="12">${payments.printPayments()}</text>
         </line>
         <line></line>
         <line>
-            <text align ="left" bold="true" length="30">Tax Analysis</text>
-            <text align ="right" bold="true" length="12">Amount</text>
+            <text align ="left" bold="true" length="28">Análisis Fiscal</text>
+            <text align ="right" bold="true" length="12">Monto</text>
         </line>
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
         #foreach ($line in $payments.getSaleLines())
         <line>
-            <text align ="left" length="30">${line.printTaxName()}</text>
+            <text align ="left" length="28">${line.printTaxName()}</text>
             <text align ="right" length="12">${line.printTaxes()}</text>
         </line>
         #end
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
 <!-- START OF VOIDS -->
-        <line size="1"><text align="center" length="42" bold="true">Line Voids</text></line>
+        <line size="0"><text align="center" length="40" bold="true">Line Voids</text></line>
         <line>
             <text align ="left" length="6" bold="true">Tkt</text>
-            <text align ="left" length="12" bold="true">User</text>
-            <text align ="left" length="19" bold="true">Product</text>
+            <text align ="left" length="12" bold="true">Usuario</text>
+            <text align ="left" length="17" bold="true">Producto</text>
             <text align ="right" length="5" bold="true">Total</text>
         </line>
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
             #foreach ($line in $payments.getRemovedProductLines())
                 <line>
                     <text align ="left" length="6">${line.printTicketId()}</text>                    
                     <text align ="left" length="11">${line.printWorkerName()}</text>
                     <text align ="left" length="1"></text>                    
-                    <text align ="left" length="19">${line.printProductName()}</text>
+                    <text align ="left" length="17">${line.printProductName()}</text>
                     <text align ="right" length="5">${line.printTotalUnits()}</text>
                 </line>
             #end
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
         <line></line>
 <!-- END OF VOIDS -->
 
 <!-- START OF NO SALES -->
-        <line size="1"><text align="center" length="42" bold="true">No Sales</text></line>	
+        <line size="0"><text align="center" length="40" bold="true">No Ventas</text></line>	
         <line>
-            <text align ="left" length="34" bold="true">User</text>
+            <text align ="left" length="32" bold="true">Usuario</text>
             <text align ="right" length="8" bold="true">Ticket</text>
         </line>
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
             #foreach ($line in $payments.getDrawerOpenedLines())
                 <line>
-                    <text align ="left" length="34">${line.printUserName()}</text>
+                    <text align ="left" length="32">${line.printUserName()}</text>
                     <text align ="right" length="8">${line.printTicketId()}</text>
                 </line>
             #end
-        <line><text>------------------------------------------</text></line>
+        <line><text>----------------------------------------</text></line>
         <line></line>
 <!-- END OF NO SALES -->
         
         <line>
-            <text align ="left" length="3">Receipts:</text>
+            <text align ="left" length="28">Número de Ventas:</text>
             <text align ="right" length="12">${payments.printSales()}</text>
         </line>
         <line></line>
-        <line size="1">
-            <text align ="left" length="30" bold="true">SubTotal</text>
+        <line size="0">
+            <text align ="left" length="28" bold="true">SubTotal</text>
             <text align ="right" length="12" bold="true">${payments.printSalesBase()}</text>
         </line>
-        <line size="1">
-            <text align ="left" length="30" bold="true">Taxes</text>
+        <line size="0">
+            <text align ="left" length="28" bold="true">Impuestos</text>
             <text align ="right" length="12" bold="true">${payments.printSalesTaxes()}</text>
         </line>
-        <line size="1">
-            <text align ="left" length="30" bold="true">Totals</text>
+        <line size="0">
+            <text align ="left" length="28" bold="true">Total</text>
             <text align ="right" length="12" bold="true">${payments.printSalesTotal()}</text>
         </line>
-        <line><text>------------------------------------------</text></line>
-        <line><text length="18" bold="true">Closed by:</text><text>${payments.printUser()}</text></line>
+        <line><text>----------------------------------------</text></line>
+        <line><text length="18" bold="true">Cerrado por:</text><text>${payments.printUser()}</text></line>
         <line><text length="18" bold="true">Terminal:</text><text>${payments.printHost()}</text></line>
-        <line><text length="18" bold="true">Sequence:</text><text>${payments.printSequence()}</text></line>
-        <line><text length="18" bold="true">Start Date:</text><text>${payments.printDateStart()}</text></line>
-        <line><text length="18" bold="true">End Date:</text><text>${payments.printDateEnd()}</text></line>
+        <line><text length="18" bold="true">Secuencia:</text><text>${payments.printSequence()}</text></line>
+        <line><text length="18" bold="true">Fecha Inicio:</text><text>${payments.printDateStart()}</text></line>
+        <line><text length="18" bold="true">Fecha Fin:</text><text>${payments.printDateEnd()}</text></line>
          
     </ticket>
 </output>
