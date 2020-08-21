@@ -25,7 +25,7 @@ import com.openbravo.beans.LocaleResources;
 public class AppLocal {
 
     public static final String APP_NAME = "AllkuPOS Ec"; //"uniCenta oPOS"
-    public static final String APP_ID = "unicentaopos";
+    public static final String APP_ID = "allkupos"; //unicentaopos
     public static final String APP_VERSION = "0.1.0"; //"4.5.4"
 
     private static final LocaleResources m_resources;
