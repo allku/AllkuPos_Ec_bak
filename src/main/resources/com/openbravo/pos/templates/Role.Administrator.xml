@@ -158,6 +158,7 @@
     <class name="com.openbravo.pos.admin.PeoplePanel"/>
     <class name="com.openbravo.pos.admin.RolesPanel"/>
     <class name="com.openbravo.pos.admin.SequencesPanel"/>
+    <class name="com.openbravo.pos.admin.SequencesRefundPanel"/>
     <class name="com.openbravo.pos.admin.ResourcesPanel"/>
     <class name="com.openbravo.pos.inventory.LocationsPanel"/>
     <class name="com.openbravo.pos.mant.JPanelFloors"/>

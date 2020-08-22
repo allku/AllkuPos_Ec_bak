@@ -39,7 +39,7 @@ import javax.swing.table.JTableHeader;
  *
  * @author jorgequiguango
  */
-public class SequencesEditor extends JPanel implements EditorRecord {
+public class SequencesRefundEditor extends JPanel implements EditorRecord {
 
     private Object m_oId;
 
@@ -53,7 +53,7 @@ public class SequencesEditor extends JPanel implements EditorRecord {
      * @param app
      * @param dirty
      */
-    public SequencesEditor(AppView app, DirtyManager dirty) {
+    public SequencesRefundEditor(AppView app, DirtyManager dirty) {
 
         dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
         initComponents();
@@ -124,7 +124,8 @@ public class SequencesEditor extends JPanel implements EditorRecord {
         m_jName.setEnabled(false);
         m_jRate.setEnabled(false);
 
-        transactionModel = new TransactionTableModel(getTransactionOfName((String) m_oId));
+        transactionModel = new TransactionTableModel(
+                getTransactionOfName((String) m_oId));
         jTablePeopleNotSequence.setModel(transactionModel);
         jTablePeopleNotSequence.setEnabled(false);
     }
@@ -155,7 +156,6 @@ public class SequencesEditor extends JPanel implements EditorRecord {
 
         jTablePeopleNotSequence.getColumnModel().getColumn(0).setPreferredWidth(50);
         jTablePeopleNotSequence.getColumnModel().getColumn(1).setPreferredWidth(70);
-        
 
         // set font for headers
         Font f = new Font("Arial", Font.BOLD, 14);
@@ -197,9 +197,9 @@ public class SequencesEditor extends JPanel implements EditorRecord {
 
         try {
             peopleNotSequenceList = dlSales
-                    .getUserWithOutSequenceList(cId, "ticketsnum");
+                    .getUserWithOutSequenceList(cId, "ticketsnum_refund");
         } catch (BasicException ex) {
-            Logger.getLogger(SequencesEditor.class.getName())
+            Logger.getLogger(SequencesRefundEditor.class.getName())
                     .log(Level.SEVERE, null, ex);
         }
 
@@ -253,7 +253,7 @@ public class SequencesEditor extends JPanel implements EditorRecord {
                 case 0:
                     return peopleNotSequence.getPeopleId();
                 case 1:
-                    return peopleNotSequence.getPeopleName();                
+                    return peopleNotSequence.getPeopleName();
                 default:
                     return "";
 

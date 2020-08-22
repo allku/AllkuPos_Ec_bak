@@ -46,9 +46,9 @@ import java.math.BigInteger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
  * @author adrianromero
  * @author jackgerrard
+ * @author Jorge Luis
  */
 public class DataLogicSales extends BeanFactoryDataSingle {
 
@@ -1289,13 +1289,16 @@ public class DataLogicSales extends BeanFactoryDataSingle {
     }
 
     /**
-     * User not sequences asigned
-     *
+     * User not sequences asigned in table ticketsnum or ticketsnum_refund
+     * @param id
+     * @param table
      * @return
+     * List users without sequence
      * @throws BasicException
      */
     @SuppressWarnings("unchecked")
-    public final List<PeopleNotSequence> getUserWithOutSequenceList(String cId) throws BasicException {
+    public final List<PeopleNotSequence> getUserWithOutSequenceList(String cId,
+            String table) throws BasicException {
 
         return new PreparedSentence(s,
                 "SELECT "
@@ -1309,7 +1312,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "SELECT "
                 + "t.person "
                 + "from "
-                + "ticketsnum t) "
+                + table + " t) "
                 + "and p.visible = ? "
                 + "LIMIT 99",
                 SerializerWriteString.INSTANCE,
@@ -2539,12 +2542,29 @@ public class DataLogicSales extends BeanFactoryDataSingle {
     }
 
     /**
+     * Sequence table sales
      *
      * @return
      */
     public final TableDefinition getTableTicketsNum() {
         return new TableDefinition(s,
                 "ticketsnum",
+                new String[]{"ID", "PERSON"},
+                new String[]{"ID", "PERSON"},
+                new Datas[]{Datas.INT, Datas.STRING},
+                new Formats[]{Formats.INT, Formats.STRING},
+                new int[]{1}
+        );
+    }
+
+    /**
+     * Sequence table refund
+     *
+     * @return
+     */
+    public final TableDefinition getTableTicketsNumRefund() {
+        return new TableDefinition(s,
+                "ticketsnum_refund",
                 new String[]{"ID", "PERSON"},
                 new String[]{"ID", "PERSON"},
                 new Datas[]{Datas.INT, Datas.STRING},
