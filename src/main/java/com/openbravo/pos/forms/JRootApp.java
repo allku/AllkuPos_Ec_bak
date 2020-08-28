@@ -67,7 +67,6 @@ import com.dalsemi.onewire.container.OneWireContainer;
 import com.dalsemi.onewire.utils.*;
 import com.dalsemi.onewire.application.monitor.*;
 import com.openbravo.pos.util.uOWWatch;
-import com.unicenta.pos.util.FtpUpload;
 import org.joda.time.Instant;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -78,6 +77,7 @@ import java.nio.file.StandardOpenOption;
 /**
  *
  * @author adrianromero
+ * @author jorgequiguango
  */
 // public class JRootApp extends JPanel implements AppView {
 public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListener  {
@@ -526,7 +526,7 @@ public class JRootApp extends JPanel implements AppView, DeviceMonitorEventListe
                 "<br>" +
                 "AllkuPos Ec is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>" +
                 "<br>" +
-                "You should have received a copy of the GNU General Public License along with uniCenta oPOS.  If not, see http://www.gnu.org/licenses/<br>" +
+                "You should have received a copy of the GNU General Public License along with AllkuPos Ec.  If not, see http://www.gnu.org/licenses/<br>" +
                 "</center>");
                 
             } else {
