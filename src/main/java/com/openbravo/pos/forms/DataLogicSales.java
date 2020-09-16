@@ -1672,7 +1672,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                                 } catch (IOException e) {
                                     setBytes(4, null);
                                 }
-                                setString(5, ticket.getProperty("person"));
+                                setString(5, ticket.getUser().getId());
                             }
                         });
 
