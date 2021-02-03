@@ -872,4 +872,15 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             return "";
         }
     }
+    
+    public List<TicketLineInfo> getBlankLines() {
+        List<TicketLineInfo> blankLines = new ArrayList<>();
+        TicketLineInfo li = new TicketLineInfo();
+        int countLinesBlank = 10 - getLinesCount();
+        
+        for(int i=0; i<countLinesBlank; i++)
+            blankLines.add(li);
+        
+        return blankLines;
+    }
 }
