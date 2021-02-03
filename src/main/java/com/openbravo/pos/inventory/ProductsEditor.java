@@ -212,6 +212,16 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jdate.getDocument().addDocumentListener(dirty);
 
         m_jRef.setEditable(false);
+        
+        m_jSupplier.setVisible(false);
+        jLabel17.setVisible(false);
+        jBtnSupplier.setVisible(false);
+        jLabel26.setVisible(false);
+        m_jUom.setVisible(false);
+        m_jAtt.setVisible(false);
+        m_jVerpatrib.setVisible(false);
+        m_jCodetype.setVisible(false);
+        jLabel13.setVisible(false);
 
         init();
     }
